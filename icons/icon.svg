@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#2563EB"/>
+  <circle cx="256" cy="256" r="178" fill="#F8FAFC"/>
+  <path d="M128 176c0-26 21-47 47-47h162c26 0 47 21 47 47v183c0 13-10 23-23 23H175c-26 0-47-21-47-47V176z" fill="#FFFFFF"/>
+  <path d="M175 129h162c26 0 47 21 47 47v30H175c-26 0-47-17-47-38s21-39 47-39z" fill="#FACC15"/>
+  <path d="M128 272h256v63c0 26-21 47-47 47H175c-26 0-47-21-47-47v-63z" fill="#EF4444"/>
+  <path d="M176 226h160M176 326h160" stroke="#1F2937" stroke-width="24" stroke-linecap="round"/>
+  <text x="256" y="289" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="92" font-weight="800" fill="#1F2937">ES</text>
+</svg>
