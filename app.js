@@ -96,7 +96,6 @@ const DATA = {
     {inf:"pedir",en:"prosić / zamawiać",c:{yo:"pedía",tú:"pedías","él/ella":"pedía",nosotros:"pedíamos","ellos/ellas":"pedían"}},
     {inf:"nacer",en:"urodzić się",c:{yo:"nacía",tú:"nacías","él/ella":"nacía",nosotros:"nacíamos","ellos/ellas":"nacían"}},
     {inf:"reír",en:"śmiać się",c:{yo:"reía",tú:"reías","él/ella":"reía",nosotros:"reíamos","ellos/ellas":"reían"}},
-      {inf:"vivir",en:"żyć / mieszkać",c:{yo:"vivía",tú:"vivías","él/ella":"vivía",nosotros:"vivíamos","ellos/ellas":"vivían"}},
       {inf:"conocer",en:"znać / poznać",c:{yo:"conocía",tú:"conocías","él/ella":"conocía",nosotros:"conocíamos","ellos/ellas":"conocían"}},
       {inf:"creer",en:"wierzyć",c:{yo:"creía",tú:"creías","él/ella":"creía",nosotros:"creíamos","ellos/ellas":"creían"}},
       {inf:"llevar",en:"nosić / zabrać",c:{yo:"llevaba",tú:"llevabas","él/ella":"llevaba",nosotros:"llevábamos","ellos/ellas":"llevaban"}},
@@ -176,8 +175,6 @@ const DATA = {
       {inf:"seguir",en:"podążać",c:{yo:"siga",tú:"sigas","él/ella":"siga",nosotros:"sigamos","ellos/ellas":"sigan"}},
       {inf:"elegir",en:"wybierać",c:{yo:"elija",tú:"elijas","él/ella":"elija",nosotros:"elijamos","ellos/ellas":"elijan"}},
       {inf:"volver",en:"wracać",c:{yo:"vuelva",tú:"vuelvas","él/ella":"vuelva",nosotros:"volvamos","ellos/ellas":"vuelvan"}},
-      {inf:"poder",en:"móc",c:{yo:"pueda",tú:"puedas","él/ella":"pueda",nosotros:"podamos","ellos/ellas":"puedan"}},
-      {inf:"hablar",en:"mówić",c:{yo:"hable",tú:"hables","él/ella":"hable",nosotros:"hablemos","ellos/ellas":"hablen"}},
       {inf:"trabajar",en:"pracować",c:{yo:"trabaje",tú:"trabajes","él/ella":"trabaje",nosotros:"trabajemos","ellos/ellas":"trabajen"}},
       {inf:"escribir",en:"pisać",c:{yo:"escriba",tú:"escribas","él/ella":"escriba",nosotros:"escribamos","ellos/ellas":"escriban"}},
       {inf:"leer",en:"czytać",c:{yo:"lea",tú:"leas","él/ella":"lea",nosotros:"leamos","ellos/ellas":"lean"}},
@@ -375,7 +372,7 @@ DATA.imperativo = {
   verbs: [
     imperativeVerb("decir","mówić","di","decid","decí","digan"), imperativeVerb("hacer","robić","haz","haced","hacé","hagan"), imperativeVerb("ir","iść / jechać","ve","id","andá","vayan"), imperativeVerb("poner","kłaść / włączać","pon","poned","poné","pongan"),
     imperativeVerb("salir","wychodzić","sal","salid","salí","salgan"), imperativeVerb("ser","być","sé","sed","sé","sean"), imperativeVerb("tener","mieć","ten","tened","tené","tengan"), imperativeVerb("venir","przychodzić","ven","venid","vení","vengan"),
-    imperativeVerb("dar","dawać","da","dad","da","den"), imperativeVerb("estar","być (gdzieś/w stanie)","está","estad","está","estén"), imperativeVerb("traer","przynosić","trae","traed","traé","traigan"), imperativeVerb("ver","widzieć","ve","ved","ve","vean"),
+    imperativeVerb("dar","dawać","da","dad","da","den"), imperativeVerb("estar","być (gdzieś/w stanie)","está","estad","está","estén"), imperativeVerb("traer","przynosić","trae","traed","traé","traigan"), imperativeVerb("ver","widzieć / patrzeć","ve","ved","mirá","vean"),
     imperativeVerb("oír","słyszeć","oye","oíd","oí","oigan"), imperativeVerb("dormir","spać","duerme","dormid","dormí","duerman"), imperativeVerb("pedir","prosić / zamawiać","pide","pedid","pedí","pidan"), imperativeVerb("sentir","czuć","siente","sentid","sentí","sientan"),
     imperativeVerb("seguir","podążać / kontynuować","sigue","seguid","seguí","sigan"), imperativeVerb("elegir","wybierać","elige","elegid","elegí","elijan"), imperativeVerb("jugar","grać","juega","jugad","jugá","jueguen"), imperativeVerb("pensar","myśleć","piensa","pensad","pensá","piensen"),
     imperativeVerb("perder","tracić / gubić","pierde","perded","perdé","pierdan"), imperativeVerb("entender","rozumieć","entiende","entended","entendé","entiendan"), imperativeVerb("encontrar","znajdować","encuentra","encontrad","encontrá","encuentren"), imperativeVerb("volver","wracać","vuelve","volved","volvé","vuelvan"),
@@ -444,7 +441,7 @@ const TENSE_LEVEL_VERBS = {
   imperativo: {
     easy: ["decir","hacer","ir","poner","salir","ser","tener","venir","dar","estar","traer","ver","oír","hablar","comer","vivir","trabajar","estudiar"],
     normal: ["dormir","pedir","sentir","seguir","elegir","jugar","pensar","perder","entender","encontrar","volver","empezar","leer","escribir","abrir","comprar","viajar","beber"],
-    hard: ["conocer","conducir","construir","traducir","producir","mantener","preferir","conseguir","reír","ofrecer","reconocer","caer","buscar","pagar","andar","servir","traer","oír"]
+    hard: ["conocer","conducir","construir","traducir","producir","mantener","preferir","conseguir","reír","ofrecer","reconocer","buscar","pagar","andar","servir","traer","oír"]
   }
 };
 const GENERATED_VERB_DEFS = [
@@ -485,7 +482,7 @@ const GENERATED_VERB_DEFS = [
   {inf:"permitir",en:"pozwalać",level:"normal",tags:["communication"],comp:[[" entrar.","wejść"],[" usar el móvil.","używać telefonu"],[" descansar un poco.","trochę odpocząć"]]},
   {inf:"decidir",en:"decydować",level:"normal",tags:["mental"],comp:[[" rápido.","szybko"],[" cambiar de plan.","zmienić plan"],[" con cuidado.","ostrożnie"]]},
   {inf:"compartir",en:"dzielić się",level:"normal",tags:["social"],comp:[[" la comida.","jedzeniem"],[" una idea.","pomysłem"],[" el enlace.","linkiem"]]},
-  {inf:"cumplir",en:"spełniać / kończyć lata",level:"normal",tags:["achievement"],comp:[[" una promesa.","obietnicę"],[" años en mayo.","lata w maju"],[" con las reglas.","zasady"]]},
+  {inf:"cumplir",en:"spełniać / kończyć lata",level:"normal",tags:["achievement"],comp:[[" una promesa.","obietnicę"],[" años en mayo.","lata w maju",["time"]],[" con las reglas.","zasady"]]},
   {inf:"asistir",en:"uczestniczyć",level:"normal",tags:["school","work"],comp:[[" a la reunión.","w spotkaniu"],[" a clase.","w lekcji"],[" al curso.","w kursie"]]},
   {inf:"visitar",en:"odwiedzać",level:"normal",tags:["travel","social"],comp:[[" a mis abuelos.","dziadków"],[" un museo.","muzeum"],[" otra ciudad.","inne miasto"]]},
   {inf:"enseñar",en:"uczyć / pokazywać",level:"normal",tags:["study","communication"],comp:[[" español.","hiszpańskiego"],[" una foto.","zdjęcie"],[" cómo funciona.","jak to działa"]]},
@@ -516,13 +513,13 @@ const GENERATED_VERB_DEFS = [
   {inf:"cruzar",en:"przechodzić / przekraczać",level:"hard",tags:["movement"],comp:[[" la calle.","ulicę"],[" la frontera.","granicę"],[" el puente.","most"]]},
   {inf:"practicar",en:"ćwiczyć",level:"hard",tags:["study"],comp:[[" español.","hiszpański"],[" la pronunciación.","wymowę"],[" cada día.","codziennie"]]},
   {inf:"tocar",en:"dotykać / grać",level:"hard",tags:["social"],comp:[[" la guitarra.","na gitarze"],[" la puerta.","drzwi"],[" una canción.","piosenkę"]]},
-  {inf:"sacar",en:"wyjmować / dostawać",level:"hard",tags:["daily"],comp:[[" una foto.","zdjęcie"],[" buenas notas.","dobre oceny"],[" la basura.","śmieci"]]},
+  {inf:"sacar",en:"wyjmować / dostawać",level:"hard",tags:["daily"],comp:[[" una foto.","zdjęcie"],[" buenas notas.","dobre oceny"],[" la basura.","śmieci",["home"]]]},
   {inf:"entregar",en:"oddawać / dostarczać",level:"hard",tags:["work","school"],comp:[[" el trabajo.","pracę"],[" el paquete.","paczkę"],[" los documentos.","dokumenty"]]},
   {inf:"cargar",en:"ładować / nosić",level:"hard",tags:["daily"],comp:[[" el móvil.","telefon"],[" una caja pesada.","ciężkie pudło"],[" la batería.","baterię"]]},
   {inf:"apagar",en:"wyłączać / gasić",level:"hard",tags:["home"],comp:[[" la luz.","światło"],[" el ordenador.","komputer"],[" el fuego.","ogień"]]},
   {inf:"aparcar",en:"parkować",level:"hard",tags:["travel"],comp:[[" el coche.","samochód"],[" cerca de casa.","blisko domu"],[" en la calle.","na ulicy"]]},
   {inf:"publicar",en:"publikować",level:"hard",tags:["work","communication"],comp:[[" una foto.","zdjęcie"],[" el artículo.","artykuł"],[" un comentario.","komentarz"]]},
-  {inf:"aplicar",en:"stosować / aplikować",level:"hard",tags:["work","study"],comp:[[" la regla.","zasadę"],[" a un trabajo.","do pracy"],[" la crema.","krem"]]},
+  {inf:"aplicar",en:"stosować / aplikować",level:"hard",tags:["work","study"],comp:[[" la regla.","zasadę"],[" una solución práctica.","praktyczne rozwiązanie"],[" la crema.","krem"]]},
   {inf:"investigar",en:"badać / sprawdzać",level:"hard",tags:["study","work"],comp:[[" el caso.","sprawę"],[" el tema.","temat"],[" una solución.","rozwiązanie"]]},
   {inf:"utilizar",en:"używać / wykorzystywać",level:"hard",tags:["daily","work"],comp:[[" otra herramienta.","inne narzędzie"],[" el ordenador.","komputer"],[" los datos.","dane"]]},
   {inf:"realizar",en:"realizować / wykonywać",level:"hard",tags:["work"],comp:[[" un proyecto.","projekt"],[" una prueba.","test"],[" una llamada.","telefon"]]},
@@ -530,18 +527,18 @@ const GENERATED_VERB_DEFS = [
   {inf:"lanzar",en:"rzucać / wypuszczać",level:"hard",tags:["movement","work"],comp:[[" la pelota.","piłkę"],[" un producto nuevo.","nowy produkt"],[" una idea.","pomysł"]]},
   {inf:"avanzar",en:"posuwać się naprzód",level:"hard",tags:["achievement"],comp:[[" poco a poco.","krok po kroku"],[" en el proyecto.","w projekcie"],[" sin miedo.","bez strachu"]]},
   {inf:"comenzar",en:"zaczynać",level:"hard",patterns:["e_ie"],tags:["work","study"],comp:[[" la clase.","lekcję"],[" el viaje.","podróż"],[" con una pregunta.","od pytania"]]},
-  {inf:"despertar",en:"budzić",level:"hard",patterns:["e_ie"],tags:["home"],comp:[[" a mi hermano.","brata"],[" temprano.","wcześnie"],[" con ruido.","hałasem"]]},
+  {inf:"despertar",en:"budzić",level:"hard",patterns:["e_ie"],tags:["home"],comp:[[" a mi hermano.","brata"],[" a los niños.","dzieci"],[" a mi familia.","rodzinę"]]},
   {inf:"negar",en:"zaprzeczać / odmawiać",level:"hard",patterns:["e_ie"],tags:["communication"],comp:[[" la acusación.","oskarżenie"],[" la entrada.","wejścia"],[" todo.","wszystkiemu"]]},
   {inf:"almorzar",en:"jeść obiad / lunch",level:"hard",patterns:["o_ue"],tags:["food"],comp:[[" en la oficina.","w biurze"],[" con mis compañeros.","z kolegami"],[" algo ligero.","coś lekkiego"]]},
   {inf:"soñar",en:"śnić / marzyć",level:"hard",patterns:["o_ue"],tags:["mental"],comp:[[" con viajar.","o podróży"],[" con una casa propia.","o własnym domu"],[" despierto.","na jawie"]]},
-  {inf:"costar",en:"kosztować / sprawiać trudność",level:"hard",patterns:["o_ue"],imperative:false,tags:["money","abstract"],comp:[[" veinte euros.","dwadzieścia euro"],[" mucho trabajo.","dużo pracy"],[" entenderlo.","zrozumienie tego"]]},
+  {inf:"costar",en:"kosztować",level:"hard",patterns:["o_ue"],imperative:false,tags:["money","abstract"],comp:[[" veinte euros.","dwadzieścia euro"],[" demasiado.","za dużo"],[" menos de lo esperado.","mniej niż oczekiwano"]]},
   {inf:"encender",en:"włączać / zapalać",level:"hard",patterns:["e_ie"],tags:["home"],comp:[[" la luz.","światło"],[" el ordenador.","komputer"],[" la calefacción.","ogrzewanie"]]},
   {inf:"mover",en:"ruszać / przesuwać",level:"hard",patterns:["o_ue"],tags:["movement","home"],comp:[[" la mesa.","stół"],[" el coche.","samochód"],[" las manos.","ręce"]]},
   {inf:"repetir",en:"powtarzać",level:"hard",patterns:["e_i"],tags:["study","communication"],comp:[[" la frase.","zdanie"],[" el ejercicio.","ćwiczenie"],[" la pregunta.","pytanie"]]},
   {inf:"competir",en:"rywalizować",level:"hard",patterns:["e_i"],tags:["sport","work"],comp:[[" en el torneo.","w turnieju"],[" con otros equipos.","z innymi drużynami"],[" por el primer lugar.","o pierwsze miejsce"]]},
   {inf:"medir",en:"mierzyć",level:"hard",patterns:["e_i"],tags:["work"],comp:[[" la distancia.","odległość"],[" el tiempo.","czas"],[" la habitación.","pokój"]]},
   {inf:"vestir",en:"ubierać",level:"hard",patterns:["e_i"],tags:["daily"],comp:[[" a los niños.","dzieci"],[" ropa cómoda.","wygodne ubrania"],[" con cuidado.","starannie"]]},
-  {inf:"mentir",en:"kłamać",level:"hard",patterns:["e_ie"],tags:["communication"],comp:[[" sobre el problema.","o problemie"],[" a sus padres.","rodzicom"],[" para evitar problemas.","żeby uniknąć problemów"]]},
+  {inf:"mentir",en:"kłamać",level:"hard",patterns:["e_ie"],imperative:false,tags:["communication"],comp:[[" sobre el problema.","o problemie"],[" a sus padres.","rodzicom"],[" para evitar problemas.","żeby uniknąć problemów"]]},
   {inf:"corregir",en:"poprawiać",level:"hard",patterns:["e_i","gir_jo"],tags:["study"],comp:[[" los errores.","błędy"],[" el texto.","tekst"],[" la pronunciación.","wymowę"]]},
   {inf:"proteger",en:"chronić",level:"hard",patterns:["ger_jo"],tags:["support"],comp:[[" a la familia.","rodzinę"],[" los datos.","dane"],[" la piel del sol.","skórę przed słońcem"]]},
   {inf:"recoger",en:"odbierać / zbierać",level:"hard",patterns:["ger_jo"],tags:["movement","home"],comp:[[" a los niños.","dzieci"],[" la mesa.","ze stołu"],[" el paquete.","paczkę"]]},
@@ -549,8 +546,8 @@ const GENERATED_VERB_DEFS = [
   {inf:"exigir",en:"wymagać",level:"hard",patterns:["gir_jo"],tags:["work","communication"],comp:[[" una respuesta.","odpowiedzi"],[" más esfuerzo.","więcej wysiłku"],[" puntualidad.","punktualności"]]},
   {inf:"agradecer",en:"dziękować",level:"hard",patterns:["zco"],tags:["communication","social"],comp:[[" la ayuda.","za pomoc"],[" el consejo.","za radę"],[" la oportunidad.","za szansę"]]},
   {inf:"parecer",en:"wydawać się",level:"hard",patterns:["zco"],imperative:false,tags:["state","mental"],comp:[[" una buena idea.","dobrym pomysłem"],[" difícil.","trudne"],[" normal.","normalne"]]},
-  {inf:"crecer",en:"rosnąć",level:"hard",patterns:["zco"],tags:["life"],comp:[[" rápido.","szybko"],[" en una ciudad pequeña.","w małym mieście"],[" mucho este año.","dużo w tym roku"]]},
-  {inf:"merecer",en:"zasługiwać",level:"hard",patterns:["zco"],tags:["abstract"],comp:[[" una oportunidad.","na szansę"],[" más respeto.","na więcej szacunku"],[" descansar.","odpocząć"]]},
+  {inf:"crecer",en:"rosnąć",level:"hard",patterns:["zco"],imperative:false,tags:["life"],comp:[[" rápido.","szybko"],[" en una ciudad pequeña.","w małym mieście"],[" mucho este año.","dużo w tym roku"]]},
+  {inf:"merecer",en:"zasługiwać",level:"hard",patterns:["zco"],imperative:false,tags:["abstract"],comp:[[" una oportunidad.","na szansę"],[" más respeto.","na więcej szacunku"],[" descansar.","odpocząć"]]},
   {inf:"incluir",en:"zawierać / włączać",level:"hard",patterns:["uir_y"],tags:["work","study"],comp:[[" todos los datos.","wszystkie dane"],[" una explicación.","wyjaśnienie"],[" a todos en el plan.","wszystkich w planie"]]},
   {inf:"distribuir",en:"rozdawać / rozdzielać",level:"hard",patterns:["uir_y"],tags:["work"],comp:[[" las tareas.","zadania"],[" la comida.","jedzenie"],[" los documentos.","dokumenty"]]},
   {inf:"huir",en:"uciekać",level:"hard",patterns:["uir_y"],tags:["movement"],comp:[[" del ruido.","od hałasu"],[" de la ciudad.","z miasta"],[" sin mirar atrás.","bez oglądania się"]]},
@@ -670,7 +667,7 @@ function generatedImperative(def){
   const present = generatedPresent(def).c;
   const subj = generatedSubjunctive(def).c;
   const tú = present["él/ella"];
-  const vosotros = verbStem(def.inf) + "d";
+  const vosotros = def.inf.slice(0, -1) + "d";
   const vos = addAccentToLastVowel(def.inf.slice(0, -1));
   const ustedes = subj["ellos/ellas"];
   return imperativeVerb(def.inf, def.en, tú, vosotros, vos, ustedes);
@@ -787,6 +784,9 @@ function getPronouns(tense = currentTense){
 function isPerfecto(tense = currentTense){ return tense === "perfecto"; }
 function correctFor(q){ return isPerfecto(q.tense) ? q.verb.part : q.verb.c[q.pronoun]; }
 function subjectFor(pronoun){ return {yo:"yo", tú:"tú", vos:"vos", ustedes:"ustedes", "él/ella":"ella", nosotros:"nosotros", vosotros:"vosotros", "ellos/ellas":"ellos"}[pronoun] || pronoun; }
+function subjectsForVerb(pronoun, inf){
+  return SPECIAL_SENTENCE_SUBJECTS[inf]?.[pronoun] || SENTENCE_SUBJECTS[pronoun] || [subjectFor(pronoun)];
+}
 const SENTENCE_SUBJECTS = {
   yo: ["yo"],
   tú: ["tú"],
@@ -795,13 +795,19 @@ const SENTENCE_SUBJECTS = {
   "él/ella": ["él", "ella", "mi hermano", "mi amiga", "el profesor", "la vecina", "mi padre", "mi madre", "Carlos", "Lucía", "la doctora", "el camarero"],
   nosotros: ["nosotros", "nosotras", "mi familia y yo", "mis amigos y yo", "mi clase y yo", "mi hermana y yo", "mi equipo y yo"],
   vosotros: ["vosotros", "vosotras", "tú y tus amigos", "tú y tu familia", "tú y tu hermano", "vosotros dos"],
-  "ellos/ellas": ["ellos", "ellas", "mis amigos", "los estudiantes", "mis padres", "los vecinos", "las chicas", "los niños", "los profesores", "las familias"]
+  "ellos/ellas": ["ellos", "ellas", "mis amigos", "los estudiantes", "mis padres", "los vecinos", "las chicas", "los compañeros", "los profesores", "las familias"]
+};
+const SPECIAL_SENTENCE_SUBJECTS = {
+  nacer: {
+    "él/ella": ["el bebé", "mi hijo", "su hija"],
+    "ellos/ellas": ["los bebés", "sus hijos"]
+  }
 };
 const SENTENCE_SUBJECT_PL = {
   yo: "ja", tú: "ty", vos: "ty", ustedes: "wy / państwo", él: "on", ella: "ona", "mi hermano": "mój brat", "mi amiga": "moja przyjaciółka", "el profesor": "nauczyciel", "la vecina": "sąsiadka", "mi padre": "mój tata", "mi madre": "moja mama", Carlos: "Carlos", Lucía: "Lucía", "la doctora": "lekarka", "el camarero": "kelner",
   nosotros: "my", nosotras: "my", "mi familia y yo": "moja rodzina i ja", "mis amigos y yo": "moi przyjaciele i ja", "mi clase y yo": "moja klasa i ja", "mi hermana y yo": "moja siostra i ja", "mi equipo y yo": "moja drużyna i ja",
   vosotros: "wy", vosotras: "wy", "tú y tus amigos": "ty i twoi przyjaciele", "tú y tu familia": "ty i twoja rodzina", "tú y tu hermano": "ty i twój brat", "vosotros dos": "wy dwaj",
-  ellos: "oni", ellas: "one", "mis amigos": "moi przyjaciele", "los estudiantes": "uczniowie", "mis padres": "moi rodzice", "los vecinos": "sąsiedzi", "las chicas": "dziewczyny", "los niños": "dzieci", "los profesores": "nauczyciele", "las familias": "rodziny"
+  ellos: "oni", ellas: "one", "mis amigos": "moi przyjaciele", "los estudiantes": "uczniowie", "mis padres": "moi rodzice", "los vecinos": "sąsiedzi", "las chicas": "dziewczyny", "los compañeros": "koledzy", "los profesores": "nauczyciele", "las familias": "rodziny", "el bebé": "dziecko", "mi hijo": "mój syn", "su hija": "jego/jej córka", "los bebés": "dzieci", "sus hijos": "jego/jej dzieci"
 };
 const SENTENCE_START_PL = {
   "Ayer":"wczoraj", "Anoche":"wczoraj wieczorem", "El lunes":"w poniedziałek", "La semana pasada":"w zeszłym tygodniu", "Hace dos días":"dwa dni temu", "Esta mañana":"dziś rano", "El verano pasado":"zeszłego lata", "En aquel momento":"w tamtym momencie", "Después de clase":"po lekcji", "Durante el viaje":"podczas podróży", "Al final":"na końcu", "De repente":"nagle", "Hace un rato":"przed chwilą", "En la reunión":"na spotkaniu", "Antes de salir":"przed wyjściem", "Por la tarde":"po południu", "El fin de semana":"w weekend", "En Madrid":"w Madrycie", "En casa":"w domu", "En la fiesta":"na imprezie", "En el aeropuerto":"na lotnisku", "Durante la cena":"podczas kolacji", "Al volver a casa":"po powrocie do domu", "En el último minuto":"w ostatniej chwili",
@@ -856,7 +862,7 @@ const SENTENCE_COMPLEMENTS = {
   perder:[{es:" las llaves.",pl:"klucze"},{es:" el tren.",pl:"pociąg"},{es:" una oportunidad.",pl:"okazję"}],
   entender:[{es:" la explicación.",pl:"wyjaśnienie"},{es:" el problema.",pl:"problem"},{es:" la pregunta.",pl:"pytanie"}],
   encontrar:[{es:" una solución.",pl:"rozwiązanie"},{es:" el teléfono.",pl:"telefon"},{es:" a un amigo.",pl:"przyjaciela"}],
-  preferir:[{es:" el café.",pl:"kawę"},{es:" quedarse en casa.",pl:"zostać w domu"},{es:" estudiar solo.",pl:"uczyć się samemu"}],
+  preferir:[{es:" el café.",pl:"kawę"},{es:" estar en casa.",pl:"zostać w domu"},{es:" estudiar a solas.",pl:"uczyć się samemu"}],
   conseguir:[{es:" el trabajo.",pl:"pracę"},{es:" una entrada.",pl:"bilet"},{es:" buenos resultados.",pl:"dobre wyniki"}],
   mantener:[{es:" la calma.",pl:"spokój"},{es:" el contacto.",pl:"kontakt"},{es:" la promesa.",pl:"obietnicę"}],
   traducir:[{es:" el texto.",pl:"tekst"},{es:" la frase.",pl:"zdanie"},{es:" una palabra difícil.",pl:"trudne słowo"}],
@@ -1005,7 +1011,7 @@ const SENTENCE_ACTION_PL = {
 Object.assign(SENTENCE_ACTION_PL, Object.fromEntries(GENERATED_VERB_DEFS.map(def => [def.inf, def.en.replace(/\s*\/\s*/g, " / ")])));
 const SENTENCE_BANK = {
   presente: {
-    starts: ["Hoy", "Ahora", "Normalmente", "A menudo", "Cada día", "Todos los días", "Esta semana", "En clase", "En casa", "En el trabajo", "Por la mañana", "Por la tarde", "Cuando tengo tiempo", "Los lunes", "Después de clase", "Antes de dormir", "En la biblioteca", "En la cocina", "Durante el descanso", "Con frecuencia", "Casi siempre", "Últimamente", "A veces", "En mi barrio"],
+    starts: ["Hoy", "Ahora", "Normalmente", "A menudo", "Cada día", "Todos los días", "Esta semana", "En clase", "En casa", "En el trabajo", "Por la mañana", "Por la tarde", "Cuando hay tiempo", "Los lunes", "Después de clase", "Antes de dormir", "En la biblioteca", "En la cocina", "Durante el descanso", "Con frecuencia", "Casi siempre", "Últimamente", "A veces", "En mi barrio"],
     ends: [".", " sin problema.", " con calma.", " en casa.", " en clase.", " en el trabajo.", " por la mañana.", " por la tarde.", " con mis amigos.", " con cuidado.", " para practicar.", " cada semana.", " cuando hay tiempo.", " muy bien.", " con atención.", " durante el descanso.", " después de clase.", " antes de dormir.", " en la biblioteca.", " en el centro."]
   },
   indefinido: {
@@ -1021,7 +1027,7 @@ const SENTENCE_BANK = {
     ends: [".", " sin problema.", " con mis amigos.", " en casa.", " en la escuela.", " en el trabajo.", " después de comer.", " antes de dormir.", " con calma.", " por la tarde.", " por la noche.", " muy bien.", " cuando llegue.", " si todo va bien.", " durante el viaje.", " en el centro.", " otra vez.", " con cuidado.", " rápidamente.", " para practicar."]
   },
   subjuntivo: {
-    starts: ["Quiero que", "Espero que", "Es posible que", "Dudo que", "Ojalá que", "Es importante que", "Me alegra que", "No creo que", "Prefiero que", "Necesito que", "Tal vez", "Puede que", "Aunque", "Cuando sea necesario que", "Es mejor que", "Me sorprende que", "No parece que", "Es normal que", "Me gusta que", "Es probable que", "No es seguro que", "Me preocupa que", "Es una pena que"],
+    starts: ["Quiero que", "Espero que", "Es posible que", "Dudo que", "Ojalá que", "Es importante que", "Me alegra que", "No creo que", "Prefiero que", "Necesito que", "Tal vez", "Puede que", "Es difícil que", "Es necesario que", "Es mejor que", "Me sorprende que", "No parece que", "Es normal que", "Me gusta que", "Es probable que", "No es seguro que", "Me preocupa que", "Es una pena que"],
     ends: [".", " hoy.", " mañana.", " pronto.", " en casa.", " con nosotros.", " en la clase.", " sin problema.", " con cuidado.", " antes de salir.", " después de comer.", " por la mañana.", " por la tarde.", " esta vez.", " durante la reunión.", " para aprender.", " si puede.", " cuando llegue.", " con más calma.", " correctamente."]
   },
   subjuntivo_imperfecto: {
@@ -1033,7 +1039,7 @@ const SENTENCE_BANK = {
     ends: [".", " todo.", " mucho.", " esto.", " algo importante.", " la tarea.", " el mensaje.", " la puerta.", " el problema.", " la respuesta.", " con cuidado.", " muy rápido.", " en casa.", " en clase.", " durante la semana.", " antes de comer.", " después de estudiar.", " sin ayuda.", " por primera vez.", " otra vez."]
   },
   imperativo: {
-    starts: ["Por favor", "Ahora", "Cuando puedas", "Cuando puedan", "Antes de salir", "Después de clase", "En casa", "En clase", "En el trabajo", "Si puedes", "Si pueden", "Esta vez", "Con calma", "Un momento", "Antes de empezar", "Para practicar", "Durante la clase", "Cuando termines", "Cuando terminen", "En la cocina", "En la biblioteca", "Al llegar a casa", "Sin prisa"],
+    starts: ["Por favor", "Ahora", "Cuando puedas", "Cuando puedan", "Cuando podáis", "Antes de salir", "Después de clase", "En casa", "En clase", "En el trabajo", "Si puedes", "Si pueden", "Si podéis", "Esta vez", "Con calma", "Antes de empezar", "Para practicar", "Durante la clase", "Cuando termines", "Cuando terminen", "Cuando terminéis", "En la cocina", "En la biblioteca", "Al llegar a casa", "Sin prisa"],
     ends: [".", " ahora.", " por favor.", " con calma.", " con cuidado.", " antes de salir.", " después de clase.", " en casa.", " en clase.", " para practicar.", " sin prisa.", " esta vez.", " cuando puedas.", " con atención.", " antes de empezar.", " al llegar a casa.", " durante la clase.", " en la cocina.", " sin problema.", " correctamente."]
   }
 };
@@ -1042,7 +1048,7 @@ Object.assign(SENTENCE_START_PL, {
   "Ahora":"teraz",
   "Cada día":"codziennie",
   "Esta semana":"w tym tygodniu",
-  "Cuando tengo tiempo":"kiedy mam czas",
+  "Cuando hay tiempo":"kiedy jest czas",
   "Los lunes":"w poniedziałki",
   "Con frecuencia":"często",
   "Casi siempre":"prawie zawsze",
@@ -1052,13 +1058,15 @@ Object.assign(SENTENCE_START_PL, {
   "Por favor":"proszę",
   "Cuando puedas":"kiedy możesz",
   "Cuando puedan":"kiedy możecie",
+  "Cuando podáis":"kiedy możecie",
   "Si puedes":"jeśli możesz",
   "Si pueden":"jeśli możecie",
+  "Si podéis":"jeśli możecie",
   "Esta vez":"tym razem",
-  "Un momento":"chwila",
   "Antes de empezar":"przed rozpoczęciem",
   "Cuando termines":"kiedy skończysz",
   "Cuando terminen":"kiedy skończycie",
+  "Cuando terminéis":"kiedy skończycie",
   "En el trabajo":"w pracy",
   "En la biblioteca":"w bibliotece",
   "En el restaurante":"w restauracji",
@@ -1070,9 +1078,10 @@ Object.assign(SENTENCE_START_PL, {
   "En la cocina":"w kuchni",
   "Antes de la reunión":"przed spotkaniem",
   "Era necesario que":"było konieczne, żeby",
-  "Si fuera posible que":"gdyby było możliwe, żeby",
-  "Aunque fuera difícil que":"chociaż byłoby trudno, żeby",
-  "Después de que terminara la clase":"po tym, jak skończyłaby się lekcja",
+  "Sería bueno que":"byłoby dobrze, żeby",
+  "Sería difícil que":"byłoby trudno, żeby",
+  "Es difícil que":"trudno, żeby",
+  "Es necesario que":"trzeba, żeby",
   "En el trabajo he":"w pracy",
   "En la biblioteca he":"w bibliotece",
   "Durante el descanso he":"podczas przerwy",
@@ -1084,7 +1093,7 @@ const SENTENCE_EXTRA_STARTS = {
   imperfecto: ["Después del trabajo", "En la universidad", "Durante el descanso", "En la cocina", "Antes de la reunión"],
   futuro: ["Después del trabajo", "En la biblioteca", "En el restaurante", "En el tren", "Antes de la reunión"],
   subjuntivo: ["Es probable que", "No es seguro que", "Me preocupa que", "Es una pena que"],
-  subjuntivo_imperfecto: ["Era necesario que", "Si fuera posible que", "Aunque fuera difícil que", "Después de que terminara la clase"],
+  subjuntivo_imperfecto: ["Era necesario que", "Sería bueno que", "Sería difícil que"],
   perfecto: ["En el trabajo he", "En la biblioteca he", "Durante el descanso he", "Después del trabajo he"],
   imperativo: ["En el trabajo", "En la biblioteca", "Durante el descanso", "En la cocina", "Al llegar a casa"]
 };
@@ -1122,13 +1131,13 @@ const SENTENCE_START_TAGS = {
   "Ayer":["time","past","day"], "Anoche":["time","past","night"], "El lunes":["time","day"], "La semana pasada":["time","past"], "Hace dos días":["time","past"], "Esta mañana":["time","morning"], "El verano pasado":["time","past","summer"], "En aquel momento":["time","moment"], "Después de clase":["time","school","sequence"], "Durante el viaje":["time","travel"], "Al final":["time","sequence"], "De repente":["time","moment"], "Hace un rato":["time","past"], "En la reunión":["time","work","meeting"], "Antes de salir":["time","departure","sequence"], "Por la tarde":["time","afternoon"], "El fin de semana":["time","weekend"], "En Madrid":["place","city"], "En casa":["place","home"], "En la fiesta":["place","social","party"], "En el aeropuerto":["place","travel"], "Durante la cena":["time","meal","evening"], "Al volver a casa":["time","home","sequence"], "En el último minuto":["time","urgency"],
   "Antes":["time","habit"], "De joven":["time","habit","past"], "En la infancia":["time","habit","past"], "Todos los días":["time","habit"], "Cada verano":["time","habit","summer"], "Normalmente":["time","habit"], "A menudo":["time","habit"], "Muchas veces":["time","habit"], "En aquella época":["time","habit","past"], "Durante las vacaciones":["time","travel","holiday"], "Por las tardes":["time","habit","afternoon"], "En la antigua escuela":["place","school","past"], "Los domingos":["time","habit","weekend"], "Cuando había tiempo":["time","habit"], "Siempre":["time","habit"], "Casi nunca":["time","habit"], "Cada mañana":["time","habit","morning"], "En invierno":["time","season"], "Durante el año":["time","habit"], "En casa de los abuelos":["place","home","family"], "En el barrio":["place"], "Después de comer":["time","meal","sequence"], "Antes de dormir":["time","sleep","sequence"], "Cuando llovía":["time","weather"],
   "Mañana":["time","future","day"], "La próxima semana":["time","future"], "El año que viene":["time","future"], "Pronto":["time","future"], "Después":["time","sequence"], "Esta tarde":["time","afternoon"], "Más tarde":["time","future"], "Si todo va bien":["condition"], "Dentro de poco":["time","future"], "En vacaciones":["time","holiday","travel"], "Esta noche":["time","night"], "El próximo verano":["time","future","summer"], "Después del examen":["time","school","sequence"], "Cuando termine la clase":["time","school","sequence"], "En el futuro":["time","future"], "Antes de la cena":["time","meal","sequence"], "En unos minutos":["time","future"], "Al llegar a casa":["time","home","sequence"], "Después de practicar":["time","study","sequence"], "Cuando sea posible":["time","condition"],
-  "Quiero que":["subjunctive","trigger"], "Espero que":["subjunctive","trigger"], "Es posible que":["subjunctive","trigger"], "Dudo que":["subjunctive","trigger"], "Ojalá que":["subjunctive","trigger"], "Es importante que":["subjunctive","trigger"], "Me alegra que":["subjunctive","trigger"], "No creo que":["subjunctive","trigger"], "Prefiero que":["subjunctive","trigger"], "Necesito que":["subjunctive","trigger"], "Tal vez":["subjunctive","trigger"], "Puede que":["subjunctive","trigger"], "Antes de que":["subjunctive","trigger","sequence"], "Aunque":["subjunctive","trigger"], "Cuando sea necesario que":["subjunctive","trigger"], "Es mejor que":["subjunctive","trigger"], "Me sorprende que":["subjunctive","trigger"], "No parece que":["subjunctive","trigger"], "Es normal que":["subjunctive","trigger"], "Me gusta que":["subjunctive","trigger"], "Es probable que":["subjunctive","trigger"], "No es seguro que":["subjunctive","trigger"], "Me preocupa que":["subjunctive","trigger"], "Es una pena que":["subjunctive","trigger"],
+  "Quiero que":["subjunctive","trigger"], "Espero que":["subjunctive","trigger"], "Es posible que":["subjunctive","trigger"], "Dudo que":["subjunctive","trigger"], "Ojalá que":["subjunctive","trigger"], "Es importante que":["subjunctive","trigger"], "Me alegra que":["subjunctive","trigger"], "No creo que":["subjunctive","trigger"], "Prefiero que":["subjunctive","trigger"], "Necesito que":["subjunctive","trigger"], "Tal vez":["subjunctive","trigger"], "Puede que":["subjunctive","trigger"], "Antes de que":["subjunctive","trigger","sequence"], "Aunque":["subjunctive","trigger"], "Es difícil que":["subjunctive","trigger"], "Es necesario que":["subjunctive","trigger"], "Es mejor que":["subjunctive","trigger"], "Me sorprende que":["subjunctive","trigger"], "No parece que":["subjunctive","trigger"], "Es normal que":["subjunctive","trigger"], "Me gusta que":["subjunctive","trigger"], "Es probable que":["subjunctive","trigger"], "No es seguro que":["subjunctive","trigger"], "Me preocupa que":["subjunctive","trigger"], "Es una pena que":["subjunctive","trigger"],
   "Quería que":["subjunctive","trigger","past"], "Esperaba que":["subjunctive","trigger","past"], "Era posible que":["subjunctive","trigger","past"], "Dudaba que":["subjunctive","trigger","past"], "Ojalá":["subjunctive","trigger"], "Era importante que":["subjunctive","trigger","past"], "Me alegró que":["subjunctive","trigger","past"], "No creía que":["subjunctive","trigger","past"], "Prefería que":["subjunctive","trigger","past"], "Necesitaba que":["subjunctive","trigger","past"], "Fue mejor que":["subjunctive","trigger","past"], "Me sorprendió que":["subjunctive","trigger","past"], "No parecía que":["subjunctive","trigger","past"], "Era normal que":["subjunctive","trigger","past"], "Me gustaba que":["subjunctive","trigger","past"], "Era probable que":["subjunctive","trigger","past"], "No era seguro que":["subjunctive","trigger","past"], "Me preocupaba que":["subjunctive","trigger","past"], "Fue una pena que":["subjunctive","trigger","past"], "Después de que":["subjunctive","trigger","sequence"],
   "Hoy he":["time","today"], "Esta semana he":["time"], "Este mes he":["time"], "Ya he":["time"], "Nunca he":["time"], "Todavía no he":["time"], "Últimamente he":["time"], "Esta mañana he":["time","morning"], "En mi vida he":["time"], "Por fin he":["time"], "Después de mucho tiempo he":["time"], "Hace poco he":["time"], "En clase he":["place","school"], "En casa he":["place","home"], "Durante el viaje he":["time","travel"], "Antes de salir he":["time","departure","sequence"], "Para practicar he":["purpose","study"], "Con calma he":["manner"], "Otra vez he":["repeat"], "En el trabajo he":["place","work"], "En la biblioteca he":["place","school"], "Durante el descanso he":["time","break"], "Después del trabajo he":["time","work","sequence"]
 };
 Object.assign(SENTENCE_START_TAGS, {
-  "Hoy":["time","today"], "Ahora":["time","present"], "Cada día":["time","habit"], "Esta semana":["time"], "Cuando tengo tiempo":["time","condition"], "Los lunes":["time","habit"], "Con frecuencia":["time","habit"], "Casi siempre":["time","habit"], "Últimamente":["time"], "A veces":["time","habit"], "En mi barrio":["place"],
-  "Por favor":["polite"], "Cuando puedas":["time","condition"], "Si puedes":["condition"], "Esta vez":["time"], "Un momento":["time"], "Antes de empezar":["time","sequence"], "Cuando termines":["time","sequence"], "Sin prisa":["manner"], "Al llegar a casa":["time","home","sequence"]
+  "Hoy":["time","today"], "Ahora":["time","present"], "Cada día":["time","habit"], "Esta semana":["time"], "Cuando hay tiempo":["time","condition"], "Los lunes":["time","habit"], "Con frecuencia":["time","habit"], "Casi siempre":["time","habit"], "Últimamente":["time"], "A veces":["time","habit"], "En mi barrio":["place"],
+  "Por favor":["polite"], "Cuando puedas":["time","condition"], "Cuando podáis":["time","condition"], "Si puedes":["condition"], "Si podéis":["condition"], "Esta vez":["time"], "Antes de empezar":["time","sequence"], "Cuando termines":["time","sequence"], "Cuando terminéis":["time","sequence"], "Sin prisa":["manner"], "Con calma":["manner"], "Para practicar":["purpose","study"], "Al llegar a casa":["time","home","sequence"], "Sería bueno que":["subjunctive","trigger"], "Sería difícil que":["subjunctive","trigger"]
 });
 Object.assign(SENTENCE_START_TAGS, {
   "Cuando puedan":["time","condition"],
@@ -1190,16 +1199,20 @@ function inferComplementTags(inf, item){
   if(/\b(cena|comida|comer|ensalada|sopa|restaurante|café|agua|té|zumo|pan|fruta|patatas|huevo|pescado|verduras|aceite)\b/.test(text)) tags.add("food");
   if(/\b(clase|escuela|profesor|profesora|tarea|examen|biblioteca|gramática|vocabulario|cuaderno|instrucciones|regla)\b/.test(text)) tags.add("school");
   if(/\b(oficina|trabajo|jefe|proyecto|documentos|reunión|clientes|contrato|equipo)\b/.test(text)) tags.add("work");
-  if(/\b(casa|cocina|sofá|balcón|puerta|mesa|ventana|silla|armario|habitación)\b/.test(text)) tags.add("home");
+  if(/\b(casa|cocina|sofá|balcón|puerta|mesa|ventana|silla|armario|habitación|basura)\b/.test(text)) tags.add("home");
   if(/\b(madrid|españa|méxico|ciudad|centro|aeropuerto|estación|playa|tren|autobús|hotel|calle|parque|supermercado|tienda|museo|edificio|habitación|piso|sótano|frontera|puente|médico|camino|sala)\b/.test(text)) tags.add("place");
+  if(tags.has("home")) tags.add("place");
   if(/\b(a casa|a clase|a la reunión|al centro|al supermercado|al médico|a la biblioteca|a españa|a méxico|hasta|al aeropuerto|a caminar|al balcón|camino)\b/.test(text)) tags.add("destination");
   if(/\b(con |a unos amigos|a un amigo|a una persona|a la profesora|a los clientes|con nosotros|con la familia)\b/.test(text)) tags.add("social");
+  if(/\b(partido|fútbol|tenis|torneo|pelota|equipo)\b/.test(text)) tags.add("sport");
   if(/\b(por la mañana|cada mañana)\b/.test(text)) { tags.add("time"); tags.add("morning"); }
   if(/\b(por la tarde|esta tarde)\b/.test(text)) { tags.add("time"); tags.add("afternoon"); }
   if(/\b(por la noche|de noche)\b/.test(text)) { tags.add("time"); tags.add("night"); }
-  if(/\b(durante|después|antes|hasta tarde|cada día|cada semana|todo el día|dos semanas|una hora)\b/.test(text)) tags.add("time");
+  if(/\b(durante|después|antes|hasta tarde|cada día|cada semana|todo el día|dos semanas|una hora|temprano|tarde|pronto)\b/.test(text)) tags.add("time");
   if(/\b(sin problema|con calma|con cuidado|despacio|rápido|lentamente|en silencio|con atención|profundamente|poco a poco)\b/.test(text)) tags.add("manner");
   if(/\b(tiempo|suerte|razón|idea|preguntas|ganas|oportunidad|opción|miedo|alegría|curiosidad|alivio|paciencia|estrés|frío|calor|dolor|dinero|euros|esfuerzo)\b/.test(text)) tags.add("abstract");
+  if(/\b(miedo|estrés|dolor|frío|problemas|culpa|acusación|trampa)\b/.test(text)) tags.add("negative");
+  if(inf === "perder") tags.add("negative");
   if(inf === "dar" && text.includes("una clase")) { tags.add("school"); tags.add("lesson"); }
   if(inf === "dormir") tags.add("sleep");
   if(inf === "nacer" || inf === "morir") tags.add("life-event");
@@ -1217,9 +1230,12 @@ function enrichSentenceComplement(inf, item){
   if(hasTag(tags, "destination") || hasTag(tags, "place")) avoidCloserTags.push("place", "home");
   if(hasTag(tags, "social")) avoidCloserTags.push("social", "place", "home");
   if(hasTag(tags, "sleep")) avoidCloserTags.push("social", "purpose", "study", "work");
-  if(hasAnyTag(tags, ["abstract", "life-event"])) avoidCloserTags.push("place", "home", "social", "purpose", "study");
+  if(hasAnyTag(tags, ["abstract", "life-event"])) avoidCloserTags.push("place", "home", "social", "purpose", "study", "time", "sequence", "departure");
   if(inf === "vivir") avoidCloserTags.push("manner", "morning", "afternoon", "night", "evening", "meal");
   if(inf === "tener") avoidCloserTags.push("manner", "place", "home", "social");
+  if(["querer", "preferir", "ganar"].includes(inf)) avoidCloserTags.push("manner");
+  if(["caer", "aparecer"].includes(inf)) avoidCloserTags.push("manner", "purpose", "study");
+  if(["olvidar", "perder", "conocer"].includes(inf)) avoidCloserTags.push("purpose", "study");
   if(inf === "saber") avoidCloserTags.push("manner", "place", "home", "social");
   if(inf === "valer") avoidCloserTags.push("manner", "place", "home", "social", "purpose", "study");
   if(hasAnyTag(tags, ["morning", "afternoon", "night", "meal"])) avoidCloserTags.push("morning", "afternoon", "night", "meal");
@@ -1237,16 +1253,29 @@ function startWorksWithComplement(inf, start, tense, complement){
   if(complement.avoidStartTags?.some(tag => hasTag(st, tag))) return false;
   if(hasTag(st, "manner") && hasTag(ct, "manner")) return false;
   if(hasTag(st, "time") && hasTag(ct, "time")) return false;
+  if(hasTag(ct, "negative") && /^(prefiero|prefería|me gusta|me gustaba|me alegra|me alegró|quiero que|quería que|es mejor que|fue mejor que|necesito que|necesitaba que|es importante que|era importante que)/.test(startText)) return false;
+  if(hasTag(ct, "life-event") && hasAnyTag(st, ["sequence", "departure", "sleep", "party", "work", "school", "meal"])) return false;
   if(hasTag(st, "purpose") && hasTag(st, "study") && !hasAnyTag(ct, ["study", "school", "communication", "perception", "mental", "knowledge", "work"])) return false;
   if(hasTag(ct, "life-event") && hasTag(st, "subjunctive")){
     const allowedStarts = inf === "morir" ? DEATH_SUBJUNCTIVE_STARTS : BIRTH_SUBJUNCTIVE_STARTS;
     if(!allowedStarts.has(start)) return false;
   }
   if(hasTag(st, "meal") && hasAnyTag(ct, ["school", "work"]) && !hasTag(ct, "food")) return false;
+  if(hasTag(st, "meeting") && hasTag(ct, "food")) return false;
+  if(hasTag(st, "food") && hasTag(ct, "shopping")) return false;
   if(hasAnyTag(st, ["party", "food"]) && hasAnyTag(ct, ["school", "work", "study"]) && !hasTag(ct, "food")) return false;
   if(hasTag(st, "work") && /\bpelota\b/.test(compText)) return false;
+  if(hasAnyTag(st, ["school", "work"]) && inf === "jugar") return false;
+  if(hasAnyTag(st, ["school", "work"]) && hasTag(ct, "sport") && !["jugar", "competir"].includes(inf)) return false;
+  if(hasTag(st, "school") && hasTag(ct, "work") && !hasAnyTag(ct, ["school", "study"])) return false;
+  if(hasTag(st, "home") && hasTag(ct, "work") && !["trabajar", "estudiar"].includes(inf)) return false;
   if(hasTag(st, "travel") && hasTag(ct, "work") && inf !== "trabajar") return false;
+  if(hasTag(st, "travel") && hasTag(ct, "home") && !hasAnyTag(ct, ["movement", "travel"])) return false;
   if(hasAnyTag(st, ["school", "work"]) && hasTag(ct, "sleep")) return false;
+  if(hasTag(st, "sleep") && hasAnyTag(ct, ["school", "work", "study"])) return false;
+  if(hasTag(st, "sleep") && !hasAnyTag(ct, ["sleep", "study", "perception", "home", "communication"])) return false;
+  if(inf === "caer" && hasAnyTag(st, ["sleep", "departure"])) return false;
+  if(hasAnyTag(st, ["school", "work"]) && hasTag(ct, "home") && !hasAnyTag(ct, ["school", "work", "movement", "travel"])) return false;
   if(inf === "dormir" && hasTag(st, "place") && hasTag(ct, "place")) return false;
   if(hasTag(st, "home") && hasTag(ct, "home")) return false;
   if(inf === "vivir" && hasTag(ct, "place") && hasAnyTag(st, TIME_OF_DAY_TAGS)) return false;
@@ -1271,6 +1300,8 @@ function closerWorksWithSentence(inf, start, complement, closer, tense = current
   if(hasTag(st, "party") && hasAnyTag(xt, TIME_OF_DAY_TAGS)) return false;
   if(hasTag(st, "manner") && hasTag(xt, "manner")) return false;
   if(hasTag(st, "repeat") && hasTag(xt, "repeat")) return false;
+  if(hasTag(st, "habit") && hasTag(xt, "repeat")) return false;
+  if(start.toLowerCase().includes("esta vez") && hasTag(xt, "repeat")) return false;
   if(hasTag(st, "purpose") && hasTag(xt, "purpose")) return false;
   if((extra.trim() && base.includes(extra.trim())) || (base.includes(" con ") && extra.startsWith(" con ")) || (base.includes(" en casa") && extra.includes("en casa")) || (base.includes(" por la ") && extra.startsWith(" por la "))) return false;
   if(hasAnyTag(ct, ["place", "destination"]) && hasAnyTag(xt, ["place", "home"])) return false;
@@ -1278,13 +1309,16 @@ function closerWorksWithSentence(inf, start, complement, closer, tense = current
   if(hasTag(st, "home") && hasTag(xt, "home")) return false;
   if(hasTag(st, "travel") && hasTag(xt, "home")) return false;
   if(hasTag(ct, "social") && hasTag(xt, "social")) return false;
-  if(hasTag(xt, "social") && !hasAnyTag(ct, ["social", "food", "movement", "travel", "communication"]) && !["jugar", "salir", "viajar", "venir", "ir", "comer", "hablar", "reír", "estar", "trabajar", "estudiar", "andar"].includes(inf)) return false;
+  if(hasTag(xt, "social") && !hasAnyTag(ct, ["social", "food", "movement", "travel"]) && !["jugar", "salir", "viajar", "venir", "ir", "comer", "hablar", "reír", "estar", "trabajar", "estudiar", "andar"].includes(inf)) return false;
   if(hasAnyTag(ct, ["school", "work"]) && hasTag(xt, "meal")) return false;
+  if(hasAnyTag(st, ["food", "meal"]) && hasTag(xt, "school")) return false;
   if(hasTag(xt, "purpose") && hasTag(xt, "study") && !hasAnyTag(ct, ["study", "school", "work", "communication", "perception", "search", "mental", "knowledge"])) return false;
   if(extra.includes("con atención") && !hasAnyTag(ct, ["study", "school", "work", "communication", "perception", "search", "travel", "movement"])) return false;
+  if(extra.includes("en silencio") && (hasTag(ct, "social") || !hasAnyTag(ct, ["study", "school", "work", "communication", "perception", "search", "sleep", "home"]))) return false;
   if(hasTag(ct, "abstract") && hasAnyTag(xt, ["manner", "place", "home", "social"])) return false;
   if(hasTag(ct, "state") && hasTag(xt, "manner")) return false;
   if(hasTag(ct, "life-event") && hasTag(xt, "manner")) return false;
+  if(["crecer", "costar", "merecer", "disfrutar"].includes(inf) && hasTag(xt, "manner")) return false;
   if(inf === "salir" && (hasTag(xt, "departure") || extra.includes("salir"))) return false;
   if(inf === "llegar" && hasTag(xt, "departure")) return false;
   if(["vivir", "reír"].includes(inf) && hasTag(xt, "manner")) return false;
@@ -1296,7 +1330,7 @@ function sentenceComplementFor(inf){
 }
 function subjectGrammar(pronoun, subject){
   const s = subject || "";
-  const plural = ["nosotros","vosotros","ellos/ellas"].includes(pronoun) || /(^los |^las |^mis | y |familias|profesores|estudiantes|vecinos|niños|chicas|padres|amigos|vosotras|nosotras|ellos|ellas)/.test(s);
+  const plural = ["nosotros","vosotros","ustedes","ellos/ellas"].includes(pronoun) || /(^los |^las |^mis | y |familias|profesores|estudiantes|vecinos|niños|chicas|padres|amigos|vosotras|nosotras|ustedes|ellos|ellas)/.test(s);
   const feminine = /(^la |^las |Lucía|madre|amiga|vecina|doctora|hermana|familias|chicas|nosotras|vosotras|ellas)/.test(s);
   return {plural, feminine};
 }
@@ -1332,12 +1366,13 @@ function sentenceStartFor(tense, inf, complement = null){
 }
 function imperativeSentenceStartFor(inf, complement, pronoun){
   const bank = SENTENCE_BANK.imperativo;
-  const plural = pronoun === "ustedes" || pronoun === "vosotros";
   const singularOnly = new Set(["Si puedes", "Cuando puedas", "Cuando termines"]);
-  const pluralOnly = new Set(["Si pueden", "Cuando puedan", "Cuando terminen"]);
+  const ustedesOnly = new Set(["Si pueden", "Cuando puedan", "Cuando terminen"]);
+  const vosotrosOnly = new Set(["Si podéis", "Cuando podáis", "Cuando terminéis"]);
   const starts = bank.starts.filter(start => {
-    if(plural && singularOnly.has(start)) return false;
-    if(!plural && pluralOnly.has(start)) return false;
+    if(pronoun === "vosotros" && (singularOnly.has(start) || ustedesOnly.has(start))) return false;
+    if(pronoun === "ustedes" && (singularOnly.has(start) || vosotrosOnly.has(start))) return false;
+    if(!["vosotros", "ustedes"].includes(pronoun) && (ustedesOnly.has(start) || vosotrosOnly.has(start))) return false;
     return !complement || startWorksWithComplement(inf, start, "imperativo", complement);
   });
   return randomPick(starts.length ? starts : bank.starts);
@@ -1350,7 +1385,7 @@ function addSentenceCloser(complement, start, inf, tense){
   if(!closer.es) return complement;
   return {
     ...complement,
-    es: complement.es.replace(/\.$/, "") + " " + closer.es + ".",
+    es: complement.es.replace(/\.$/, "") + closer.es + ".",
     pl: [complement.pl, closer.pl].filter(Boolean).join(", ")
   };
 }
@@ -1386,7 +1421,7 @@ function sentencePromptFor(q, correct){
       pl: sentenceTranslation(start, subject, q.verb, complement, tense)
     };
   }
-  const subject = randomPick(SENTENCE_SUBJECTS[q.pronoun] || [subjectFor(q.pronoun)]);
+  const subject = randomPick(subjectsForVerb(q.pronoun, q.verb.inf));
   const baseComplement = sentenceComplementForSubject(q.verb.inf, q.pronoun, subject);
   const start = sentenceStartFor(tense, q.verb.inf, baseComplement);
   const complement = addSentenceCloser(baseComplement, start, q.verb.inf, tense);
