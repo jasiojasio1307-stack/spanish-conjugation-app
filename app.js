@@ -1706,7 +1706,7 @@ function renderPracticeSelection(){
     const region = selectedPracticeMode === "imperativo"
       ? (spainMode ? " · tú/vosotros" : " · vos/ustedes")
       : spainMode && selectedPracticeMode !== "perfecto" ? " · z vosotros" : "";
-    const sentences = sentenceMode ? ` · zdania (${sentenceVariantCount()}+ wariantów)` : "";
+    const sentences = sentenceMode ? " · zdania" : "";
     note.textContent = `${selectedDifficultyLabel()} · ${label}${region}${sentences}`;
   }
 }
