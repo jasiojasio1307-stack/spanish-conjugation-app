@@ -1,4 +1,4 @@
-const CACHE_NAME = "spanish-app-v2026-06-13-2";
+const CACHE_NAME = "spanish-app-v2026-06-13-4";
 const APP_SHELL = [
   "./",
   "./index.html",

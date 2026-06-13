@@ -37,12 +37,14 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 
 .progress-bar { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin-bottom: 1.5rem; }
 .progress-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.pf-presente { background: #159A8A; }
 .pf-indefinido { background: #1D9E75; }
 .pf-futuro { background: #378ADD; }
 .pf-imperfecto { background: #BA7517; }
 .pf-subjuntivo { background: #7F77DD; }
 .pf-subjuntivo_imperfecto { background: #6C63C7; }
 .pf-perfecto { background: #D8527A; }
+.pf-imperativo { background: #C94F5D; }
 
 .counter { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; }
 .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin-bottom: 1rem; }
@@ -87,11 +89,13 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .score-num { font-size: 48px; font-weight: 500; }
 .score-label { font-size: 16px; color: var(--color-text-secondary); margin: 0.5rem 0 1.5rem; }
 .score-green { color: #1D9E75; }
+.score-teal { color: #159A8A; }
 .score-blue { color: #378ADD; }
 .score-amber { color: #BA7517; }
 .score-purple { color: #7F77DD; }
 .score-indigo { color: #6C63C7; }
 .score-pink { color: #D8527A; }
+.score-rose { color: #C94F5D; }
 
 .mode-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; margin-bottom: 1rem; }
 .panel-title { font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 8px; }
@@ -213,6 +217,16 @@ body {
 .tense-card:nth-child(6) { border-top: 4px solid #6C63C7; }
 .tense-card:nth-child(7) { border-top: 4px solid #B7791F; }
 .tense-card:nth-child(8) { border-top: 4px solid #C0447A; }
+.tense-card[data-mode="presente"] { border-top-color: #159A8A; }
+.tense-card[data-mode="indefinido"] { border-top-color: #1D9E75; }
+.tense-card[data-mode="imperfecto"] { border-top-color: #BA7517; }
+.tense-card[data-mode="perfecto"] { border-top-color: #D8527A; }
+.tense-card[data-mode="futuro"] { border-top-color: #378ADD; }
+.tense-card[data-mode="subjuntivo"] { border-top-color: #7F77DD; }
+.tense-card[data-mode="subjuntivo_imperfecto"] { border-top-color: #6C63C7; }
+.tense-card[data-mode="imperativo"] { border-top-color: #C94F5D; }
+.tense-card[data-mode="mix"] { border-top-color: #B7791F; }
+.tense-card[data-mode="favorites"] { border-top-color: #C0447A; }
 .tense-icon {
   width: 34px;
   height: 34px;
@@ -230,6 +244,16 @@ body {
 .tense-card:nth-child(6) .tense-icon { background: #ECEBFF; }
 .tense-card:nth-child(7) .tense-icon { background: #FFF3D9; }
 .tense-card:nth-child(8) .tense-icon { background: #FFE9F4; }
+.tense-card[data-mode="presente"] .tense-icon { background: #DDF8F3; }
+.tense-card[data-mode="indefinido"] .tense-icon { background: #E1F5EE; }
+.tense-card[data-mode="imperfecto"] .tense-icon { background: #FFF3D9; }
+.tense-card[data-mode="perfecto"] .tense-icon { background: #FFEAF1; }
+.tense-card[data-mode="futuro"] .tense-icon { background: #E8F2FF; }
+.tense-card[data-mode="subjuntivo"] .tense-icon { background: #F0EEFF; }
+.tense-card[data-mode="subjuntivo_imperfecto"] .tense-icon { background: #ECEBFF; }
+.tense-card[data-mode="imperativo"] .tense-icon { background: #FFE8EC; }
+.tense-card[data-mode="mix"] .tense-icon { background: #FFF3D9; }
+.tense-card[data-mode="favorites"] .tense-icon { background: #FFE9F4; }
 .progress-bar { height: 7px; background: rgba(31,41,51,0.09); }
 .inp { background: #FFFFFF; border-color: rgba(31,41,51,0.16); border-radius: 8px; }
 .btn { border-radius: 8px; font-weight: 600; }
