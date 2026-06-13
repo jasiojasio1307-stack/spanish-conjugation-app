@@ -1,4 +1,4 @@
-﻿﻿<!doctype html>
+﻿﻿﻿<!doctype html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
@@ -1219,7 +1219,19 @@ const ACCENT_WORDS = [
   {plain:"poblacion",word:"población",pl:"populacja"}, {plain:"tradicion",word:"tradición",pl:"tradycja"}, {plain:"eleccion",word:"elección",pl:"wybór"}, {plain:"emocion",word:"emoción",pl:"emocja"}, {plain:"obligacion",word:"obligación",pl:"obowiązek"}, {plain:"participacion",word:"participación",pl:"udział"}, {plain:"condicion",word:"condición",pl:"warunek"}, {plain:"posicion",word:"posición",pl:"pozycja"}, {plain:"produccion",word:"producción",pl:"produkcja"}, {plain:"construccion",word:"construcción",pl:"budowa / konstrukcja"},
   {plain:"administracion",word:"administración",pl:"administracja"}, {plain:"practicamente",word:"prácticamente",pl:"praktycznie"}, {plain:"dificilmente",word:"difícilmente",pl:"z trudem"}, {plain:"tecnologia",word:"tecnología",pl:"technologia"}, {plain:"psicologia",word:"psicología",pl:"psychologia"}, {plain:"categoria",word:"categoría",pl:"kategoria"}, {plain:"secretaria",word:"secretaría",pl:"sekretariat"}, {plain:"garantia",word:"garantía",pl:"gwarancja"}, {plain:"melodia",word:"melodía",pl:"melodia"}, {plain:"simpatia",word:"simpatía",pl:"sympatia"}
 ];
-let selectedDifficulty = localStorage.getItem("spanishConjugationDifficulty") || "normal";
+const DIFFICULTY_KEYS = ["easy", "normal", "hard"];
+function loadSelectedDifficulties(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("spanishConjugationDifficulties") || "null");
+    if(Array.isArray(saved)){
+      const valid = saved.filter(level => DIFFICULTY_KEYS.includes(level));
+      if(valid.length) return valid;
+    }
+  } catch(e){}
+  const legacy = localStorage.getItem("spanishConjugationDifficulty") || "normal";
+  return DIFFICULTY_KEYS.includes(legacy) ? [legacy] : ["normal"];
+}
+let selectedDifficulties = loadSelectedDifficulties();
 let selectedPracticeMode = localStorage.getItem("spanishPracticeMode") || "indefinido";
 let spainMode = localStorage.getItem("spanishSpainMode") === "true";
 let sentenceMode = localStorage.getItem("spanishSentenceMode") === "true";
@@ -1636,13 +1648,30 @@ function getStats(){
   catch(e){ return {}; }
 }
 function saveStats(stats){ localStorage.setItem(STATS_KEY, JSON.stringify(stats)); }
+function getSelectedDifficulties(){ return selectedDifficulties.filter(level => DIFFICULTIES[level]); }
+function selectedDifficultyLabel(){
+  return getSelectedDifficulties().map(level => DIFFICULTIES[level].label).join(" + ");
+}
+function selectedFormCount(){
+  return Math.max(...getSelectedDifficulties().map(level => DIFFICULTIES[level].formCount));
+}
+function saveSelectedDifficulties(){
+  localStorage.setItem("spanishConjugationDifficulties", JSON.stringify(getSelectedDifficulties()));
+  localStorage.setItem("spanishConjugationDifficulty", getSelectedDifficulties()[0]);
+}
+function normalizeLevels(level = null){
+  if(Array.isArray(level)) return level.filter(item => DIFFICULTIES[item]);
+  if(level && DIFFICULTIES[level]) return [level];
+  return [];
+}
 function getUniqueVerbs(tense, level = null, includeSuspended = false){
   if(!DATA[tense]) return [];
   const seen = new Set();
-  const allowed = level && TENSE_LEVEL_VERBS[tense] ? new Set(TENSE_LEVEL_VERBS[tense][level] || []) : null;
+  const levels = normalizeLevels(level);
+  const allowed = levels.length && TENSE_LEVEL_VERBS[tense] ? new Set(levels.flatMap(lvl => TENSE_LEVEL_VERBS[tense][lvl] || [])) : null;
   return DATA[tense].verbs.filter(v => {
     if(allowed && !allowed.has(v.inf)) return false;
-    if(level && !includeSuspended && isVerbSuspended(tense, level, v.inf)) return false;
+    if(levels.length && !includeSuspended && levels.every(lvl => isVerbSuspended(tense, lvl, v.inf))) return false;
     if(seen.has(v.inf)) return false;
     seen.add(v.inf);
     if(isPerfecto(tense)) return Boolean(v.part);
@@ -1727,8 +1756,9 @@ function showHomeTab(tab){
 function renderDifficultyOptions(){
   const wrap = document.getElementById("difficulty-options");
   if(!wrap) return;
+  const activeLevels = getSelectedDifficulties();
   wrap.innerHTML = Object.entries(DIFFICULTIES).map(([key, d]) => `
-    <button type="button" class="difficulty-option ${selectedDifficulty === key ? "active" : ""}" onclick="setDifficulty('${key}')" aria-pressed="${selectedDifficulty === key}">
+    <button type="button" class="difficulty-option ${activeLevels.includes(key) ? "active" : ""}" onclick="toggleDifficulty('${key}')" aria-pressed="${activeLevels.includes(key)}">
       <span class="difficulty-name">${d.label}</span>
       <span class="difficulty-meta">${d.desc}</span>
     </button>`).join("");
@@ -1750,7 +1780,7 @@ function renderPracticeSelection(){
     const label = selectedPracticeMode === "mix" ? "Mix czasów" : selectedPracticeMode === "favorites" ? "Moje trudne" : DATA[selectedPracticeMode]?.label;
     const region = spainMode && selectedPracticeMode !== "perfecto" ? " · z vosotros" : "";
     const sentences = sentenceMode ? ` · zdania (${sentenceVariantCount()}+ wariantów)` : "";
-    note.textContent = `${DIFFICULTIES[selectedDifficulty].label} · ${label}${region}${sentences}`;
+    note.textContent = `${selectedDifficultyLabel()} · ${label}${region}${sentences}`;
   }
 }
 function selectPracticeMode(mode){
@@ -1786,15 +1816,17 @@ function renderVerbList(){
   const panel = document.getElementById("verb-list-panel");
   if(!panel) return;
   const mode = DATA[selectedPracticeMode] ? selectedPracticeMode : "indefinido";
-  const verbs = getUniqueVerbs(mode, selectedDifficulty, true);
-  panel.innerHTML = `
-    <div class="verb-list-level">
-      <div class="verb-list-title">${DATA[mode].label} · ${DIFFICULTIES[selectedDifficulty].label}</div>
-      <div class="verb-chip-list">${verbs.map(v => {
-        const suspended = isVerbSuspended(mode, selectedDifficulty, v.inf);
-        return `<button type="button" class="verb-chip ${suspended ? "suspended" : ""}" onclick="toggleVerbSuspended('${mode}', '${selectedDifficulty}', '${v.inf.replace(/'/g,"\\'")}')" aria-pressed="${suspended}" title="Kliknij, aby ${suspended ? "przywrócić" : "zawiesić"}">${v.inf}</button>`;
-      }).join("")}</div>
-    </div>`;
+  panel.innerHTML = getSelectedDifficulties().map(level => {
+    const verbs = getUniqueVerbs(mode, level, true);
+    return `
+      <div class="verb-list-level">
+        <div class="verb-list-title">${DATA[mode].label} · ${DIFFICULTIES[level].label}</div>
+        <div class="verb-chip-list">${verbs.map(v => {
+          const suspended = isVerbSuspended(mode, level, v.inf);
+          return `<button type="button" class="verb-chip ${suspended ? "suspended" : ""}" onclick="toggleVerbSuspended('${mode}', '${level}', '${v.inf.replace(/'/g,"\\'")}')" aria-pressed="${suspended}" title="Kliknij, aby ${suspended ? "przywrócić" : "zawiesić"}">${v.inf}</button>`;
+        }).join("")}</div>
+      </div>`;
+  }).join("");
 }
 function toggleVerbList(){
   const panel = document.getElementById("verb-list-panel");
@@ -1829,9 +1861,13 @@ function toggleAccentList(){
   toggle.setAttribute("aria-expanded", String(open));
   arrow.textContent = open ? "−" : "+";
 }
-function setDifficulty(level){
-  selectedDifficulty = level;
-  localStorage.setItem("spanishConjugationDifficulty", level);
+function toggleDifficulty(level){
+  if(!DIFFICULTIES[level]) return;
+  const active = getSelectedDifficulties();
+  selectedDifficulties = active.includes(level)
+    ? (active.length > 1 ? active.filter(item => item !== level) : active)
+    : DIFFICULTY_KEYS.filter(item => active.includes(item) || item === level);
+  saveSelectedDifficulties();
   renderDifficultyOptions();
   renderPracticeSelection();
   renderVerbList();
@@ -1959,20 +1995,20 @@ function startTense(tense, customVerbs = null, customTitle = null, customDesc = 
   currentTense = tense;
   const d = DATA[tense];
   document.getElementById("ex-title").textContent = customTitle || d.label;
-  document.getElementById("ex-sub").textContent = customDesc || (customVerbs ? "Powtórka wybranych czasowników" : `${d.desc} · ${DIFFICULTIES[selectedDifficulty].label}`);
+  document.getElementById("ex-sub").textContent = customDesc || (customVerbs ? "Powtórka wybranych czasowników" : `${d.desc} · ${selectedDifficultyLabel()}`);
   const pf = document.getElementById("progress");
   pf.className = "progress-fill pf-" + tense;
 
   const btnClass = { indefinido:"btn-green", futuro:"btn-blue", imperfecto:"btn-amber", subjuntivo:"btn-purple", subjuntivo_imperfecto:"btn-purple", perfecto:"btn-purple" }[tense];
   window._btnClass = btnClass;
 
-  const available = getUniqueVerbs(tense, selectedDifficulty);
+  const available = getUniqueVerbs(tense, getSelectedDifficulties());
   const verbs = customVerbs || available;
   if(!verbs.length){
     alert("W tym zakresie wszystkie elementy są zawieszone. Przywróć coś na liście albo wybierz inny poziom.");
     return;
   }
-  queue = customVerbs ? buildQueueFromVerbs(verbs, tense) : buildRandomFormQueue(verbs, DIFFICULTIES[selectedDifficulty].formCount, tense);
+  queue = customVerbs ? buildQueueFromVerbs(verbs, tense) : buildRandomFormQueue(verbs, selectedFormCount(), tense);
   current = 0; score = 0; checked = false; sessionWrong = [];
   showPage("page-exercise");
   renderExercise();
@@ -1988,7 +2024,7 @@ function repeatWorst(tense = currentTense, inf = null){
 function buildMixedForms(filterFavorites = false){
   const favs = getFavorites();
   return Object.keys(DATA).flatMap(tense => {
-    const verbs = getUniqueVerbs(tense, selectedDifficulty).filter(v => !filterFavorites || favs.includes(v.inf));
+    const verbs = getUniqueVerbs(tense, getSelectedDifficulties()).filter(v => !filterFavorites || favs.includes(v.inf));
     if(isPerfecto(tense)) return verbs.map(v => ({verb:v, pronoun:null, tense}));
     return verbs.flatMap(v => getPronouns(tense).map(p => ({verb:v, pronoun:p, tense})));
   });
@@ -1997,7 +2033,7 @@ function buildMixedForms(filterFavorites = false){
 function startMixedTense(){
   currentTense = "mix";
   document.getElementById("ex-title").textContent = "Mix czasów";
-  document.getElementById("ex-sub").textContent = "15 losowych form ze wszystkich czasów · " + DIFFICULTIES[selectedDifficulty].label;
+  document.getElementById("ex-sub").textContent = "15 losowych form ze wszystkich czasów · " + selectedDifficultyLabel();
   const pf = document.getElementById("progress");
   pf.className = "progress-fill";
   pf.style.background = "#D8527A";
@@ -2311,3 +2347,4 @@ renderStats();
 renderAccentStats();</script>
 </body>
 </html>
+
