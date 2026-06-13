@@ -410,6 +410,7 @@ Object.entries(DATA).forEach(([tense, data]) => {
   if(tense !== "perfecto") data.verbs.forEach(v => inferVosotros(tense, v));
 });
 const STATS_KEY = "spanishConjugationStats.v2";
+const DAILY_STATS_KEY = "spanishDailyProgress.v1";
 const FAVORITES_KEY = "spanishConjugationFavorites.v1";
 const SUSPENDED_VERBS_KEY = "spanishSuspendedVerbs.v1";
 const SUSPENDED_ACCENTS_KEY = "spanishSuspendedAccents.v1";
@@ -1082,6 +1083,71 @@ function getStats(){
   catch(e){ return {}; }
 }
 function saveStats(stats){ localStorage.setItem(STATS_KEY, JSON.stringify(stats)); }
+function todayKey(date = new Date()){
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+function getDailyProgress(){
+  try { return JSON.parse(localStorage.getItem(DAILY_STATS_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveDailyProgress(data){ localStorage.setItem(DAILY_STATS_KEY, JSON.stringify(data)); }
+function recordDailyProgress(section, ok){
+  const data = getDailyProgress();
+  const key = todayKey();
+  const day = data[key] || { verbs: {attempts:0, correct:0}, accents: {attempts:0, correct:0} };
+  const row = day[section] || {attempts:0, correct:0};
+  row.attempts += 1;
+  if(ok) row.correct += 1;
+  day[section] = row;
+  data[key] = day;
+
+  const keep = new Set(lastThirtyDays().map(item => item.key));
+  Object.keys(data).forEach(dayKey => { if(!keep.has(dayKey)) delete data[dayKey]; });
+  saveDailyProgress(data);
+}
+function lastThirtyDays(){
+  return Array.from({length: 30}, (_, index) => {
+    const date = new Date();
+    date.setHours(12,0,0,0);
+    date.setDate(date.getDate() - (29 - index));
+    return {
+      key: todayKey(date),
+      label: `${date.getDate()}.${date.getMonth() + 1}`
+    };
+  });
+}
+function dailyHistoryHtml(section){
+  const data = getDailyProgress();
+  const days = lastThirtyDays();
+  const maxAttempts = Math.max(1, ...days.map(day => data[day.key]?.[section]?.attempts || 0));
+  const totalAttempts = days.reduce((sum, day) => sum + (data[day.key]?.[section]?.attempts || 0), 0);
+  const totalCorrect = days.reduce((sum, day) => sum + (data[day.key]?.[section]?.correct || 0), 0);
+  const activeDays = days.filter(day => (data[day.key]?.[section]?.attempts || 0) > 0).length;
+  const pct = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+  const bars = days.map(day => {
+    const row = data[day.key]?.[section] || {attempts:0, correct:0};
+    const height = row.attempts ? Math.max(12, Math.round((row.attempts / maxAttempts) * 100)) : 4;
+    const acc = row.attempts ? Math.round((row.correct / row.attempts) * 100) : 0;
+    const title = `${day.label}: ${row.correct}/${row.attempts} (${acc}%)`;
+    return `<div class="history-bar-wrap" title="${title}" aria-label="${title}">
+      <span class="history-bar ${row.attempts ? "" : "empty"}" style="height:${height}%"></span>
+    </div>`;
+  }).join("");
+  return `
+    <div class="progress-history">
+      <div class="history-head">
+        <div>
+          <div class="history-title">Historia 30 dni</div>
+          <div class="history-meta">${totalAttempts ? `${totalAttempts} odpowiedzi · ${pct}% poprawnych · ${activeDays} dni aktywnych` : "Brak odpowiedzi z ostatnich 30 dni"}</div>
+        </div>
+      </div>
+      <div class="history-chart">${bars}</div>
+      <div class="history-axis"><span>${days[0].label}</span><span>${days[days.length - 1].label}</span></div>
+    </div>`;
+}
 function getSelectedDifficulties(){ return selectedDifficulties.filter(level => DIFFICULTIES[level]); }
 function selectedDifficultyLabel(){
   return getSelectedDifficulties().map(level => DIFFICULTIES[level].label).join(" + ");
@@ -1158,6 +1224,7 @@ function recordAnswer(q, ok){
   item.lastPracticed = Date.now();
   stats[key] = item;
   saveStats(stats);
+  recordDailyProgress("verbs", ok);
   if(!ok && !sessionWrong.some(item => item.verb.inf === q.verb.inf && item.pronoun === q.pronoun && item.tense === tense)){
     sessionWrong.push({verb: q.verb, pronoun: q.pronoun, tense});
   }
@@ -1347,6 +1414,7 @@ function recordAccentAnswer(item, ok){
   row.lastPracticed = Date.now();
   stats[item.word] = row;
   saveAccentStats(stats);
+  recordDailyProgress("accents", ok);
   if(!ok && !accentSessionWrong.some(w => w.word === item.word)) accentSessionWrong.push(item);
   renderAccentStats();
 }
@@ -1372,7 +1440,8 @@ function renderAccentStats(){
       <div class="stat-box"><span class="stat-num">${attempts}</span><span class="stat-label">odpowiedzi</span></div>
       <div class="stat-box"><span class="stat-num">${pct}%</span><span class="stat-label">poprawnych</span></div>
       <div class="stat-box"><span class="stat-num">${wrong}</span><span class="stat-label">do powtórki</span></div>
-    </div>` : `<p class="muted-note">Statystyki akcentów pojawią się po pierwszej odpowiedzi.</p>`;
+    </div>
+    ${dailyHistoryHtml("accents")}` : `<p class="muted-note">Statystyki akcentów pojawią się po pierwszej odpowiedzi.</p>${dailyHistoryHtml("accents")}`;
 
   const worst = getAccentWorst(5);
   worstBox.innerHTML = worst.length ? `<div class="worst-list">${worst.map(s => `
@@ -1407,7 +1476,8 @@ function renderStats(){
       <div class="stat-box"><span class="stat-num">${attempts}</span><span class="stat-label">odpowiedzi</span></div>
       <div class="stat-box"><span class="stat-num">${pct}%</span><span class="stat-label">poprawnych</span></div>
       <div class="stat-box"><span class="stat-num">${wrong}</span><span class="stat-label">do powtórki</span></div>
-    </div>` : `<p class="muted-note">Statystyki pojawią się po pierwszej sprawdzonej odpowiedzi.</p>`;
+    </div>
+    ${dailyHistoryHtml("verbs")}` : `<p class="muted-note">Statystyki pojawią się po pierwszej sprawdzonej odpowiedzi.</p>${dailyHistoryHtml("verbs")}`;
 
   const worst = getWorstStats(5);
   worstBox.innerHTML = worst.length ? `<div class="worst-list">${worst.map(s => {
