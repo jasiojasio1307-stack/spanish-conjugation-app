@@ -1,0 +1,868 @@
+﻿<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, sans-serif; }
+.page { display: none; padding: 1.5rem 0; }
+.page.active { display: block; }
+
+.home-title { font-size: 26px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+.home-sub { font-size: 15px; color: var(--color-text-secondary); margin-bottom: 2rem; }
+
+.tense-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.tense-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1rem; cursor: pointer; transition: border-color 0.15s, background 0.15s; text-align: left; }
+.tense-card:hover { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
+.tense-icon { font-size: 22px; margin-bottom: 10px; }
+.tense-label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.tense-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--color-text-secondary); background: none; border: none; cursor: pointer; margin-bottom: 1.25rem; padding: 0; }
+.back-btn:hover { color: var(--color-text-primary); }
+
+.ex-header { margin-bottom: 1.25rem; }
+.ex-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+.ex-sub { font-size: 13px; color: var(--color-text-secondary); }
+
+.progress-bar { height: 4px; background: var(--color-border-tertiary); border-radius: 2px; margin-bottom: 1.5rem; }
+.progress-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.pf-indefinido { background: #1D9E75; }
+.pf-futuro { background: #378ADD; }
+.pf-imperfecto { background: #BA7517; }
+.pf-subjuntivo { background: #7F77DD; }
+
+.counter { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin-bottom: 1rem; }
+.verb-name { font-size: 24px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 1.25rem; }
+.pronoun-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.pronoun { font-size: 15px; color: var(--color-text-secondary); min-width: 100px; }
+.inp { flex: 1; padding: 7px 12px; font-size: 15px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); color: var(--color-text-primary); outline: none; transition: border-color 0.15s; }
+.inp:focus { border-color: var(--focus-color, #1D9E75); box-shadow: 0 0 0 2px var(--focus-shadow, rgba(29,158,117,0.15)); }
+.inp.correct { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+.inp.wrong { border-color: #E24B4A; background: #FCEBEB; color: #501313; }
+.inp.accent-warning { border-color: #D6A400; background: #FFF4BF; color: #5D4300; }
+.hint.show-accent { color: #8A6500; font-weight: 500; }
+.hint { font-size: 13px; min-width: 120px; color: var(--color-text-tertiary); }
+.hint.show-correct { color: #0F6E56; font-weight: 500; }
+.hint.show-wrong { color: #A32D2D; font-weight: 500; }
+.actions { display: flex; gap: 10px; margin-top: 1.25rem; flex-wrap: wrap; }
+.btn { padding: 8px 20px; border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: transparent; color: var(--color-text-primary); transition: background 0.15s; }
+.btn:hover { background: var(--color-background-secondary); }
+.btn-green { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+.btn-green:hover { background: #0F6E56; border-color: #0F6E56; }
+.btn-blue { background: #378ADD; color: #fff; border-color: #378ADD; }
+.btn-blue:hover { background: #185FA5; border-color: #185FA5; }
+.btn-amber { background: #BA7517; color: #fff; border-color: #BA7517; }
+.btn-amber:hover { background: #854F0B; border-color: #854F0B; }
+.btn-purple { background: #7F77DD; color: #fff; border-color: #7F77DD; }
+.btn-purple:hover { background: #534AB7; border-color: #534AB7; }
+.translation-box { margin-top: 1rem; padding: 0.9rem 1rem; background: var(--color-background-secondary); border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); font-size: 14px; color: var(--color-text-secondary); display: none; }
+.translation-box strong { color: var(--color-text-primary); font-weight: 500; }
+.example-line { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); line-height: 1.45; }
+.example-line span { color: var(--color-text-secondary); }
+.score-card { text-align: center; padding: 2.5rem 1.5rem; }
+.score-num { font-size: 48px; font-weight: 500; }
+.score-label { font-size: 16px; color: var(--color-text-secondary); margin: 0.5rem 0 1.5rem; }
+.score-green { color: #1D9E75; }
+.score-blue { color: #378ADD; }
+.score-amber { color: #BA7517; }
+.score-purple { color: #7F77DD; }
+
+.mode-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; margin-bottom: 1rem; }
+.panel-title { font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 8px; }
+.verb-list-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); border-radius: var(--border-radius-md); padding: 10px 12px; cursor: pointer; font-size: 14px; font-weight: 600; }
+.verb-list-toggle:hover { border-color: var(--color-border-primary); }
+.verb-list-toggle span:last-child { color: var(--color-text-secondary); font-size: 16px; line-height: 1; }
+.verb-list-panel { display: none; margin-top: 10px; }
+.verb-list-panel.open { display: block; }
+.verb-list-level { margin-top: 10px; }
+.verb-list-level:first-child { margin-top: 0; }
+.verb-list-title { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; }
+.verb-chip-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.verb-chip { padding: 5px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 13px; }
+.difficulty-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.difficulty-option { border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); border-radius: var(--border-radius-md); padding: 10px 12px; text-align: left; cursor: pointer; transition: border-color 0.15s, background 0.15s, box-shadow 0.15s; }
+.difficulty-option:hover { border-color: var(--color-border-primary); }
+.difficulty-option.active { border-color: #1D9E75; background: #E1F5EE; box-shadow: 0 0 0 2px rgba(29,158,117,0.12); }
+.difficulty-name { display: block; font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.difficulty-meta { display: block; font-size: 12px; color: var(--color-text-secondary); line-height: 1.35; }
+.stats-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; margin-top: 1rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 1rem; }
+.stat-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px; }
+.stat-num { display: block; font-size: 20px; font-weight: 600; color: var(--color-text-primary); }
+.stat-label { display: block; margin-top: 2px; font-size: 12px; color: var(--color-text-secondary); }
+.worst-list { display: grid; gap: 8px; }
+.worst-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 9px 10px; }
+.worst-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.worst-meta { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.muted-note { font-size: 13px; color: var(--color-text-secondary); line-height: 1.45; }
+.session-note { font-size: 13px; color: var(--color-text-secondary); margin-top: -0.5rem; margin-bottom: 1rem; }
+.verb-name small { display: block; margin-top: 4px; font-size: 13px; color: var(--color-text-secondary); font-weight: 400; }
+
+body {
+  --ui-ink: var(--color-text-primary, #1F2933);
+  --ui-muted: var(--color-text-secondary, #667085);
+  --ui-line: var(--color-border-tertiary, #D8E0E7);
+  --ui-card: rgba(255,255,255,0.92);
+  --ui-soft: rgba(247,250,252,0.92);
+  min-height: 100vh;
+  background:
+    linear-gradient(135deg, rgba(247,252,249,0.95) 0%, rgba(255,250,239,0.88) 43%, rgba(242,247,255,0.9) 100%);
+  color: var(--ui-ink);
+}
+.page { max-width: 980px; margin: 0 auto; padding: 1.75rem 1rem; }
+.home-title { color: #173B35; font-weight: 700; letter-spacing: 0; }
+.home-sub { color: #5C6670; }
+.mode-panel, .stats-panel, .card {
+  background: var(--ui-card);
+  border-color: rgba(31,41,51,0.11);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(31,41,51,0.08);
+}
+.panel-title { color: #26413C; letter-spacing: 0.01em; }
+.verb-list-toggle, .difficulty-option, .stat-box, .worst-item, .translation-box {
+  background: var(--ui-soft);
+  border-color: rgba(31,41,51,0.12);
+  border-radius: 8px;
+}
+.verb-list-toggle {
+  background: linear-gradient(90deg, #F2FBF7, #FFF8E8);
+}
+.verb-list-toggle:hover, .difficulty-option:hover, .tense-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(31,41,51,0.09);
+}
+.verb-chip {
+  border-radius: 999px;
+  background: #F7FAFC;
+  border-color: rgba(31,41,51,0.1);
+}
+.verb-list-level:nth-child(1) .verb-chip { background: #EAF8F1; color: #0B5F4A; }
+.verb-list-level:nth-child(2) .verb-chip { background: #EEF4FF; color: #244B8F; }
+.verb-list-level:nth-child(3) .verb-chip { background: #FFF3D9; color: #7A4A08; }
+.difficulty-option { position: relative; overflow: hidden; }
+.difficulty-option::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: #1D9E75;
+}
+.difficulty-option:nth-child(2)::before { background: #378ADD; }
+.difficulty-option:nth-child(3)::before { background: #BA7517; }
+.difficulty-option.active {
+  background: #FFFFFF;
+  box-shadow: 0 0 0 2px rgba(29,158,117,0.12), 0 12px 24px rgba(31,41,51,0.08);
+}
+.difficulty-option:nth-child(2).active { border-color: #378ADD; box-shadow: 0 0 0 2px rgba(55,138,221,0.12), 0 12px 24px rgba(31,41,51,0.08); }
+.difficulty-option:nth-child(3).active { border-color: #BA7517; box-shadow: 0 0 0 2px rgba(186,117,23,0.13), 0 12px 24px rgba(31,41,51,0.08); }
+.tense-card {
+  background: var(--ui-card);
+  border-color: rgba(31,41,51,0.1);
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(31,41,51,0.06);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s, background 0.15s;
+}
+.tense-card:nth-child(1) { border-top: 4px solid #1D9E75; }
+.tense-card:nth-child(2) { border-top: 4px solid #BA7517; }
+.tense-card:nth-child(3) { border-top: 4px solid #378ADD; }
+.tense-card:nth-child(4) { border-top: 4px solid #7F77DD; }
+.tense-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #F3F7FA;
+}
+.tense-card:nth-child(1) .tense-icon { background: #E1F5EE; }
+.tense-card:nth-child(2) .tense-icon { background: #FFF3D9; }
+.tense-card:nth-child(3) .tense-icon { background: #E8F2FF; }
+.tense-card:nth-child(4) .tense-icon { background: #F0EEFF; }
+.progress-bar { height: 7px; background: rgba(31,41,51,0.09); }
+.inp { background: #FFFFFF; border-color: rgba(31,41,51,0.16); border-radius: 8px; }
+.btn { border-radius: 8px; font-weight: 600; }
+.btn-green, .btn-blue, .btn-amber, .btn-purple { box-shadow: 0 8px 16px rgba(31,41,51,0.12); }
+.score-card { background: #FFFFFF; }
+@media (max-width: 520px) { .pronoun-row { display: grid; grid-template-columns: 1fr; gap: 6px; } .pronoun { min-width: 0; } .hint { min-width: 0; } .worst-item { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="page-home" class="page active">
+  <h2 class="sr-only">Nauka koniugacji hiszpańskiej</h2>
+  <p class="home-title">Koniugacja hiszpańska</p>
+  <p class="home-sub">Wybierz poziom i czas, który chcesz ćwiczyć</p>
+
+  <section class="mode-panel" aria-labelledby="verb-list-title">
+    <button type="button" class="verb-list-toggle" onclick="toggleVerbList()" aria-expanded="false" id="verb-list-toggle">
+      <span id="verb-list-title">Lista czasowników</span>
+      <span id="verb-list-arrow">+</span>
+    </button>
+    <div class="verb-list-panel" id="verb-list-panel"></div>
+  </section>
+
+  <section class="mode-panel" aria-labelledby="difficulty-title">
+    <div class="panel-title" id="difficulty-title">Poziom trudności</div>
+    <div class="difficulty-options" id="difficulty-options"></div>
+  </section>
+
+  <div class="tense-grid">
+    <div class="tense-card" onclick="startTense('indefinido')">
+      <div class="tense-icon">📖</div>
+      <div class="tense-label">Pretérito indefinido</div>
+      <div class="tense-desc">hablé, comí, fui...</div>
+    </div>
+    <div class="tense-card" onclick="startTense('imperfecto')">
+      <div class="tense-icon">↻</div>
+      <div class="tense-label">Pretérito imperfecto</div>
+      <div class="tense-desc">hablaba, comía, era...</div>
+    </div>
+    <div class="tense-card" onclick="startTense('futuro')">
+      <div class="tense-icon">⏭</div>
+      <div class="tense-label">Futuro imperfecto</div>
+      <div class="tense-desc">hablaré, tendré, iré...</div>
+    </div>
+    <div class="tense-card" onclick="startTense('subjuntivo')">
+      <div class="tense-icon">◇</div>
+      <div class="tense-label">Subjuntivo presente</div>
+      <div class="tense-desc">hable, coma, sea...</div>
+    </div>
+  </div>
+
+  <section class="stats-panel" aria-labelledby="stats-title">
+    <div class="panel-title" id="stats-title">Statystyka</div>
+    <div id="stats-summary"></div>
+    <div class="panel-title" style="margin-top:12px;">Najgorsze czasowniki</div>
+    <div id="worst-verbs"></div>
+  </section>
+</div>
+
+<div id="page-exercise" class="page">
+  <button class="back-btn" onclick="goHome()"><i class="ti ti-arrow-left" aria-hidden="true"></i> Strona główna</button>
+  <div class="ex-header">
+    <div class="ex-title" id="ex-title"></div>
+    <div class="ex-sub" id="ex-sub"></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  <div class="counter" id="counter"></div>
+  <div id="exercise-area"></div>
+</div>
+
+<script>
+const pronouns = ["yo","tú","él/ella","nosotros","ellos/ellas"];
+
+const DATA = {
+  indefinido: {
+    label: "Pretérito indefinido",
+    desc: "co zrobiłem / co się stało",
+    color: "green",
+    verbs: [
+      {inf:"hablar",en:"mówić",c:{yo:"hablé",tú:"hablaste","él/ella":"habló",nosotros:"hablamos","ellos/ellas":"hablaron"}},
+      {inf:"comer",en:"jeść",c:{yo:"comí",tú:"comiste","él/ella":"comió",nosotros:"comimos","ellos/ellas":"comieron"}},
+      {inf:"vivir",en:"żyć / mieszkać",c:{yo:"viví",tú:"viviste","él/ella":"vivió",nosotros:"vivimos","ellos/ellas":"vivieron"}},
+      {inf:"ser",en:"być",c:{yo:"fui",tú:"fuiste","él/ella":"fue",nosotros:"fuimos","ellos/ellas":"fueron"}},
+      {inf:"ir",en:"iść / jechać",c:{yo:"fui",tú:"fuiste","él/ella":"fue",nosotros:"fuimos","ellos/ellas":"fueron"}},
+      {inf:"tener",en:"mieć",c:{yo:"tuve",tú:"tuviste","él/ella":"tuvo",nosotros:"tuvimos","ellos/ellas":"tuvieron"}},
+      {inf:"estar",en:"być (gdzieś/w stanie)",c:{yo:"estuve",tú:"estuviste","él/ella":"estuvo",nosotros:"estuvimos","ellos/ellas":"estuvieron"}},
+      {inf:"hacer",en:"robić",c:{yo:"hice",tú:"hiciste","él/ella":"hizo",nosotros:"hicimos","ellos/ellas":"hicieron"}},
+      {inf:"poder",en:"móc",c:{yo:"pude",tú:"pudiste","él/ella":"pudo",nosotros:"pudimos","ellos/ellas":"pudieron"}},
+      {inf:"querer",en:"chcieć / kochać",c:{yo:"quise",tú:"quisiste","él/ella":"quiso",nosotros:"quisimos","ellos/ellas":"quisieron"}},
+      {inf:"saber",en:"wiedzieć / umieć",c:{yo:"supe",tú:"supiste","él/ella":"supo",nosotros:"supimos","ellos/ellas":"supieron"}},
+      {inf:"venir",en:"przychodzić",c:{yo:"vine",tú:"viniste","él/ella":"vino",nosotros:"vinimos","ellos/ellas":"vinieron"}},
+      {inf:"decir",en:"mówić / powiedzieć",c:{yo:"dije",tú:"dijiste","él/ella":"dijo",nosotros:"dijimos","ellos/ellas":"dijeron"}},
+      {inf:"dar",en:"dawać",c:{yo:"di",tú:"diste","él/ella":"dio",nosotros:"dimos","ellos/ellas":"dieron"}},
+      {inf:"ver",en:"widzieć / oglądać",c:{yo:"vi",tú:"viste","él/ella":"vio",nosotros:"vimos","ellos/ellas":"vieron"}},
+      {inf:"poner",en:"kłaść / stawiać",c:{yo:"puse",tú:"pusiste","él/ella":"puso",nosotros:"pusimos","ellos/ellas":"pusieron"}},
+      {inf:"traer",en:"przynosić",c:{yo:"traje",tú:"trajiste","él/ella":"trajo",nosotros:"trajimos","ellos/ellas":"trajeron"}},
+      {inf:"andar",en:"chodzić",c:{yo:"anduve",tú:"anduviste","él/ella":"anduvo",nosotros:"anduvimos","ellos/ellas":"anduvieron"}},
+      {inf:"leer",en:"czytać",c:{yo:"leí",tú:"leíste","él/ella":"leyó",nosotros:"leímos","ellos/ellas":"leyeron"}},
+      {inf:"escribir",en:"pisać",c:{yo:"escribí",tú:"escribiste","él/ella":"escribió",nosotros:"escribimos","ellos/ellas":"escribieron"}},
+      {inf:"salir",en:"wychodzić",c:{yo:"salí",tú:"saliste","él/ella":"salió",nosotros:"salimos","ellos/ellas":"salieron"}},
+      {inf:"llegar",en:"przyjeżdżać",c:{yo:"llegué",tú:"llegaste","él/ella":"llegó",nosotros:"llegamos","ellos/ellas":"llegaron"}},
+      {inf:"dormir",en:"spać",c:{yo:"dormí",tú:"dormiste","él/ella":"durmió",nosotros:"dormimos","ellos/ellas":"durmieron"}},
+      {inf:"pedir",en:"prosić / zamawiać",c:{yo:"pedí",tú:"pediste","él/ella":"pidió",nosotros:"pedimos","ellos/ellas":"pidieron"}},
+      {inf:"sentir",en:"czuć",c:{yo:"sentí",tú:"sentiste","él/ella":"sintió",nosotros:"sentimos","ellos/ellas":"sintieron"}},
+      {inf:"conducir",en:"prowadzić (auto)",c:{yo:"conduje",tú:"condujiste","él/ella":"condujo",nosotros:"condujimos","ellos/ellas":"condujeron"}},
+      {inf:"caer",en:"upadać",c:{yo:"caí",tú:"caíste","él/ella":"cayó",nosotros:"caímos","ellos/ellas":"cayeron"}},
+      {inf:"oír",en:"słyszeć",c:{yo:"oí",tú:"oíste","él/ella":"oyó",nosotros:"oímos","ellos/ellas":"oyeron"}},
+      {inf:"construir",en:"budować",c:{yo:"construí",tú:"construiste","él/ella":"construyó",nosotros:"construimos","ellos/ellas":"construyeron"}},
+      {inf:"reír",en:"śmiać się",c:{yo:"reí",tú:"reíste","él/ella":"rió",nosotros:"reímos","ellos/ellas":"rieron"}},
+      {inf:"morir",en:"umierać",c:{yo:"morí",tú:"moriste","él/ella":"murió",nosotros:"morimos","ellos/ellas":"murieron"}},
+      {inf:"seguir",en:"podążać",c:{yo:"seguí",tú:"seguiste","él/ella":"siguió",nosotros:"seguimos","ellos/ellas":"siguieron"}},
+      {inf:"elegir",en:"wybierać",c:{yo:"elegí",tú:"elegiste","él/ella":"eligió",nosotros:"elegimos","ellos/ellas":"eligieron"}},
+      {inf:"servir",en:"służyć / podawać",c:{yo:"serví",tú:"serviste","él/ella":"sirvió",nosotros:"servimos","ellos/ellas":"sirvieron"}},
+      {inf:"volver",en:"wracać",c:{yo:"volví",tú:"volviste","él/ella":"volvió",nosotros:"volvimos","ellos/ellas":"volvieron"}},
+      {inf:"empezar",en:"zaczynać",c:{yo:"empecé",tú:"empezaste","él/ella":"empezó",nosotros:"empezamos","ellos/ellas":"empezaron"}},
+      {inf:"buscar",en:"szukać",c:{yo:"busqué",tú:"buscaste","él/ella":"buscó",nosotros:"buscamos","ellos/ellas":"buscaron"}},
+      {inf:"pagar",en:"płacić",c:{yo:"pagué",tú:"pagaste","él/ella":"pagó",nosotros:"pagamos","ellos/ellas":"pagaron"}},
+      {inf:"jugar",en:"grać",c:{yo:"jugué",tú:"jugaste","él/ella":"jugó",nosotros:"jugamos","ellos/ellas":"jugaron"}},
+      {inf:"creer",en:"wierzyć / sądzić",c:{yo:"creí",tú:"creíste","él/ella":"creyó",nosotros:"creímos","ellos/ellas":"creyeron"}},
+      {inf:"nacer",en:"urodzić się",c:{yo:"nací",tú:"naciste","él/ella":"nació",nosotros:"nacimos","ellos/ellas":"nacieron"}},
+      {inf:"trabajar",en:"pracować",c:{yo:"trabajé",tú:"trabajaste","él/ella":"trabajó",nosotros:"trabajamos","ellos/ellas":"trabajaron"}},
+      {inf:"estudiar",en:"uczyć się",c:{yo:"estudié",tú:"estudiaste","él/ella":"estudió",nosotros:"estudiamos","ellos/ellas":"estudiaron"}},
+      {inf:"comprar",en:"kupować",c:{yo:"compré",tú:"compraste","él/ella":"compró",nosotros:"compramos","ellos/ellas":"compraron"}},
+      {inf:"viajar",en:"podróżować",c:{yo:"viajé",tú:"viajaste","él/ella":"viajó",nosotros:"viajamos","ellos/ellas":"viajaron"}},
+    ]
+  },
+  imperfecto: {
+    label: "Pretérito imperfecto",
+    desc: "co robiłem (w przeszłości, zwyczajowo)",
+    color: "amber",
+    verbs: [
+      {inf:"hablar",en:"mówić",c:{yo:"hablaba",tú:"hablabas","él/ella":"hablaba",nosotros:"hablábamos","ellos/ellas":"hablaban"}},
+      {inf:"comer",en:"jeść",c:{yo:"comía",tú:"comías","él/ella":"comía",nosotros:"comíamos","ellos/ellas":"comían"}},
+      {inf:"vivir",en:"żyć / mieszkać",c:{yo:"vivía",tú:"vivías","él/ella":"vivía",nosotros:"vivíamos","ellos/ellas":"vivían"}},
+      {inf:"ser",en:"być",c:{yo:"era",tú:"eras","él/ella":"era",nosotros:"éramos","ellos/ellas":"eran"}},
+      {inf:"ir",en:"iść / jechać",c:{yo:"iba",tú:"ibas","él/ella":"iba",nosotros:"íbamos","ellos/ellas":"iban"}},
+      {inf:"ver",en:"widzieć / oglądać",c:{yo:"veía",tú:"veías","él/ella":"veía",nosotros:"veíamos","ellos/ellas":"veían"}},
+      {inf:"tener",en:"mieć",c:{yo:"tenía",tú:"tenías","él/ella":"tenía",nosotros:"teníamos","ellos/ellas":"tenían"}},
+      {inf:"estar",en:"być (gdzieś/w stanie)",c:{yo:"estaba",tú:"estabas","él/ella":"estaba",nosotros:"estábamos","ellos/ellas":"estaban"}},
+      {inf:"hacer",en:"robić",c:{yo:"hacía",tú:"hacías","él/ella":"hacía",nosotros:"hacíamos","ellos/ellas":"hacían"}},
+      {inf:"poder",en:"móc",c:{yo:"podía",tú:"podías","él/ella":"podía",nosotros:"podíamos","ellos/ellas":"podían"}},
+      {inf:"querer",en:"chcieć / kochać",c:{yo:"quería",tú:"querías","él/ella":"quería",nosotros:"queríamos","ellos/ellas":"querían"}},
+      {inf:"saber",en:"wiedzieć / umieć",c:{yo:"sabía",tú:"sabías","él/ella":"sabía",nosotros:"sabíamos","ellos/ellas":"sabían"}},
+      {inf:"venir",en:"przychodzić",c:{yo:"venía",tú:"venías","él/ella":"venía",nosotros:"veníamos","ellos/ellas":"venían"}},
+      {inf:"decir",en:"mówić / powiedzieć",c:{yo:"decía",tú:"decías","él/ella":"decía",nosotros:"decíamos","ellos/ellas":"decían"}},
+      {inf:"poner",en:"kłaść / stawiać",c:{yo:"ponía",tú:"ponías","él/ella":"ponía",nosotros:"poníamos","ellos/ellas":"ponían"}},
+      {inf:"salir",en:"wychodzić",c:{yo:"salía",tú:"salías","él/ella":"salía",nosotros:"salíamos","ellos/ellas":"salían"}},
+      {inf:"trabajar",en:"pracować",c:{yo:"trabajaba",tú:"trabajabas","él/ella":"trabajaba",nosotros:"trabajábamos","ellos/ellas":"trabajaban"}},
+      {inf:"estudiar",en:"uczyć się",c:{yo:"estudiaba",tú:"estudiabas","él/ella":"estudiaba",nosotros:"estudiábamos","ellos/ellas":"estudiaban"}},
+      {inf:"comprar",en:"kupować",c:{yo:"compraba",tú:"comprabas","él/ella":"compraba",nosotros:"comprábamos","ellos/ellas":"compraban"}},
+      {inf:"viajar",en:"podróżować",c:{yo:"viajaba",tú:"viajabas","él/ella":"viajaba",nosotros:"viajábamos","ellos/ellas":"viajaban"}},
+      {inf:"dormir",en:"spać",c:{yo:"dormía",tú:"dormías","él/ella":"dormía",nosotros:"dormíamos","ellos/ellas":"dormían"}},
+      {inf:"leer",en:"czytać",c:{yo:"leía",tú:"leías","él/ella":"leía",nosotros:"leíamos","ellos/ellas":"leían"}},
+      {inf:"escribir",en:"pisać",c:{yo:"escribía",tú:"escribías","él/ella":"escribía",nosotros:"escribíamos","ellos/ellas":"escribían"}},
+      {inf:"jugar",en:"grać",c:{yo:"jugaba",tú:"jugabas","él/ella":"jugaba",nosotros:"jugábamos","ellos/ellas":"jugaban"}},
+      {inf:"beber",en:"pić",c:{yo:"bebía",tú:"bebías","él/ella":"bebía",nosotros:"bebíamos","ellos/ellas":"bebían"}},
+    {inf:"traer",en:"przynosić",c:{yo:"traía",tú:"traías","él/ella":"traía",nosotros:"traíamos","ellos/ellas":"traían"}},
+    {inf:"pedir",en:"prosić / zamawiać",c:{yo:"pedía",tú:"pedías","él/ella":"pedía",nosotros:"pedíamos","ellos/ellas":"pedían"}},
+    {inf:"nacer",en:"urodzić się",c:{yo:"nacía",tú:"nacías","él/ella":"nacía",nosotros:"nacíamos","ellos/ellas":"nacían"}},
+    {inf:"reír",en:"śmiać się",c:{yo:"reía",tú:"reías","él/ella":"reía",nosotros:"reíamos","ellos/ellas":"reían"}},
+      {inf:"vivir",en:"żyć / mieszkać",c:{yo:"vivía",tú:"vivías","él/ella":"vivía",nosotros:"vivíamos","ellos/ellas":"vivían"}},
+      {inf:"conocer",en:"znać / poznać",c:{yo:"conocía",tú:"conocías","él/ella":"conocía",nosotros:"conocíamos","ellos/ellas":"conocían"}},
+      {inf:"creer",en:"wierzyć",c:{yo:"creía",tú:"creías","él/ella":"creía",nosotros:"creíamos","ellos/ellas":"creían"}},
+      {inf:"llevar",en:"nosić / zabrać",c:{yo:"llevaba",tú:"llevabas","él/ella":"llevaba",nosotros:"llevábamos","ellos/ellas":"llevaban"}},
+      {inf:"llamar",en:"dzwonić / nazywać",c:{yo:"llamaba",tú:"llamabas","él/ella":"llamaba",nosotros:"llamábamos","ellos/ellas":"llamaban"}},
+      {inf:"pasar",en:"mijać / spędzać",c:{yo:"pasaba",tú:"pasabas","él/ella":"pasaba",nosotros:"pasábamos","ellos/ellas":"pasaban"}},
+      {inf:"dar",en:"dawać",c:{yo:"daba",tú:"dabas","él/ella":"daba",nosotros:"dábamos","ellos/ellas":"daban"}},
+      {inf:"pensar",en:"myśleć",c:{yo:"pensaba",tú:"pensabas","él/ella":"pensaba",nosotros:"pensábamos","ellos/ellas":"pensaban"}},
+      {inf:"sentir",en:"czuć",c:{yo:"sentía",tú:"sentías","él/ella":"sentía",nosotros:"sentíamos","ellos/ellas":"sentían"}},
+      {inf:"seguir",en:"podążać",c:{yo:"seguía",tú:"seguías","él/ella":"seguía",nosotros:"seguíamos","ellos/ellas":"seguían"}},
+    ]
+  },
+  futuro: {
+    label: "Futuro imperfecto",
+    desc: "co zrobię / co się stanie",
+    color: "blue",
+    verbs: [
+      {inf:"hablar",en:"mówić",c:{yo:"hablaré",tú:"hablarás","él/ella":"hablará",nosotros:"hablaremos","ellos/ellas":"hablarán"}},
+      {inf:"comer",en:"jeść",c:{yo:"comeré",tú:"comerás","él/ella":"comerá",nosotros:"comeremos","ellos/ellas":"comerán"}},
+      {inf:"vivir",en:"żyć / mieszkać",c:{yo:"viviré",tú:"vivirás","él/ella":"vivirá",nosotros:"viviremos","ellos/ellas":"vivirán"}},
+      {inf:"tener",en:"mieć",c:{yo:"tendré",tú:"tendrás","él/ella":"tendrá",nosotros:"tendremos","ellos/ellas":"tendrán"}},
+      {inf:"ser",en:"być",c:{yo:"seré",tú:"serás","él/ella":"será",nosotros:"seremos","ellos/ellas":"serán"}},
+      {inf:"ir",en:"iść / jechać",c:{yo:"iré",tú:"irás","él/ella":"irá",nosotros:"iremos","ellos/ellas":"irán"}},
+      {inf:"hacer",en:"robić",c:{yo:"haré",tú:"harás","él/ella":"hará",nosotros:"haremos","ellos/ellas":"harán"}},
+      {inf:"poder",en:"móc",c:{yo:"podré",tú:"podrás","él/ella":"podrá",nosotros:"podremos","ellos/ellas":"podrán"}},
+      {inf:"querer",en:"chcieć / kochać",c:{yo:"querré",tú:"querrás","él/ella":"querrá",nosotros:"querremos","ellos/ellas":"querrán"}},
+      {inf:"saber",en:"wiedzieć / umieć",c:{yo:"sabré",tú:"sabrás","él/ella":"sabrá",nosotros:"sabremos","ellos/ellas":"sabrán"}},
+      {inf:"venir",en:"przychodzić",c:{yo:"vendré",tú:"vendrás","él/ella":"vendrá",nosotros:"vendremos","ellos/ellas":"vendrán"}},
+      {inf:"decir",en:"mówić / powiedzieć",c:{yo:"diré",tú:"dirás","él/ella":"dirá",nosotros:"diremos","ellos/ellas":"dirán"}},
+      {inf:"poner",en:"kłaść / stawiać",c:{yo:"pondré",tú:"pondrás","él/ella":"pondrá",nosotros:"pondremos","ellos/ellas":"pondrán"}},
+      {inf:"salir",en:"wychodzić",c:{yo:"saldré",tú:"saldrás","él/ella":"saldrá",nosotros:"saldremos","ellos/ellas":"saldrán"}},
+      {inf:"valer",en:"być wartym",c:{yo:"valdré",tú:"valdrás","él/ella":"valdrá",nosotros:"valdremos","ellos/ellas":"valdrán"}},
+      {inf:"caber",en:"mieścić się",c:{yo:"cabré",tú:"cabrás","él/ella":"cabrá",nosotros:"cabremos","ellos/ellas":"cabrán"}},
+      {inf:"haber",en:"być (aux.)",c:{yo:"habré",tú:"habrás","él/ella":"habrá",nosotros:"habremos","ellos/ellas":"habrán"}},
+      {inf:"estar",en:"być (gdzieś/w stanie)",c:{yo:"estaré",tú:"estarás","él/ella":"estará",nosotros:"estaremos","ellos/ellas":"estarán"}},
+      {inf:"trabajar",en:"pracować",c:{yo:"trabajaré",tú:"trabajarás","él/ella":"trabajará",nosotros:"trabajaremos","ellos/ellas":"trabajarán"}},
+      {inf:"estudiar",en:"uczyć się",c:{yo:"estudiaré",tú:"estudiarás","él/ella":"estudiará",nosotros:"estudiaremos","ellos/ellas":"estudiarán"}},
+      {inf:"comprar",en:"kupować",c:{yo:"compraré",tú:"comprarás","él/ella":"comprará",nosotros:"compraremos","ellos/ellas":"comprarán"}},
+      {inf:"viajar",en:"podróżować",c:{yo:"viajaré",tú:"viajarás","él/ella":"viajará",nosotros:"viajaremos","ellos/ellas":"viajarán"}},
+      {inf:"dormir",en:"spać",c:{yo:"dormiré",tú:"dormirás","él/ella":"dormirá",nosotros:"dormiremos","ellos/ellas":"dormirán"}},
+      {inf:"escribir",en:"pisać",c:{yo:"escribiré",tú:"escribirás","él/ella":"escribirá",nosotros:"escribiremos","ellos/ellas":"escribirán"}},
+      {inf:"leer",en:"czytać",c:{yo:"leeré",tú:"leerás","él/ella":"leerá",nosotros:"leeremos","ellos/ellas":"leerán"}},
+      {inf:"abrir",en:"otwierać",c:{yo:"abriré",tú:"abrirás","él/ella":"abrirá",nosotros:"abriremos","ellos/ellas":"abrirán"}},
+      {inf:"seguir",en:"podążać",c:{yo:"seguiré",tú:"seguirás","él/ella":"seguirá",nosotros:"seguiremos","ellos/ellas":"seguirán"}},
+      {inf:"ver",en:"widzieć / oglądać",c:{yo:"veré",tú:"verás","él/ella":"verá",nosotros:"veremos","ellos/ellas":"verán"}},
+      {inf:"dar",en:"dawać",c:{yo:"daré",tú:"darás","él/ella":"dará",nosotros:"daremos","ellos/ellas":"darán"}},
+      {inf:"llegar",en:"przyjeżdżać",c:{yo:"llegaré",tú:"llegarás","él/ella":"llegará",nosotros:"llegaremos","ellos/ellas":"llegarán"}},
+    ]
+  },
+  subjuntivo: {
+    label: "Subjuntivo presente",
+    desc: "życzenia, wątpliwości, emocje",
+    color: "purple",
+    verbs: [
+      {inf:"hablar",en:"mówić",c:{yo:"hable",tú:"hables","él/ella":"hable",nosotros:"hablemos","ellos/ellas":"hablen"}},
+      {inf:"comer",en:"jeść",c:{yo:"coma",tú:"comas","él/ella":"coma",nosotros:"comamos","ellos/ellas":"coman"}},
+      {inf:"vivir",en:"żyć / mieszkać",c:{yo:"viva",tú:"vivas","él/ella":"viva",nosotros:"vivamos","ellos/ellas":"vivan"}},
+      {inf:"ser",en:"być",c:{yo:"sea",tú:"seas","él/ella":"sea",nosotros:"seamos","ellos/ellas":"sean"}},
+      {inf:"estar",en:"być (gdzieś/w stanie)",c:{yo:"esté",tú:"estés","él/ella":"esté",nosotros:"estemos","ellos/ellas":"estén"}},
+      {inf:"ir",en:"iść / jechać",c:{yo:"vaya",tú:"vayas","él/ella":"vaya",nosotros:"vayamos","ellos/ellas":"vayan"}},
+      {inf:"tener",en:"mieć",c:{yo:"tenga",tú:"tengas","él/ella":"tenga",nosotros:"tengamos","ellos/ellas":"tengan"}},
+      {inf:"hacer",en:"robić",c:{yo:"haga",tú:"hagas","él/ella":"haga",nosotros:"hagamos","ellos/ellas":"hagan"}},
+      {inf:"poder",en:"móc",c:{yo:"pueda",tú:"puedas","él/ella":"pueda",nosotros:"podamos","ellos/ellas":"puedan"}},
+      {inf:"querer",en:"chcieć / kochać",c:{yo:"quiera",tú:"quieras","él/ella":"quiera",nosotros:"queramos","ellos/ellas":"quieran"}},
+      {inf:"saber",en:"wiedzieć / umieć",c:{yo:"sepa",tú:"sepas","él/ella":"sepa",nosotros:"sepamos","ellos/ellas":"sepan"}},
+      {inf:"venir",en:"przychodzić",c:{yo:"venga",tú:"vengas","él/ella":"venga",nosotros:"vengamos","ellos/ellas":"vengan"}},
+      {inf:"decir",en:"mówić / powiedzieć",c:{yo:"diga",tú:"digas","él/ella":"diga",nosotros:"digamos","ellos/ellas":"digan"}},
+      {inf:"dar",en:"dawać",c:{yo:"dé",tú:"des","él/ella":"dé",nosotros:"demos","ellos/ellas":"den"}},
+      {inf:"ver",en:"widzieć / oglądać",c:{yo:"vea",tú:"veas","él/ella":"vea",nosotros:"veamos","ellos/ellas":"vean"}},
+      {inf:"poner",en:"kłaść / stawiać",c:{yo:"ponga",tú:"pongas","él/ella":"ponga",nosotros:"pongamos","ellos/ellas":"pongan"}},
+      {inf:"salir",en:"wychodzić",c:{yo:"salga",tú:"salgas","él/ella":"salga",nosotros:"salgamos","ellos/ellas":"salgan"}},
+      {inf:"traer",en:"przynosić",c:{yo:"traiga",tú:"traigas","él/ella":"traiga",nosotros:"traigamos","ellos/ellas":"traigan"}},
+      {inf:"conocer",en:"znać / poznać",c:{yo:"conozca",tú:"conozcas","él/ella":"conozca",nosotros:"conozcamos","ellos/ellas":"conozcan"}},
+      {inf:"conducir",en:"prowadzić (auto)",c:{yo:"conduzca",tú:"conduzcas","él/ella":"conduzca",nosotros:"conduzcamos","ellos/ellas":"conduzcan"}},
+      {inf:"dormir",en:"spać",c:{yo:"duerma",tú:"duermas","él/ella":"duerma",nosotros:"durmamos","ellos/ellas":"duerman"}},
+      {inf:"pedir",en:"prosić / zamawiać",c:{yo:"pida",tú:"pidas","él/ella":"pida",nosotros:"pidamos","ellos/ellas":"pidan"}},
+      {inf:"sentir",en:"czuć",c:{yo:"sienta",tú:"sientas","él/ella":"sienta",nosotros:"sintamos","ellos/ellas":"sientan"}},
+      {inf:"seguir",en:"podążać",c:{yo:"siga",tú:"sigas","él/ella":"siga",nosotros:"sigamos","ellos/ellas":"sigan"}},
+      {inf:"elegir",en:"wybierać",c:{yo:"elija",tú:"elijas","él/ella":"elija",nosotros:"elijamos","ellos/ellas":"elijan"}},
+      {inf:"volver",en:"wracać",c:{yo:"vuelva",tú:"vuelvas","él/ella":"vuelva",nosotros:"volvamos","ellos/ellas":"vuelvan"}},
+      {inf:"poder",en:"móc",c:{yo:"pueda",tú:"puedas","él/ella":"pueda",nosotros:"podamos","ellos/ellas":"puedan"}},
+      {inf:"hablar",en:"mówić",c:{yo:"hable",tú:"hables","él/ella":"hable",nosotros:"hablemos","ellos/ellas":"hablen"}},
+      {inf:"trabajar",en:"pracować",c:{yo:"trabaje",tú:"trabajes","él/ella":"trabaje",nosotros:"trabajemos","ellos/ellas":"trabajen"}},
+      {inf:"escribir",en:"pisać",c:{yo:"escriba",tú:"escribas","él/ella":"escriba",nosotros:"escribamos","ellos/ellas":"escriban"}},
+      {inf:"leer",en:"czytać",c:{yo:"lea",tú:"leas","él/ella":"lea",nosotros:"leamos","ellos/ellas":"lean"}},
+      {inf:"abrir",en:"otwierać",c:{yo:"abra",tú:"abras","él/ella":"abra",nosotros:"abramos","ellos/ellas":"abran"}},
+      {inf:"buscar",en:"szukać",c:{yo:"busque",tú:"busques","él/ella":"busque",nosotros:"busquemos","ellos/ellas":"busquen"}},
+      {inf:"llegar",en:"przyjeżdżać",c:{yo:"llegue",tú:"llegues","él/ella":"llegue",nosotros:"lleguemos","ellos/ellas":"lleguen"}},
+      {inf:"pagar",en:"płacić",c:{yo:"pague",tú:"pagues","él/ella":"pague",nosotros:"paguemos","ellos/ellas":"paguen"}},
+      {inf:"empezar",en:"zaczynać",c:{yo:"empiece",tú:"empieces","él/ella":"empiece",nosotros:"empecemos","ellos/ellas":"empiecen"}},
+      {inf:"jugar",en:"grać",c:{yo:"juegue",tú:"juegues","él/ella":"juegue",nosotros:"juguemos","ellos/ellas":"jueguen"}},
+      {inf:"haber",en:"być (aux.)",c:{yo:"haya",tú:"hayas","él/ella":"haya",nosotros:"hayamos","ellos/ellas":"hayan"}},
+    ]
+  }
+};
+
+const SUPPLEMENTAL_VERBS = {
+  indefinido: [
+    {inf:"haber",en:"być (aux.)",c:{yo:"hube",tú:"hubiste","él/ella":"hubo",nosotros:"hubimos","ellos/ellas":"hubieron"}},
+    {inf:"valer",en:"być wartym",c:{yo:"valí",tú:"valiste","él/ella":"valió",nosotros:"valimos","ellos/ellas":"valieron"}},
+    {inf:"caber",en:"mieścić się",c:{yo:"cupe",tú:"cupiste","él/ella":"cupo",nosotros:"cupimos","ellos/ellas":"cupieron"}},
+    {inf:"conocer",en:"znać / poznać",c:{yo:"conocí",tú:"conociste","él/ella":"conoció",nosotros:"conocimos","ellos/ellas":"conocieron"}},
+    {inf:"abrir",en:"otwierać",c:{yo:"abrí",tú:"abriste","él/ella":"abrió",nosotros:"abrimos","ellos/ellas":"abrieron"}},
+    {inf:"beber",en:"pić",c:{yo:"bebí",tú:"bebiste","él/ella":"bebió",nosotros:"bebimos","ellos/ellas":"bebieron"}},
+    {inf:"pensar",en:"myśleć",c:{yo:"pensé",tú:"pensaste","él/ella":"pensó",nosotros:"pensamos","ellos/ellas":"pensaron"}},
+    {inf:"perder",en:"tracić / gubić",c:{yo:"perdí",tú:"perdiste","él/ella":"perdió",nosotros:"perdimos","ellos/ellas":"perdieron"}},
+    {inf:"entender",en:"rozumieć",c:{yo:"entendí",tú:"entendiste","él/ella":"entendió",nosotros:"entendimos","ellos/ellas":"entendieron"}},
+    {inf:"encontrar",en:"znajdować",c:{yo:"encontré",tú:"encontraste","él/ella":"encontró",nosotros:"encontramos","ellos/ellas":"encontraron"}},
+    {inf:"preferir",en:"woleć",c:{yo:"preferí",tú:"preferiste","él/ella":"prefirió",nosotros:"preferimos","ellos/ellas":"prefirieron"}},
+    {inf:"conseguir",en:"osiągać / zdobywać",c:{yo:"conseguí",tú:"conseguiste","él/ella":"consiguió",nosotros:"conseguimos","ellos/ellas":"consiguieron"}},
+    {inf:"mantener",en:"utrzymywać",c:{yo:"mantuve",tú:"mantuviste","él/ella":"mantuvo",nosotros:"mantuvimos","ellos/ellas":"mantuvieron"}},
+    {inf:"traducir",en:"tłumaczyć",c:{yo:"traduje",tú:"tradujiste","él/ella":"tradujo",nosotros:"tradujimos","ellos/ellas":"tradujeron"}},
+    {inf:"producir",en:"produkować",c:{yo:"produje",tú:"produjiste","él/ella":"produjo",nosotros:"produjimos","ellos/ellas":"produjeron"}},
+    {inf:"ofrecer",en:"oferować",c:{yo:"ofrecí",tú:"ofreciste","él/ella":"ofreció",nosotros:"ofrecimos","ellos/ellas":"ofrecieron"}},
+    {inf:"aparecer",en:"pojawiać się",c:{yo:"aparecí",tú:"apareciste","él/ella":"apareció",nosotros:"aparecimos","ellos/ellas":"aparecieron"}},
+    {inf:"reconocer",en:"rozpoznawać / przyznawać",c:{yo:"reconocí",tú:"reconociste","él/ella":"reconoció",nosotros:"reconocimos","ellos/ellas":"reconocieron"}}
+  ],
+  imperfecto: [
+    {inf:"haber",en:"być (aux.)",c:{yo:"había",tú:"habías","él/ella":"había",nosotros:"habíamos","ellos/ellas":"habían"}},
+    {inf:"valer",en:"być wartym",c:{yo:"valía",tú:"valías","él/ella":"valía",nosotros:"valíamos","ellos/ellas":"valían"}},
+    {inf:"caber",en:"mieścić się",c:{yo:"cabía",tú:"cabías","él/ella":"cabía",nosotros:"cabíamos","ellos/ellas":"cabían"}},
+    {inf:"abrir",en:"otwierać",c:{yo:"abría",tú:"abrías","él/ella":"abría",nosotros:"abríamos","ellos/ellas":"abrían"}},
+    {inf:"buscar",en:"szukać",c:{yo:"buscaba",tú:"buscabas","él/ella":"buscaba",nosotros:"buscábamos","ellos/ellas":"buscaban"}},
+    {inf:"llegar",en:"przyjeżdżać",c:{yo:"llegaba",tú:"llegabas","él/ella":"llegaba",nosotros:"llegábamos","ellos/ellas":"llegaban"}},
+    {inf:"pagar",en:"płacić",c:{yo:"pagaba",tú:"pagabas","él/ella":"pagaba",nosotros:"pagábamos","ellos/ellas":"pagaban"}},
+    {inf:"perder",en:"tracić / gubić",c:{yo:"perdía",tú:"perdías","él/ella":"perdía",nosotros:"perdíamos","ellos/ellas":"perdían"}},
+    {inf:"entender",en:"rozumieć",c:{yo:"entendía",tú:"entendías","él/ella":"entendía",nosotros:"entendíamos","ellos/ellas":"entendían"}},
+    {inf:"encontrar",en:"znajdować",c:{yo:"encontraba",tú:"encontrabas","él/ella":"encontraba",nosotros:"encontrábamos","ellos/ellas":"encontraban"}},
+    {inf:"preferir",en:"woleć",c:{yo:"prefería",tú:"preferías","él/ella":"prefería",nosotros:"preferíamos","ellos/ellas":"preferían"}},
+    {inf:"elegir",en:"wybierać",c:{yo:"elegía",tú:"elegías","él/ella":"elegía",nosotros:"elegíamos","ellos/ellas":"elegían"}},
+    {inf:"servir",en:"służyć / podawać",c:{yo:"servía",tú:"servías","él/ella":"servía",nosotros:"servíamos","ellos/ellas":"servían"}},
+    {inf:"volver",en:"wracać",c:{yo:"volvía",tú:"volvías","él/ella":"volvía",nosotros:"volvíamos","ellos/ellas":"volvían"}},
+    {inf:"empezar",en:"zaczynać",c:{yo:"empezaba",tú:"empezabas","él/ella":"empezaba",nosotros:"empezábamos","ellos/ellas":"empezaban"}},
+    {inf:"conseguir",en:"osiągać / zdobywać",c:{yo:"conseguía",tú:"conseguías","él/ella":"conseguía",nosotros:"conseguíamos","ellos/ellas":"conseguían"}},
+    {inf:"mantener",en:"utrzymywać",c:{yo:"mantenía",tú:"mantenías","él/ella":"mantenía",nosotros:"manteníamos","ellos/ellas":"mantenían"}},
+    {inf:"traducir",en:"tłumaczyć",c:{yo:"traducía",tú:"traducías","él/ella":"traducía",nosotros:"traducíamos","ellos/ellas":"traducían"}},
+    {inf:"producir",en:"produkować",c:{yo:"producía",tú:"producías","él/ella":"producía",nosotros:"producíamos","ellos/ellas":"producían"}},
+    {inf:"ofrecer",en:"oferować",c:{yo:"ofrecía",tú:"ofrecías","él/ella":"ofrecía",nosotros:"ofrecíamos","ellos/ellas":"ofrecían"}},
+    {inf:"aparecer",en:"pojawiać się",c:{yo:"aparecía",tú:"aparecías","él/ella":"aparecía",nosotros:"aparecíamos","ellos/ellas":"aparecían"}},
+    {inf:"reconocer",en:"rozpoznawać / przyznawać",c:{yo:"reconocía",tú:"reconocías","él/ella":"reconocía",nosotros:"reconocíamos","ellos/ellas":"reconocían"}}
+  ],
+  futuro: [
+    {inf:"pensar",en:"myśleć",c:{yo:"pensaré",tú:"pensarás","él/ella":"pensará",nosotros:"pensaremos","ellos/ellas":"pensarán"}},
+    {inf:"sentir",en:"czuć",c:{yo:"sentiré",tú:"sentirás","él/ella":"sentirá",nosotros:"sentiremos","ellos/ellas":"sentirán"}},
+    {inf:"pedir",en:"prosić / zamawiać",c:{yo:"pediré",tú:"pedirás","él/ella":"pedirá",nosotros:"pediremos","ellos/ellas":"pedirán"}},
+    {inf:"traer",en:"przynosić",c:{yo:"traeré",tú:"traerás","él/ella":"traerá",nosotros:"traeremos","ellos/ellas":"traerán"}},
+    {inf:"nacer",en:"urodzić się",c:{yo:"naceré",tú:"nacerás","él/ella":"nacerá",nosotros:"naceremos","ellos/ellas":"nacerán"}},
+    {inf:"reír",en:"śmiać się",c:{yo:"reiré",tú:"reirás","él/ella":"reirá",nosotros:"reiremos","ellos/ellas":"reirán"}},
+    {inf:"elegir",en:"wybierać",c:{yo:"elegiré",tú:"elegirás","él/ella":"elegirá",nosotros:"elegiremos","ellos/ellas":"elegirán"}},
+    {inf:"servir",en:"służyć / podawać",c:{yo:"serviré",tú:"servirás","él/ella":"servirá",nosotros:"serviremos","ellos/ellas":"servirán"}},
+    {inf:"volver",en:"wracać",c:{yo:"volveré",tú:"volverás","él/ella":"volverá",nosotros:"volveremos","ellos/ellas":"volverán"}},
+    {inf:"empezar",en:"zaczynać",c:{yo:"empezaré",tú:"empezarás","él/ella":"empezará",nosotros:"empezaremos","ellos/ellas":"empezarán"}},
+    {inf:"buscar",en:"szukać",c:{yo:"buscaré",tú:"buscarás","él/ella":"buscará",nosotros:"buscaremos","ellos/ellas":"buscarán"}},
+    {inf:"pagar",en:"płacić",c:{yo:"pagaré",tú:"pagarás","él/ella":"pagará",nosotros:"pagaremos","ellos/ellas":"pagarán"}},
+    {inf:"jugar",en:"grać",c:{yo:"jugaré",tú:"jugarás","él/ella":"jugará",nosotros:"jugaremos","ellos/ellas":"jugarán"}},
+    {inf:"creer",en:"wierzyć / sądzić",c:{yo:"creeré",tú:"creerás","él/ella":"creerá",nosotros:"creeremos","ellos/ellas":"creerán"}},
+    {inf:"conocer",en:"znać / poznać",c:{yo:"conoceré",tú:"conocerás","él/ella":"conocerá",nosotros:"conoceremos","ellos/ellas":"conocerán"}},
+    {inf:"perder",en:"tracić / gubić",c:{yo:"perderé",tú:"perderás","él/ella":"perderá",nosotros:"perderemos","ellos/ellas":"perderán"}},
+    {inf:"entender",en:"rozumieć",c:{yo:"entenderé",tú:"entenderás","él/ella":"entenderá",nosotros:"entenderemos","ellos/ellas":"entenderán"}},
+    {inf:"encontrar",en:"znajdować",c:{yo:"encontraré",tú:"encontrarás","él/ella":"encontrará",nosotros:"encontraremos","ellos/ellas":"encontrarán"}},
+    {inf:"preferir",en:"woleć",c:{yo:"preferiré",tú:"preferirás","él/ella":"preferirá",nosotros:"preferiremos","ellos/ellas":"preferirán"}},
+    {inf:"conseguir",en:"osiągać / zdobywać",c:{yo:"conseguiré",tú:"conseguirás","él/ella":"conseguirá",nosotros:"conseguiremos","ellos/ellas":"conseguirán"}},
+    {inf:"mantener",en:"utrzymywać",c:{yo:"mantendré",tú:"mantendrás","él/ella":"mantendrá",nosotros:"mantendremos","ellos/ellas":"mantendrán"}},
+    {inf:"traducir",en:"tłumaczyć",c:{yo:"traduciré",tú:"traducirás","él/ella":"traducirá",nosotros:"traduciremos","ellos/ellas":"traducirán"}},
+    {inf:"producir",en:"produkować",c:{yo:"produciré",tú:"producirás","él/ella":"producirá",nosotros:"produciremos","ellos/ellas":"producirán"}},
+    {inf:"ofrecer",en:"oferować",c:{yo:"ofreceré",tú:"ofrecerás","él/ella":"ofrecerá",nosotros:"ofreceremos","ellos/ellas":"ofrecerán"}},
+    {inf:"aparecer",en:"pojawiać się",c:{yo:"apareceré",tú:"aparecerás","él/ella":"aparecerá",nosotros:"apareceremos","ellos/ellas":"aparecerán"}},
+    {inf:"reconocer",en:"rozpoznawać / przyznawać",c:{yo:"reconoceré",tú:"reconocerás","él/ella":"reconocerá",nosotros:"reconoceremos","ellos/ellas":"reconocerán"}}
+  ],
+  subjuntivo: [
+    {inf:"valer",en:"być wartym",c:{yo:"valga",tú:"valgas","él/ella":"valga",nosotros:"valgamos","ellos/ellas":"valgan"}},
+    {inf:"caber",en:"mieścić się",c:{yo:"quepa",tú:"quepas","él/ella":"quepa",nosotros:"quepamos","ellos/ellas":"quepan"}},
+    {inf:"escribir",en:"pisać",c:{yo:"escriba",tú:"escribas","él/ella":"escriba",nosotros:"escribamos","ellos/ellas":"escriban"}},
+    {inf:"pensar",en:"myśleć",c:{yo:"piense",tú:"pienses","él/ella":"piense",nosotros:"pensemos","ellos/ellas":"piensen"}},
+    {inf:"perder",en:"tracić / gubić",c:{yo:"pierda",tú:"pierdas","él/ella":"pierda",nosotros:"perdamos","ellos/ellas":"pierdan"}},
+    {inf:"entender",en:"rozumieć",c:{yo:"entienda",tú:"entiendas","él/ella":"entienda",nosotros:"entendamos","ellos/ellas":"entiendan"}},
+    {inf:"encontrar",en:"znajdować",c:{yo:"encuentre",tú:"encuentres","él/ella":"encuentre",nosotros:"encontremos","ellos/ellas":"encuentren"}},
+    {inf:"preferir",en:"woleć",c:{yo:"prefiera",tú:"prefieras","él/ella":"prefiera",nosotros:"prefiramos","ellos/ellas":"prefieran"}},
+    {inf:"creer",en:"wierzyć / sądzić",c:{yo:"crea",tú:"creas","él/ella":"crea",nosotros:"creamos","ellos/ellas":"crean"}},
+    {inf:"morir",en:"umierać",c:{yo:"muera",tú:"mueras","él/ella":"muera",nosotros:"muramos","ellos/ellas":"mueran"}},
+    {inf:"nacer",en:"urodzić się",c:{yo:"nazca",tú:"nazcas","él/ella":"nazca",nosotros:"nazcamos","ellos/ellas":"nazcan"}},
+    {inf:"reír",en:"śmiać się",c:{yo:"ría",tú:"rías","él/ella":"ría",nosotros:"riamos","ellos/ellas":"rían"}},
+    {inf:"conseguir",en:"osiągać / zdobywać",c:{yo:"consiga",tú:"consigas","él/ella":"consiga",nosotros:"consigamos","ellos/ellas":"consigan"}},
+    {inf:"mantener",en:"utrzymywać",c:{yo:"mantenga",tú:"mantengas","él/ella":"mantenga",nosotros:"mantengamos","ellos/ellas":"mantengan"}},
+    {inf:"traducir",en:"tłumaczyć",c:{yo:"traduzca",tú:"traduzcas","él/ella":"traduzca",nosotros:"traduzcamos","ellos/ellas":"traduzcan"}},
+    {inf:"producir",en:"produkować",c:{yo:"produzca",tú:"produzcas","él/ella":"produzca",nosotros:"produzcamos","ellos/ellas":"produzcan"}},
+    {inf:"ofrecer",en:"oferować",c:{yo:"ofrezca",tú:"ofrezcas","él/ella":"ofrezca",nosotros:"ofrezcamos","ellos/ellas":"ofrezcan"}},
+    {inf:"aparecer",en:"pojawiać się",c:{yo:"aparezca",tú:"aparezcas","él/ella":"aparezca",nosotros:"aparezcamos","ellos/ellas":"aparezcan"}},
+    {inf:"reconocer",en:"rozpoznawać / przyznawać",c:{yo:"reconozca",tú:"reconozcas","él/ella":"reconozca",nosotros:"reconozcamos","ellos/ellas":"reconozcan"}}
+  ]
+};
+
+Object.entries(SUPPLEMENTAL_VERBS).forEach(([tense, verbs]) => {
+  const existing = new Set(DATA[tense].verbs.map(v => v.inf));
+  verbs.forEach(v => { if(!existing.has(v.inf)) DATA[tense].verbs.push(v); });
+});
+const DIFFICULTIES = {
+  easy: {
+    label: "Łatwy",
+    verbCount: 3,
+    desc: "najczęstsze czasowniki: 15 pytań z puli 20",
+    verbs: ["ser","estar","tener","ir","hacer","poder","querer","decir","saber","venir","dar","ver","poner","salir","haber","traer","dormir","pedir","hablar","comer"]
+  },
+  normal: {
+    label: "Średni",
+    verbCount: 3,
+    desc: "częste, trochę trudniejsze: 15 pytań z puli 20",
+    verbs: ["seguir","sentir","volver","empezar","jugar","leer","oír","caer","creer","conocer","conducir","construir","elegir","servir","morir","valer","caber","andar","escribir","trabajar"]
+  },
+  hard: {
+    label: "Trudny",
+    verbCount: 3,
+    desc: "częste nieregularne i problematyczne: 15 pytań z puli 20",
+    verbs: ["pensar","perder","entender","encontrar","preferir","conseguir","mantener","traducir","producir","ofrecer","aparecer","reconocer","reír","nacer","buscar","pagar","llegar","abrir","beber","vivir"]
+  }
+};
+const STATS_KEY = "spanishConjugationStats.v2";
+let selectedDifficulty = localStorage.getItem("spanishConjugationDifficulty") || "normal";
+let currentTense = null, queue = [], current = 0, score = 0, checked = false, sessionWrong = [];
+
+function shuffle(a){
+  const copy = [...a];
+  for(let i = copy.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+function normalize(s){ return s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
+function cleanText(s){ return s.trim().toLowerCase(); }
+function hasAccentDifference(answer, correct){ return normalize(answer) === normalize(correct) && cleanText(answer) !== cleanText(correct); }
+function randomPick(items){ return items[Math.floor(Math.random() * items.length)]; }
+function subjectFor(pronoun){ return {yo:"yo", tú:"tú", "él/ella":"ella", nosotros:"nosotros", "ellos/ellas":"ellos"}[pronoun] || pronoun; }
+function exampleFor(q, correct){
+  const subject = subjectFor(q.pronoun);
+  const sets = {
+    indefinido: ["Ayer " + subject + " " + correct + ".", "La semana pasada " + subject + " " + correct + ".", "En ese momento " + subject + " " + correct + ".", "Anoche " + subject + " " + correct + ".", "De repente " + subject + " " + correct + "."],
+    imperfecto: ["Antes " + subject + " " + correct + " a menudo.", "De niño, " + subject + " " + correct + ".", "Cada verano " + subject + " " + correct + ".", "Normalmente " + subject + " " + correct + ".", "Mientras tanto, " + subject + " " + correct + "."],
+    futuro: ["Mañana " + subject + " " + correct + ".", "El próximo año " + subject + " " + correct + ".", "Después " + subject + " " + correct + ".", "Pronto " + subject + " " + correct + ".", "Esta tarde " + subject + " " + correct + "."],
+    subjuntivo: ["Es posible que " + subject + " " + correct + ".", "Quiero que " + subject + " " + correct + ".", "Dudo que " + subject + " " + correct + ".", "Ojalá que " + subject + " " + correct + ".", "Es importante que " + subject + " " + correct + "."]
+  };
+  return randomPick(sets[currentTense] || [subject + " " + correct + "."]);
+}
+function showExample(q, correct){
+  const box = document.getElementById("example-line");
+  if(box) box.innerHTML = "<span>Przykład:</span> " + exampleFor(q, correct);
+}
+function statKey(tense, inf){ return `${tense}::${inf}`; }
+function getStats(){
+  try { return JSON.parse(localStorage.getItem(STATS_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveStats(stats){ localStorage.setItem(STATS_KEY, JSON.stringify(stats)); }
+function getUniqueVerbs(tense, level = null){
+  const seen = new Set();
+  const allowed = level ? new Set(DIFFICULTIES[level].verbs) : null;
+  return DATA[tense].verbs.filter(v => {
+    if(allowed && !allowed.has(v.inf)) return false;
+    if(seen.has(v.inf)) return false;
+    seen.add(v.inf);
+    return pronouns.every(p => Object.prototype.hasOwnProperty.call(v.c, p));
+  });
+}
+function buildQueueFromVerbs(verbs){
+  const groups = shuffle(verbs).map(v => ({
+    inf: v.inf,
+    items: shuffle(pronouns).map(p => ({verb:v, pronoun:p}))
+  }));
+  const queue = [];
+  while(groups.some(g => g.items.length)){
+    const lastInf = queue.length ? queue[queue.length - 1].verb.inf : null;
+    let candidates = groups
+      .filter(g => g.items.length && g.inf !== lastInf)
+      .sort((a, b) => b.items.length - a.items.length);
+    if(!candidates.length) candidates = groups.filter(g => g.items.length);
+    const bestSize = candidates[0]?.items.length || 0;
+    const best = candidates.filter(g => g.items.length === bestSize);
+    const chosen = randomPick(best);
+    queue.push(chosen.items.pop());
+  }
+  return queue;
+}
+function buildRandomFormQueue(verbs, count = 15){
+  const remaining = shuffle(verbs.flatMap(v => pronouns.map(p => ({verb:v, pronoun:p}))));
+  const queue = [];
+  while(queue.length < count && remaining.length){
+    const lastInf = queue.length ? queue[queue.length - 1].verb.inf : null;
+    const candidates = remaining.filter(item => item.verb.inf !== lastInf);
+    const pool = candidates.length ? candidates : remaining;
+    const chosen = randomPick(pool);
+    queue.push(chosen);
+    remaining.splice(remaining.indexOf(chosen), 1);
+  }
+  return queue;
+}
+function recordAnswer(q, ok){
+  const stats = getStats();
+  const key = statKey(currentTense, q.verb.inf);
+  const item = stats[key] || { tense: currentTense, inf: q.verb.inf, en: q.verb.en, attempts: 0, correct: 0, wrong: 0 };
+  item.attempts += 1;
+  if(ok) item.correct += 1; else item.wrong += 1;
+  item.lastPracticed = Date.now();
+  stats[key] = item;
+  saveStats(stats);
+  if(!ok && !sessionWrong.some(item => item.verb.inf === q.verb.inf && item.pronoun === q.pronoun)){
+    sessionWrong.push({verb: q.verb, pronoun: q.pronoun});
+  }
+  renderStats();
+}
+function getWorstStats(limit = 5, tense = null){
+  return Object.values(getStats())
+    .filter(s => s.attempts > 0 && (!tense || s.tense === tense))
+    .map(s => ({...s, accuracy: s.correct / s.attempts}))
+    .sort((a,b) => (a.accuracy - b.accuracy) || (b.wrong - a.wrong) || (b.attempts - a.attempts))
+    .slice(0, limit);
+}
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  if(id === "page-home") renderStats();
+}
+
+function goHome(){ showPage("page-home"); }
+
+function renderDifficultyOptions(){
+  const wrap = document.getElementById("difficulty-options");
+  if(!wrap) return;
+  wrap.innerHTML = Object.entries(DIFFICULTIES).map(([key, d]) => `
+    <button type="button" class="difficulty-option ${selectedDifficulty === key ? "active" : ""}" onclick="setDifficulty('${key}')" aria-pressed="${selectedDifficulty === key}">
+      <span class="difficulty-name">${d.label}</span>
+      <span class="difficulty-meta">${d.desc}</span>
+    </button>`).join("");
+}
+function renderVerbList(){
+  const panel = document.getElementById("verb-list-panel");
+  if(!panel) return;
+  panel.innerHTML = Object.entries(DIFFICULTIES).map(([, d]) => `
+    <div class="verb-list-level">
+      <div class="verb-list-title">${d.label}</div>
+      <div class="verb-chip-list">${d.verbs.map(v => `<span class="verb-chip">${v}</span>`).join("")}</div>
+    </div>`).join("");
+}
+function toggleVerbList(){
+  const panel = document.getElementById("verb-list-panel");
+  const toggle = document.getElementById("verb-list-toggle");
+  const arrow = document.getElementById("verb-list-arrow");
+  if(!panel || !toggle || !arrow) return;
+  const open = panel.classList.toggle("open");
+  toggle.setAttribute("aria-expanded", String(open));
+  arrow.textContent = open ? "−" : "+";
+}
+function setDifficulty(level){
+  selectedDifficulty = level;
+  localStorage.setItem("spanishConjugationDifficulty", level);
+  renderDifficultyOptions();
+}
+
+function renderStats(){
+  const summary = document.getElementById("stats-summary");
+  const worstBox = document.getElementById("worst-verbs");
+  if(!summary || !worstBox) return;
+  const all = Object.values(getStats());
+  const attempts = all.reduce((sum, s) => sum + s.attempts, 0);
+  const correct = all.reduce((sum, s) => sum + s.correct, 0);
+  const wrong = all.reduce((sum, s) => sum + s.wrong, 0);
+  const pct = attempts ? Math.round((correct / attempts) * 100) : 0;
+  summary.innerHTML = attempts ? `
+    <div class="stats-grid">
+      <div class="stat-box"><span class="stat-num">${attempts}</span><span class="stat-label">odpowiedzi</span></div>
+      <div class="stat-box"><span class="stat-num">${pct}%</span><span class="stat-label">poprawnych</span></div>
+      <div class="stat-box"><span class="stat-num">${wrong}</span><span class="stat-label">do powtórki</span></div>
+    </div>` : `<p class="muted-note">Statystyki pojawią się po pierwszej sprawdzonej odpowiedzi.</p>`;
+
+  const worst = getWorstStats(5);
+  worstBox.innerHTML = worst.length ? `<div class="worst-list">${worst.map(s => {
+    const acc = Math.round(s.accuracy * 100);
+    return `<div class="worst-item">
+      <div><div class="worst-name">${s.inf}</div><div class="worst-meta">${DATA[s.tense].label}: ${acc}% (${s.correct}/${s.attempts})</div></div>
+      <button class="btn" onclick="repeatWorst('${s.tense}', '${s.inf.replace(/'/g,"\\'")}')">Powtórz</button>
+    </div>`;
+  }).join("")}</div>` : `<p class="muted-note">Na razie nie ma słabych punktów. Zrób rundę, a tu pojawią się czasowniki z największą liczbą pomyłek.</p>`;
+}
+
+function startTense(tense, customVerbs = null, customTitle = null, customDesc = null){
+  currentTense = tense;
+  const d = DATA[tense];
+  document.getElementById("ex-title").textContent = customTitle || d.label;
+  document.getElementById("ex-sub").textContent = customDesc || (customVerbs ? "Powtórka wybranych czasowników" : `${d.desc} · ${DIFFICULTIES[selectedDifficulty].label}`);
+  const pf = document.getElementById("progress");
+  pf.className = "progress-fill pf-" + tense;
+
+  const btnClass = { indefinido:"btn-green", futuro:"btn-blue", imperfecto:"btn-amber", subjuntivo:"btn-purple" }[tense];
+  window._btnClass = btnClass;
+
+  const available = getUniqueVerbs(tense, selectedDifficulty);
+  const verbs = customVerbs || available;
+  queue = customVerbs ? buildQueueFromVerbs(verbs) : buildRandomFormQueue(verbs, DIFFICULTIES[selectedDifficulty].verbCount * pronouns.length);
+  current = 0; score = 0; checked = false; sessionWrong = [];
+  showPage("page-exercise");
+  renderExercise();
+}
+
+function repeatWorst(tense = currentTense, inf = null){
+  const unique = getUniqueVerbs(tense);
+  const verbs = inf ? unique.filter(v => v.inf === inf) : getWorstStats(3, tense).map(s => unique.find(v => v.inf === s.inf)).filter(Boolean);
+  if(!verbs.length) return;
+  startTense(tense, verbs, "Powtórka: najsłabsze czasowniki", "Powtórka czasowników, które mają najniższą skuteczność");
+}
+
+function startWrongReview(){
+  if(!sessionWrong.length) return;
+  const wrongQueue = shuffle(sessionWrong);
+  document.getElementById("ex-title").textContent = "Powtórka: błędne formy";
+  document.getElementById("ex-sub").textContent = "Powtórka tylko tych form, które były błędne w ostatniej rundzie";
+  queue = wrongQueue;
+  current = 0; score = 0; checked = false; sessionWrong = [];
+  showPage("page-exercise");
+  renderExercise();
+}
+
+function renderExercise(){
+  if(current >= queue.length){ renderScore(); return; }
+  const q = queue[current];
+  const v = q.verb, p = q.pronoun;
+  checked = false;
+  document.getElementById("counter").textContent = `Pytanie ${current+1} / ${queue.length}`;
+  document.getElementById("progress").style.width = `${(current/queue.length)*100}%`;
+  document.getElementById("exercise-area").innerHTML = `
+    <div class="card">
+      <div class="verb-name">${v.inf}<small>${v.en}</small></div>
+      <div class="session-note">Każdy wybrany czasownik pojawia się we wszystkich osobach oprócz vosotros.</div>
+      <div class="pronoun-row">
+        <span class="pronoun">${p}</span>
+        <input class="inp" id="ans" type="text" placeholder="wpisz formę..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <span class="hint" id="hint"></span>
+      </div>
+      <div class="translation-box" id="tbox"><strong>${v.inf}</strong> = ${v.en}<div class="example-line" id="example-line"></div></div>
+      <div class="actions">
+        <button class="btn ${window._btnClass}" id="check-btn" onclick="checkAnswer()">Sprawdź</button>
+        <button class="btn" onclick="skipQ()">Pomiń →</button>
+      </div>
+    </div>`;
+  const inp = document.getElementById("ans");
+  inp.focus();
+  inp.addEventListener("keydown", e => { if(e.key==="Enter") checked ? nextQ() : checkAnswer(); });
+}
+
+function checkAnswer(){
+  if(checked) return;
+  checked = true;
+  const q = queue[current], correct = q.verb.c[q.pronoun];
+  const inp = document.getElementById("ans");
+  const hint = document.getElementById("hint");
+  const btn = document.getElementById("check-btn");
+  const ok = normalize(inp.value) === normalize(correct);
+  const accentIssue = ok && hasAccentDifference(inp.value, correct);
+  if(accentIssue){
+    inp.classList.add("accent-warning");
+    hint.textContent = "✓ zaliczone, akcent: " + correct;
+    hint.className = "hint show-accent";
+    score++;
+  } else if(ok){
+    inp.classList.add("correct");
+    hint.textContent="✓ dobrze!";
+    hint.className="hint show-correct";
+    score++;
+  } else {
+    inp.classList.add("wrong");
+    hint.textContent=correct;
+    hint.className="hint show-wrong";
+  }
+  recordAnswer(q, ok);
+  showExample(q, correct);
+  document.getElementById("tbox").style.display="block";
+  btn.textContent="Dalej →";
+  btn.onclick=nextQ;
+}
+
+function skipQ(){
+  if(!checked){
+    checked=true;
+    const q = queue[current];
+    const correct=q.verb.c[q.pronoun];
+    const inp=document.getElementById("ans");
+    inp.classList.add("wrong");
+    document.getElementById("hint").textContent=correct;
+    document.getElementById("hint").className="hint show-wrong";
+    showExample(q, correct);
+    document.getElementById("tbox").style.display="block";
+    const btn=document.getElementById("check-btn");
+    btn.textContent="Dalej →"; btn.onclick=nextQ;
+    recordAnswer(q, false);
+  } else nextQ();
+}
+
+function nextQ(){ current++; renderExercise(); }
+
+function renderScore(){
+  document.getElementById("progress").style.width="100%";
+  document.getElementById("counter").textContent="";
+  const total = queue.length;
+  const pct=Math.round((score/total)*100);
+  const msg=pct>=80?"¡Muy bien!":pct>=50?"Niezłe, ćwicz dalej!":"Warto powtórzyć materiał.";
+  const sc = { indefinido:"score-green", futuro:"score-blue", imperfecto:"score-amber", subjuntivo:"score-purple" }[currentTense];
+  const retryWrong = sessionWrong.length ? `<button class="btn" onclick="startWrongReview()">Powtórz błędne (${sessionWrong.length})</button>` : "";
+  const retryWorst = getWorstStats(3, currentTense).length ? `<button class="btn" onclick="repeatWorst('${currentTense}')">Powtórz najsłabsze</button>` : "";
+  document.getElementById("exercise-area").innerHTML=`
+    <div class="card score-card">
+      <div class="score-num ${sc}">${score}/${total}</div>
+      <div class="score-label">${pct}% poprawnych<br><span style="font-size:15px;color:var(--color-text-primary)">${msg}</span></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn ${window._btnClass}" onclick="startTense('${currentTense}')">Jeszcze raz</button>
+        ${retryWrong}
+        ${retryWorst}
+        <button class="btn" onclick="goHome()">Inne ćwiczenie</button>
+      </div>
+    </div>`;
+}
+
+renderVerbList();
+renderDifficultyOptions();
+renderStats();</script>
+</body>
+</html>
