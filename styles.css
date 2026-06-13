@@ -618,3 +618,67 @@ body.mobile-ui.narrow-ui .actions {
 body.mobile-ui.narrow-ui .btn {
   width: 100%;
 }
+
+.pwa-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(92vw, 520px);
+  padding: 11px 13px;
+  border: 0.5px solid rgba(31,41,51,0.12);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.96);
+  color: var(--color-text-primary);
+  box-shadow: 0 18px 45px rgba(31,41,51,0.16);
+  font-size: 14px;
+  line-height: 1.35;
+  transform: translate(-50%, 140%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 180ms ease, opacity 180ms ease;
+  backdrop-filter: blur(12px);
+}
+.pwa-toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.pwa-toast button {
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: var(--color-accent-primary);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pwa-toast .pwa-close {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: #EEF2F7;
+  color: var(--color-text-primary);
+}
+
+@media (max-width: 520px) {
+  .pwa-toast {
+    bottom: 10px;
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .pwa-toast button {
+    width: 100%;
+  }
+  .pwa-toast .pwa-close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    width: 30px;
+  }
+}

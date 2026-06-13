@@ -1779,3 +1779,59 @@ renderPracticeSelection();
 renderAccentDifficultyOptions();
 renderStats();
 renderAccentStats();
+
+function showPwaToast(message, actionText = "", action = null, autoHide = true){
+  let toast = document.getElementById("pwa-toast");
+  if(!toast){
+    toast = document.createElement("div");
+    toast.id = "pwa-toast";
+    toast.className = "pwa-toast";
+    document.body.appendChild(toast);
+  }
+  const actionButton = actionText ? `<button type="button" id="pwa-toast-action">${actionText}</button>` : "";
+  toast.innerHTML = `<span>${message}</span>${actionButton}<button type="button" class="pwa-close" id="pwa-toast-close" aria-label="Zamknij">×</button>`;
+  requestAnimationFrame(() => toast.classList.add("show"));
+  document.getElementById("pwa-toast-close").onclick = () => toast.classList.remove("show");
+  const btn = document.getElementById("pwa-toast-action");
+  if(btn && action) btn.onclick = action;
+  if(autoHide){
+    clearTimeout(window._pwaToastTimer);
+    window._pwaToastTimer = setTimeout(() => toast.classList.remove("show"), 5200);
+  }
+}
+
+function registerPwa(){
+  if(!("serviceWorker" in navigator)) return;
+  if(location.protocol === "file:") return;
+
+  window.addEventListener("online", () => showPwaToast("Internet wrócił. Apka może pobrać najnowszą wersję."));
+  window.addEventListener("offline", () => showPwaToast("Jesteś offline. Apka dalej działa z zapisanej wersji.", "", null, false));
+
+  navigator.serviceWorker.register("./service-worker.js").then(registration => {
+    if(!localStorage.getItem("spanishPwaReadyShown")){
+      localStorage.setItem("spanishPwaReadyShown", "true");
+      showPwaToast("Apka zapisała się do działania offline.");
+    }
+
+    registration.addEventListener("updatefound", () => {
+      const worker = registration.installing;
+      if(!worker) return;
+      worker.addEventListener("statechange", () => {
+        if(worker.state === "installed" && navigator.serviceWorker.controller){
+          showPwaToast("Jest dostępna nowa wersja aplikacji.", "Odśwież", () => {
+            worker.postMessage({type:"SKIP_WAITING"});
+          }, false);
+        }
+      });
+    });
+  }).catch(() => {});
+
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if(refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
+}
+
+registerPwa();
