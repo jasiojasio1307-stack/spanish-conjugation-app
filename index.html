@@ -1,4 +1,4 @@
-﻿<!doctype html>
+﻿﻿<!doctype html>
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
@@ -17,6 +17,9 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .tense-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1rem; cursor: pointer; transition: border-color 0.15s, background 0.15s; text-align: left; }
 .tense-card:hover { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
 .tense-card.active { border-color: #1D9E75; background: #E1F5EE; box-shadow: 0 10px 24px rgba(56, 120, 110, 0.12); }
+.tense-select-wrap { display: none; margin: 12px 0 10px; }
+.tense-select-label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 650; color: var(--color-text-primary); }
+.tense-select { width: 100%; min-height: 46px; padding: 10px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: 8px; background: #FFFFFF; color: var(--color-text-primary); font: inherit; font-size: 15px; }
 .tense-icon { font-size: 22px; margin-bottom: 10px; }
 .tense-label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
 .tense-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
@@ -45,6 +48,7 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .pf-futuro { background: #378ADD; }
 .pf-imperfecto { background: #BA7517; }
 .pf-subjuntivo { background: #7F77DD; }
+.pf-subjuntivo_imperfecto { background: #6C63C7; }
 .pf-perfecto { background: #D8527A; }
 
 .counter { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; }
@@ -93,6 +97,7 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .score-blue { color: #378ADD; }
 .score-amber { color: #BA7517; }
 .score-purple { color: #7F77DD; }
+.score-indigo { color: #6C63C7; }
 .score-pink { color: #D8527A; }
 
 .mode-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; margin-bottom: 1rem; }
@@ -200,11 +205,12 @@ body {
 }
 .tense-card:nth-child(1) { border-top: 4px solid #1D9E75; }
 .tense-card:nth-child(2) { border-top: 4px solid #BA7517; }
-.tense-card:nth-child(3) { border-top: 4px solid #378ADD; }
-.tense-card:nth-child(4) { border-top: 4px solid #7F77DD; }
-.tense-card:nth-child(5) { border-top: 4px solid #D8527A; }
-.tense-card:nth-child(6) { border-top: 4px solid #B7791F; }
-.tense-card:nth-child(7) { border-top: 4px solid #C0447A; }
+.tense-card:nth-child(3) { border-top: 4px solid #D8527A; }
+.tense-card:nth-child(4) { border-top: 4px solid #378ADD; }
+.tense-card:nth-child(5) { border-top: 4px solid #7F77DD; }
+.tense-card:nth-child(6) { border-top: 4px solid #6C63C7; }
+.tense-card:nth-child(7) { border-top: 4px solid #B7791F; }
+.tense-card:nth-child(8) { border-top: 4px solid #C0447A; }
 .tense-icon {
   width: 34px;
   height: 34px;
@@ -216,11 +222,12 @@ body {
 }
 .tense-card:nth-child(1) .tense-icon { background: #E1F5EE; }
 .tense-card:nth-child(2) .tense-icon { background: #FFF3D9; }
-.tense-card:nth-child(3) .tense-icon { background: #E8F2FF; }
-.tense-card:nth-child(4) .tense-icon { background: #F0EEFF; }
-.tense-card:nth-child(5) .tense-icon { background: #FFEAF1; }
-.tense-card:nth-child(6) .tense-icon { background: #FFF3D9; }
-.tense-card:nth-child(7) .tense-icon { background: #FFE9F4; }
+.tense-card:nth-child(3) .tense-icon { background: #FFEAF1; }
+.tense-card:nth-child(4) .tense-icon { background: #E8F2FF; }
+.tense-card:nth-child(5) .tense-icon { background: #F0EEFF; }
+.tense-card:nth-child(6) .tense-icon { background: #ECEBFF; }
+.tense-card:nth-child(7) .tense-icon { background: #FFF3D9; }
+.tense-card:nth-child(8) .tense-icon { background: #FFE9F4; }
 .progress-bar { height: 7px; background: rgba(31,41,51,0.09); }
 .inp { background: #FFFFFF; border-color: rgba(31,41,51,0.16); border-radius: 8px; }
 .btn { border-radius: 8px; font-weight: 600; }
@@ -251,14 +258,23 @@ body.mobile-ui .card {
   box-shadow: 0 8px 18px rgba(31,41,51,0.07);
 }
 body.mobile-ui .tense-grid,
-body.mobile-ui .difficulty-options,
 body.mobile-ui .home-tabs,
 body.mobile-ui .settings-row,
 body.mobile-ui .stats-grid {
   grid-template-columns: 1fr;
 }
+body.mobile-ui .tense-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+body.mobile-ui .difficulty-options {
+  grid-template-columns: 1fr;
+}
 body.mobile-ui .start-panel {
   grid-template-columns: 1fr;
+}
+body.mobile-ui .tense-select-wrap {
+  display: block;
 }
 body.mobile-ui .start-panel .btn {
   width: 100%;
@@ -277,21 +293,21 @@ body.mobile-ui .accent-start-card .btn {
   width: 100%;
 }
 body.mobile-ui .tense-card {
-  display: grid;
-  grid-template-columns: 42px 1fr;
-  column-gap: 10px;
-  align-items: center;
+  display: block;
+  min-height: 104px;
+  padding: 0.8rem;
 }
 body.mobile-ui .tense-icon {
-  grid-row: span 2;
-  margin-bottom: 0;
+  margin-bottom: 7px;
 }
 body.mobile-ui .tense-label {
-  font-size: 15px;
+  font-size: 14px;
+  line-height: 1.2;
   margin-bottom: 2px;
 }
 body.mobile-ui .tense-desc {
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.25;
 }
 body.mobile-ui .verb-chip-list {
   gap: 7px;
@@ -422,15 +438,21 @@ body.mobile-ui .score-num {
     border-radius: 8px;
     box-shadow: 0 8px 18px rgba(31,41,51,0.07);
   }
-  .tense-grid,
   .difficulty-options,
   .home-tabs,
   .settings-row,
   .stats-grid {
     grid-template-columns: 1fr;
   }
+  .tense-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
   .start-panel {
     grid-template-columns: 1fr;
+  }
+  .tense-select-wrap {
+    display: block;
   }
   .start-panel .btn {
     width: 100%;
@@ -442,21 +464,21 @@ body.mobile-ui .score-num {
     padding: 0.95rem;
   }
   .tense-card {
-    display: grid;
-    grid-template-columns: 42px 1fr;
-    column-gap: 10px;
-    align-items: center;
+    display: block;
+    min-height: 104px;
+    padding: 0.8rem;
   }
   .tense-icon {
-    grid-row: span 2;
-    margin-bottom: 0;
+    margin-bottom: 7px;
   }
   .tense-label {
-    font-size: 15px;
+    font-size: 14px;
+    line-height: 1.2;
     margin-bottom: 2px;
   }
   .tense-desc {
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.25;
   }
   .verb-chip-list {
     gap: 7px;
@@ -646,6 +668,20 @@ body.mobile-ui.narrow-ui .btn {
     <div class="difficulty-options" id="difficulty-options"></div>
   </section>
 
+  <div class="tense-select-wrap">
+    <label class="tense-select-label" for="tense-select">Czas</label>
+    <select class="tense-select" id="tense-select" onchange="selectPracticeMode(this.value)">
+      <option value="indefinido">Pretérito indefinido</option>
+      <option value="imperfecto">Pretérito imperfecto</option>
+      <option value="perfecto">Pretérito perfecto</option>
+      <option value="futuro">Futuro imperfecto</option>
+      <option value="subjuntivo">Subjuntivo presente</option>
+      <option value="subjuntivo_imperfecto">Subjuntivo imperfecto</option>
+      <option value="mix">Mix czasów</option>
+      <option value="favorites">Moje trudne</option>
+    </select>
+  </div>
+
   <div class="tense-grid">
     <div class="tense-card" data-mode="indefinido" onclick="selectPracticeMode('indefinido')">
       <div class="tense-icon">📖</div>
@@ -671,6 +707,11 @@ body.mobile-ui.narrow-ui .btn {
       <div class="tense-icon">◇</div>
       <div class="tense-label">Subjuntivo presente</div>
       <div class="tense-desc">hable, coma, sea...</div>
+    </div>
+    <div class="tense-card" data-mode="subjuntivo_imperfecto" onclick="selectPracticeMode('subjuntivo_imperfecto')">
+      <div class="tense-icon">◈</div>
+      <div class="tense-label">Subjuntivo imperfecto</div>
+      <div class="tense-desc">hablara, tuviera, fuera...</div>
     </div>
     <div class="tense-card" data-mode="mix" onclick="selectPracticeMode('mix')">
       <div class="tense-icon">⇄</div>
@@ -1046,6 +1087,37 @@ DATA.perfecto = {
     {inf:"conducir",en:"prowadzić (auto)",part:"conducido"}, {inf:"conocer",en:"znać / poznać",part:"conocido"}, {inf:"mantener",en:"utrzymywać",part:"mantenido"}, {inf:"traducir",en:"tłumaczyć",part:"traducido"}, {inf:"producir",en:"produkować",part:"producido"}
   ]
 };
+function addAccentToLastVowel(text){
+  const accents = {a:"á", e:"é", i:"í", o:"ó", u:"ú"};
+  for(let i = text.length - 1; i >= 0; i--){
+    const ch = text[i].toLowerCase();
+    if(accents[ch]) return text.slice(0, i) + accents[ch] + text.slice(i + 1);
+  }
+  return text;
+}
+function imperfectSubjunctiveFromPreterite(verb){
+  const ellos = verb.c?.["ellos/ellas"];
+  if(!ellos || !ellos.endsWith("ron")) return null;
+  const stem = ellos.slice(0, -3);
+  return {
+    inf: verb.inf,
+    en: verb.en,
+    c: {
+      yo: stem + "ra",
+      tú: stem + "ras",
+      "él/ella": stem + "ra",
+      nosotros: addAccentToLastVowel(stem) + "ramos",
+      vosotros: stem + "rais",
+      "ellos/ellas": stem + "ran"
+    }
+  };
+}
+DATA.subjuntivo_imperfecto = {
+  label: "Subjuntivo imperfecto",
+  desc: "gdyby / żeby w przeszłości",
+  color: "indigo",
+  verbs: DATA.indefinido.verbs.map(imperfectSubjunctiveFromPreterite).filter(Boolean)
+};
 const DIFFICULTIES = {
   easy: {
     label: "Łatwy",
@@ -1083,6 +1155,11 @@ const TENSE_LEVEL_VERBS = {
     easy: ["ser","estar","ir","tener","hacer","poder","querer","saber","venir","decir","dar","ver","poner","salir","haber","hablar","comer","vivir"],
     normal: ["traer","conocer","conducir","dormir","pedir","sentir","seguir","elegir","volver","empezar","jugar","buscar","llegar","pagar","escribir","leer","abrir","pensar"],
     hard: ["caber","valer","perder","entender","encontrar","preferir","creer","morir","nacer","reír","conseguir","mantener","traducir","producir","ofrecer","aparecer","reconocer","trabajar"]
+  },
+  subjuntivo_imperfecto: {
+    easy: ["ser","ir","tener","estar","hacer","poder","querer","saber","venir","decir","dar","ver","poner","salir","haber","hablar","comer","vivir"],
+    normal: ["traer","andar","leer","oír","caer","creer","dormir","pedir","sentir","seguir","elegir","servir","morir","volver","empezar","jugar","buscar","pagar"],
+    hard: ["conducir","construir","caber","mantener","traducir","producir","preferir","conseguir","reír","nacer","conocer","perder","entender","encontrar","ofrecer","aparecer","reconocer","abrir"]
   },
   perfecto: {
     easy: ["abrir","decir","hacer","poner","ver","volver","escribir","morir","ser","estar","tener","ir","poder","querer","dar"],
@@ -1185,6 +1262,7 @@ const SENTENCE_START_PL = {
   "Antes":"wcześniej", "De joven":"w młodości", "En la infancia":"w dzieciństwie", "Todos los días":"codziennie", "Cada verano":"każdego lata", "Normalmente":"zwykle", "A menudo":"często", "Muchas veces":"wiele razy", "En aquella época":"w tamtym okresie", "Durante las vacaciones":"podczas wakacji", "Por las tardes":"popołudniami", "En la antigua escuela":"w dawnej szkole", "Los domingos":"w niedziele", "Cuando había tiempo":"kiedy był czas", "Siempre":"zawsze", "Casi nunca":"prawie nigdy", "Cada mañana":"każdego ranka", "En invierno":"zimą", "Durante el año":"w ciągu roku", "En casa de los abuelos":"u dziadków", "En el barrio":"w dzielnicy", "Después de comer":"po jedzeniu", "Antes de dormir":"przed snem", "Cuando llovía":"kiedy padał deszcz",
   "Mañana":"jutro", "La próxima semana":"w przyszłym tygodniu", "El año que viene":"w przyszłym roku", "Pronto":"wkrótce", "Después":"potem", "Esta tarde":"dziś po południu", "El lunes":"w poniedziałek", "Más tarde":"później", "Si todo va bien":"jeśli wszystko pójdzie dobrze", "Dentro de poco":"niedługo", "En vacaciones":"w wakacje", "Esta noche":"dziś wieczorem", "El próximo verano":"przyszłego lata", "Después del examen":"po egzaminie", "Cuando termine la clase":"kiedy skończy się lekcja", "En el futuro":"w przyszłości", "El fin de semana":"w weekend", "Antes de la cena":"przed kolacją", "En unos minutos":"za kilka minut", "Al llegar a casa":"po przyjściu do domu", "Durante el viaje":"podczas podróży", "En la reunión":"na spotkaniu", "Después de practicar":"po ćwiczeniu", "Cuando sea posible":"kiedy będzie to możliwe",
   "Quiero que":"chcę, żeby", "Espero que":"mam nadzieję, że", "Es posible que":"możliwe, że", "Dudo que":"wątpię, że", "Ojalá que":"oby", "Es importante que":"ważne, żeby", "Me alegra que":"cieszę się, że", "No creo que":"nie sądzę, żeby", "Prefiero que":"wolę, żeby", "Necesito que":"potrzebuję, żeby", "Tal vez":"być może", "Puede que":"możliwe, że", "Antes de que":"zanim", "Aunque":"chociaż", "Cuando sea necesario que":"kiedy będzie konieczne, żeby", "Es mejor que":"lepiej, żeby", "Me sorprende que":"dziwi mnie, że", "No parece que":"nie wygląda na to, żeby", "Es normal que":"to normalne, że", "Me gusta que":"podoba mi się, że", "Es probable que":"prawdopodobne, że", "No es seguro que":"nie jest pewne, że", "Me preocupa que":"martwi mnie, że", "Es una pena que":"szkoda, że",
+  "Quería que":"chciałem/am, żeby", "Esperaba que":"miałem/am nadzieję, że", "Era posible que":"było możliwe, że", "Dudaba que":"wątpiłem/am, że", "Ojalá":"oby", "Era importante que":"było ważne, żeby", "Me alegró que":"ucieszyło mnie, że", "No creía que":"nie sądziłem/am, żeby", "Prefería que":"wolałem/am, żeby", "Necesitaba que":"potrzebowałem/am, żeby", "Fue mejor que":"było lepiej, żeby", "Me sorprendió que":"zdziwiło mnie, że", "No parecía que":"nie wyglądało na to, żeby", "Era normal que":"było normalne, że", "Me gustaba que":"podobało mi się, że", "Era probable que":"było prawdopodobne, że", "No era seguro que":"nie było pewne, że", "Me preocupaba que":"martwiło mnie, że", "Fue una pena que":"szkoda było, że", "Después de que":"po tym, jak",
   "Hoy he":"dzisiaj", "Esta semana he":"w tym tygodniu", "Este mes he":"w tym miesiącu", "Ya he":"już", "Nunca he":"nigdy", "Todavía no he":"jeszcze nie", "Últimamente he":"ostatnio", "Esta mañana he":"dziś rano", "En mi vida he":"w życiu", "Por fin he":"w końcu", "Después de mucho tiempo he":"po długim czasie", "Hace poco he":"niedawno", "En clase he":"na lekcji", "En casa he":"w domu", "Durante el viaje he":"podczas podróży", "Antes de salir he":"przed wyjściem", "Al final he":"na końcu", "Para practicar he":"dla praktyki", "Con calma he":"spokojnie", "Otra vez he":"znowu", "Esta tarde he":"dziś po południu", "En la reunión he":"na spotkaniu", "Después de estudiar he":"po nauce", "Sin ayuda he":"bez pomocy"
 };
 const SENTENCE_COMPLEMENTS = {
@@ -1378,6 +1456,10 @@ const SENTENCE_BANK = {
     starts: ["Quiero que", "Espero que", "Es posible que", "Dudo que", "Ojalá que", "Es importante que", "Me alegra que", "No creo que", "Prefiero que", "Necesito que", "Tal vez", "Puede que", "Antes de que", "Aunque", "Cuando sea necesario que", "Es mejor que", "Me sorprende que", "No parece que", "Es normal que", "Me gusta que", "Es probable que", "No es seguro que", "Me preocupa que", "Es una pena que"],
     ends: [".", " hoy.", " mañana.", " pronto.", " en casa.", " con nosotros.", " en la clase.", " sin problema.", " con cuidado.", " antes de salir.", " después de comer.", " por la mañana.", " por la tarde.", " esta vez.", " durante la reunión.", " para aprender.", " si puede.", " cuando llegue.", " con más calma.", " correctamente."]
   },
+  subjuntivo_imperfecto: {
+    starts: ["Quería que", "Esperaba que", "Era posible que", "Dudaba que", "Ojalá", "Era importante que", "Me alegró que", "No creía que", "Prefería que", "Necesitaba que", "Fue mejor que", "Me sorprendió que", "No parecía que", "Era normal que", "Me gustaba que", "Era probable que", "No era seguro que", "Me preocupaba que", "Fue una pena que", "Después de que"],
+    ends: [".", " ayer.", " entonces.", " en casa.", " con nosotros.", " en la clase.", " sin problema.", " con cuidado.", " antes de salir.", " después de comer.", " por la mañana.", " por la tarde.", " aquella vez.", " durante la reunión.", " para aprender.", " cuando llegara.", " con más calma.", " correctamente.", " en aquel momento.", " durante el viaje."]
+  },
   perfecto: {
     starts: ["Hoy he", "Esta semana he", "Este mes he", "Ya he", "Nunca he", "Todavía no he", "Últimamente he", "Esta mañana he", "En mi vida he", "Por fin he", "Después de mucho tiempo he", "Hace poco he", "En clase he", "En casa he", "Durante el viaje he", "Antes de salir he", "Al final he", "Para practicar he", "Con calma he", "Otra vez he", "Esta tarde he", "En la reunión he", "Después de estudiar he", "Sin ayuda he"],
     ends: [".", " todo.", " mucho.", " esto.", " algo importante.", " la tarea.", " el mensaje.", " la puerta.", " el problema.", " la respuesta.", " con cuidado.", " muy rápido.", " en casa.", " en clase.", " durante la semana.", " antes de comer.", " después de estudiar.", " sin ayuda.", " por primera vez.", " otra vez."]
@@ -1496,7 +1578,8 @@ function exampleFor(q, correct){
     indefinido: ["Ayer " + subject + " " + correct + ".", "La semana pasada " + subject + " " + correct + ".", "En ese momento " + subject + " " + correct + ".", "Anoche " + subject + " " + correct + ".", "De repente " + subject + " " + correct + "."],
     imperfecto: ["Antes " + subject + " " + correct + " a menudo.", "De niño, " + subject + " " + correct + ".", "Cada verano " + subject + " " + correct + ".", "Normalmente " + subject + " " + correct + ".", "Mientras tanto, " + subject + " " + correct + "."],
     futuro: ["Mañana " + subject + " " + correct + ".", "El próximo año " + subject + " " + correct + ".", "Después " + subject + " " + correct + ".", "Pronto " + subject + " " + correct + ".", "Esta tarde " + subject + " " + correct + "."],
-    subjuntivo: ["Es posible que " + subject + " " + correct + ".", "Quiero que " + subject + " " + correct + ".", "Dudo que " + subject + " " + correct + ".", "Ojalá que " + subject + " " + correct + ".", "Es importante que " + subject + " " + correct + "."]
+    subjuntivo: ["Es posible que " + subject + " " + correct + ".", "Quiero que " + subject + " " + correct + ".", "Dudo que " + subject + " " + correct + ".", "Ojalá que " + subject + " " + correct + ".", "Es importante que " + subject + " " + correct + "."],
+    subjuntivo_imperfecto: ["Quería que " + subject + " " + correct + ".", "Esperaba que " + subject + " " + correct + ".", "Dudaba que " + subject + " " + correct + ".", "Ojalá " + subject + " " + correct + ".", "Era importante que " + subject + " " + correct + "."]
   };
   return randomPick(sets[tense] || [subject + " " + correct + "."]);
 }
@@ -1656,6 +1739,8 @@ function renderPracticeSelection(){
     card.classList.toggle("active", active);
     card.setAttribute("aria-pressed", String(active));
   });
+  const tenseSelect = document.getElementById("tense-select");
+  if(tenseSelect) tenseSelect.value = selectedPracticeMode;
   const toggle = document.getElementById("spain-mode-toggle");
   if(toggle) toggle.checked = spainMode;
   const sentenceToggle = document.getElementById("sentence-mode-toggle");
@@ -1878,7 +1963,7 @@ function startTense(tense, customVerbs = null, customTitle = null, customDesc = 
   const pf = document.getElementById("progress");
   pf.className = "progress-fill pf-" + tense;
 
-  const btnClass = { indefinido:"btn-green", futuro:"btn-blue", imperfecto:"btn-amber", subjuntivo:"btn-purple", perfecto:"btn-purple" }[tense];
+  const btnClass = { indefinido:"btn-green", futuro:"btn-blue", imperfecto:"btn-amber", subjuntivo:"btn-purple", subjuntivo_imperfecto:"btn-purple", perfecto:"btn-purple" }[tense];
   window._btnClass = btnClass;
 
   const available = getUniqueVerbs(tense, selectedDifficulty);
@@ -2200,7 +2285,7 @@ function renderScore(){
   const total = queue.length;
   const pct=Math.round((score/total)*100);
   const msg=pct>=80?"¡Muy bien!":pct>=50?"Niezłe, ćwicz dalej!":"Warto powtórzyć materiał.";
-  const sc = { indefinido:"score-green", futuro:"score-blue", imperfecto:"score-amber", subjuntivo:"score-purple", perfecto:"score-pink", mix:"score-purple", favorites:"score-amber" }[currentTense] || "score-green";
+  const sc = { indefinido:"score-green", futuro:"score-blue", imperfecto:"score-amber", subjuntivo:"score-purple", subjuntivo_imperfecto:"score-indigo", perfecto:"score-pink", mix:"score-purple", favorites:"score-amber" }[currentTense] || "score-green";
   const retryWrong = sessionWrong.length ? `<button class="btn" onclick="startWrongReview()">Powtórz błędne (${sessionWrong.length})</button>` : "";
   const retryWorst = DATA[currentTense] && getWorstStats(3, currentTense).length ? `<button class="btn" onclick="repeatWorst('${currentTense}')">Powtórz najsłabsze</button>` : "";
   const againAction = currentTense === "mix" ? "startMixedTense()" : currentTense === "favorites" ? "startFavoritesMix()" : `startTense('${currentTense}')`;
