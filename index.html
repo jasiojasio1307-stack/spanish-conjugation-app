@@ -2,6 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,9 +16,21 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .tense-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
 .tense-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1rem; cursor: pointer; transition: border-color 0.15s, background 0.15s; text-align: left; }
 .tense-card:hover { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
+.tense-card.active { border-color: #1D9E75; background: #E1F5EE; box-shadow: 0 10px 24px rgba(56, 120, 110, 0.12); }
 .tense-icon { font-size: 22px; margin-bottom: 10px; }
 .tense-label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
 .tense-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.start-panel { margin-top: 14px; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+.selection-note { color: var(--color-text-secondary); font-size: 13px; line-height: 1.45; }
+.settings-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.region-toggle { display: flex; align-items: center; gap: 10px; padding: 0.85rem 1rem; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); background: var(--color-background-primary); margin-bottom: 12px; cursor: pointer; }
+.settings-row .region-toggle { margin-bottom: 0; }
+.region-toggle input { width: 18px; height: 18px; accent-color: var(--color-accent-primary); }
+.region-title { display: block; font-size: 14px; font-weight: 650; color: var(--color-text-primary); }
+.region-meta { display: block; margin-top: 2px; font-size: 12px; color: var(--color-text-secondary); }
+.sentence-card { margin: 0.85rem 0; padding: 0.95rem 1rem; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: #F7FBFF; color: var(--color-text-primary); font-size: 18px; line-height: 1.5; }
+.sentence-card .blank { display: inline-block; min-width: 72px; border-bottom: 2px solid #7F8EA3; transform: translateY(-2px); }
+.sentence-card small { display: block; margin-top: 6px; color: var(--color-text-secondary); font-size: 12px; line-height: 1.35; }
 
 .back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--color-text-secondary); background: none; border: none; cursor: pointer; margin-bottom: 1.25rem; padding: 0; }
 .back-btn:hover { color: var(--color-text-primary); }
@@ -32,6 +45,7 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .pf-futuro { background: #378ADD; }
 .pf-imperfecto { background: #BA7517; }
 .pf-subjuntivo { background: #7F77DD; }
+.pf-perfecto { background: #D8527A; }
 
 .counter { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1rem; }
 .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin-bottom: 1rem; }
@@ -62,6 +76,16 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .translation-box strong { color: var(--color-text-primary); font-weight: 500; }
 .example-line { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); line-height: 1.45; }
 .example-line span { color: var(--color-text-secondary); }
+.verb-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 1.25rem; }
+.verb-head .verb-name { margin-bottom: 0; }
+.fav-btn { width: 36px; height: 36px; border-radius: 8px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: #9AA3AD; cursor: pointer; font-size: 20px; line-height: 1; }
+.fav-btn.active { color: #B7791F; background: #FFF3D9; border-color: #E0B35B; }
+.conj-table-wrap { margin-top: 0.75rem; display: none; }
+.conj-table-wrap.open { display: block; }
+.conj-table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 8px; font-size: 13px; }
+.conj-table th, .conj-table td { text-align: left; padding: 8px 10px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.conj-table th { color: var(--color-text-secondary); font-weight: 600; background: rgba(255,255,255,0.55); }
+.conj-table tr:last-child th, .conj-table tr:last-child td { border-bottom: none; }
 .score-card { text-align: center; padding: 2.5rem 1.5rem; }
 .score-num { font-size: 48px; font-weight: 500; }
 .score-label { font-size: 16px; color: var(--color-text-secondary); margin: 0.5rem 0 1.5rem; }
@@ -69,6 +93,7 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .score-blue { color: #378ADD; }
 .score-amber { color: #BA7517; }
 .score-purple { color: #7F77DD; }
+.score-pink { color: #D8527A; }
 
 .mode-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; margin-bottom: 1rem; }
 .panel-title { font-size: 13px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 8px; }
@@ -81,13 +106,21 @@ body { font-family: Inter, "Segoe UI", "SF Pro Text", "Helvetica Neue", Arial, s
 .verb-list-level:first-child { margin-top: 0; }
 .verb-list-title { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; }
 .verb-chip-list { display: flex; flex-wrap: wrap; gap: 6px; }
-.verb-chip { padding: 5px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 13px; }
+.verb-chip { padding: 5px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); color: var(--color-text-primary); font-size: 13px; cursor: pointer; font-family: inherit; }
+.verb-chip.suspended { background: #FCEBEB !important; border-color: #E24B4A !important; color: #B42318 !important; text-decoration: line-through; text-decoration-thickness: 2px; opacity: 0.9; }
 .difficulty-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
 .difficulty-option { border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); border-radius: var(--border-radius-md); padding: 10px 12px; text-align: left; cursor: pointer; transition: border-color 0.15s, background 0.15s, box-shadow 0.15s; }
 .difficulty-option:hover { border-color: var(--color-border-primary); }
 .difficulty-option.active { border-color: #1D9E75; background: #E1F5EE; box-shadow: 0 0 0 2px rgba(29,158,117,0.12); }
 .difficulty-name { display: block; font-size: 14px; font-weight: 600; margin-bottom: 3px; }
 .difficulty-meta { display: block; font-size: 12px; color: var(--color-text-secondary); line-height: 1.35; }
+.home-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+.home-tab { min-height: 46px; border: 0.5px solid var(--color-border-secondary); background: rgba(255,255,255,0.72); color: var(--color-text-primary); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 700; }
+.home-tab.active { background: #173B35; color: #fff; border-color: #173B35; box-shadow: 0 8px 18px rgba(31,41,51,0.12); }
+.home-section { display: none; }
+.home-section.active { display: block; }
+.accent-start-card { background: linear-gradient(90deg, #FFEAF1, #F2F7FF); border: 0.5px solid rgba(192,68,122,0.18); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.accent-start-card .btn { margin-top: 10px; }
 .stats-panel { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem; margin-top: 1rem; }
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-bottom: 1rem; }
 .stat-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px; }
@@ -169,6 +202,9 @@ body {
 .tense-card:nth-child(2) { border-top: 4px solid #BA7517; }
 .tense-card:nth-child(3) { border-top: 4px solid #378ADD; }
 .tense-card:nth-child(4) { border-top: 4px solid #7F77DD; }
+.tense-card:nth-child(5) { border-top: 4px solid #D8527A; }
+.tense-card:nth-child(6) { border-top: 4px solid #B7791F; }
+.tense-card:nth-child(7) { border-top: 4px solid #C0447A; }
 .tense-icon {
   width: 34px;
   height: 34px;
@@ -182,12 +218,391 @@ body {
 .tense-card:nth-child(2) .tense-icon { background: #FFF3D9; }
 .tense-card:nth-child(3) .tense-icon { background: #E8F2FF; }
 .tense-card:nth-child(4) .tense-icon { background: #F0EEFF; }
+.tense-card:nth-child(5) .tense-icon { background: #FFEAF1; }
+.tense-card:nth-child(6) .tense-icon { background: #FFF3D9; }
+.tense-card:nth-child(7) .tense-icon { background: #FFE9F4; }
 .progress-bar { height: 7px; background: rgba(31,41,51,0.09); }
 .inp { background: #FFFFFF; border-color: rgba(31,41,51,0.16); border-radius: 8px; }
 .btn { border-radius: 8px; font-weight: 600; }
 .btn-green, .btn-blue, .btn-amber, .btn-purple { box-shadow: 0 8px 16px rgba(31,41,51,0.12); }
 .score-card { background: #FFFFFF; }
-@media (max-width: 520px) { .pronoun-row { display: grid; grid-template-columns: 1fr; gap: 6px; } .pronoun { min-width: 0; } .hint { min-width: 0; } .worst-item { grid-template-columns: 1fr; } }
+body.mobile-ui {
+  background: linear-gradient(180deg, #F7FCF9 0%, #FFF8E8 54%, #F2F7FF 100%);
+  -webkit-text-size-adjust: 100%;
+}
+body.mobile-ui .page {
+  width: 100%;
+  max-width: 520px;
+  padding: 1rem 0.85rem 1.35rem;
+}
+body.mobile-ui .home-title {
+  font-size: 24px;
+  line-height: 1.15;
+}
+body.mobile-ui .home-sub {
+  font-size: 14px;
+  margin-bottom: 1rem;
+}
+body.mobile-ui .mode-panel,
+body.mobile-ui .stats-panel,
+body.mobile-ui .card {
+  padding: 0.9rem;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(31,41,51,0.07);
+}
+body.mobile-ui .tense-grid,
+body.mobile-ui .difficulty-options,
+body.mobile-ui .home-tabs,
+body.mobile-ui .settings-row,
+body.mobile-ui .stats-grid {
+  grid-template-columns: 1fr;
+}
+body.mobile-ui .start-panel {
+  grid-template-columns: 1fr;
+}
+body.mobile-ui .start-panel .btn {
+  width: 100%;
+}
+body.mobile-ui .tense-card,
+body.mobile-ui .difficulty-option,
+body.mobile-ui .home-tab,
+body.mobile-ui .verb-list-toggle {
+  min-height: 58px;
+  padding: 0.95rem;
+}
+body.mobile-ui .accent-start-card {
+  padding: 0.95rem;
+}
+body.mobile-ui .accent-start-card .btn {
+  width: 100%;
+}
+body.mobile-ui .tense-card {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  column-gap: 10px;
+  align-items: center;
+}
+body.mobile-ui .tense-icon {
+  grid-row: span 2;
+  margin-bottom: 0;
+}
+body.mobile-ui .tense-label {
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+body.mobile-ui .tense-desc {
+  font-size: 12px;
+}
+body.mobile-ui .verb-chip-list {
+  gap: 7px;
+}
+body.mobile-ui .verb-chip {
+  font-size: 14px;
+  padding: 7px 10px;
+}
+body.mobile-ui .back-btn {
+  min-height: 44px;
+  margin-bottom: 0.75rem;
+}
+body.mobile-ui .ex-header {
+  margin-bottom: 0.9rem;
+}
+body.mobile-ui .ex-title {
+  font-size: 19px;
+}
+body.mobile-ui .progress-bar {
+  margin-bottom: 1rem;
+}
+body.mobile-ui .counter {
+  margin-bottom: 0.75rem;
+}
+body.mobile-ui .verb-head {
+  align-items: center;
+  margin-bottom: 1rem;
+}
+body.mobile-ui .verb-name {
+  font-size: 28px;
+  line-height: 1.12;
+}
+body.mobile-ui .verb-name small {
+  font-size: 13px;
+  line-height: 1.35;
+}
+body.mobile-ui .fav-btn {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  font-size: 23px;
+}
+body.mobile-ui .session-note {
+  font-size: 12px;
+  margin-top: -0.3rem;
+  margin-bottom: 0.85rem;
+}
+body.mobile-ui .pronoun-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+body.mobile-ui .pronoun {
+  min-width: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+body.mobile-ui .inp {
+  width: 100%;
+  min-height: 48px;
+  font-size: 17px;
+  padding: 11px 12px;
+}
+body.mobile-ui .hint {
+  min-width: 0;
+  min-height: 20px;
+  font-size: 14px;
+}
+body.mobile-ui .translation-box {
+  font-size: 14px;
+  line-height: 1.45;
+}
+body.mobile-ui .actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 1rem -0.9rem -0.9rem;
+  padding: 0.75rem 0.9rem;
+  background: rgba(255,255,255,0.94);
+  border-top: 0.5px solid rgba(31,41,51,0.1);
+  backdrop-filter: blur(8px);
+}
+body.mobile-ui .btn {
+  min-height: 46px;
+  padding: 10px 12px;
+  font-size: 15px;
+}
+body.mobile-ui .conj-table {
+  font-size: 14px;
+}
+body.mobile-ui .conj-table th,
+body.mobile-ui .conj-table td {
+  padding: 9px 8px;
+}
+body.mobile-ui .worst-item {
+  grid-template-columns: 1fr;
+}
+body.mobile-ui .score-card {
+  padding: 2rem 1rem;
+}
+body.mobile-ui .score-num {
+  font-size: 44px;
+}
+
+@media (max-width: 640px) {
+  body {
+    background: linear-gradient(180deg, #F7FCF9 0%, #FFF8E8 54%, #F2F7FF 100%);
+    -webkit-text-size-adjust: 100%;
+  }
+  .page {
+    width: 100%;
+    padding: 1rem 0.85rem 1.35rem;
+  }
+  .home-title {
+    font-size: 24px;
+    line-height: 1.15;
+  }
+  .home-sub {
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+  .mode-panel, .stats-panel, .card {
+    padding: 0.9rem;
+    border-radius: 8px;
+    box-shadow: 0 8px 18px rgba(31,41,51,0.07);
+  }
+  .tense-grid,
+  .difficulty-options,
+  .home-tabs,
+  .settings-row,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .start-panel {
+    grid-template-columns: 1fr;
+  }
+  .start-panel .btn {
+    width: 100%;
+  }
+  .tense-card,
+  .difficulty-option,
+  .verb-list-toggle {
+    min-height: 58px;
+    padding: 0.95rem;
+  }
+  .tense-card {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    column-gap: 10px;
+    align-items: center;
+  }
+  .tense-icon {
+    grid-row: span 2;
+    margin-bottom: 0;
+  }
+  .tense-label {
+    font-size: 15px;
+    margin-bottom: 2px;
+  }
+  .tense-desc {
+    font-size: 12px;
+  }
+  .verb-chip-list {
+    gap: 7px;
+  }
+  .verb-chip {
+    font-size: 14px;
+    padding: 7px 10px;
+  }
+  .back-btn {
+    min-height: 44px;
+    margin-bottom: 0.75rem;
+  }
+  .ex-header {
+    margin-bottom: 0.9rem;
+  }
+  .ex-title {
+    font-size: 19px;
+  }
+  .progress-bar {
+    margin-bottom: 1rem;
+  }
+  .counter {
+    margin-bottom: 0.75rem;
+  }
+  .verb-head {
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .verb-name {
+    font-size: 28px;
+    line-height: 1.12;
+  }
+  .verb-name small {
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .fav-btn {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    font-size: 23px;
+  }
+  .session-note {
+    font-size: 12px;
+    margin-top: -0.3rem;
+    margin-bottom: 0.85rem;
+  }
+  .pronoun-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .pronoun {
+    min-width: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+  }
+  .inp {
+    width: 100%;
+    min-height: 48px;
+    font-size: 17px;
+    padding: 11px 12px;
+  }
+  .hint {
+    min-width: 0;
+    min-height: 20px;
+    font-size: 14px;
+  }
+  .translation-box {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 1rem -0.9rem -0.9rem;
+    padding: 0.75rem 0.9rem;
+    background: rgba(255,255,255,0.94);
+    border-top: 0.5px solid rgba(31,41,51,0.1);
+    backdrop-filter: blur(8px);
+  }
+  .btn {
+    min-height: 46px;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+  .accent-start-card .btn {
+    width: 100%;
+  }
+  .conj-table {
+    font-size: 14px;
+  }
+  .conj-table th,
+  .conj-table td {
+    padding: 9px 8px;
+  }
+  .worst-item {
+    grid-template-columns: 1fr;
+  }
+  .score-card {
+    padding: 2rem 1rem;
+  }
+  .score-num {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 380px) {
+  .page {
+    padding-left: 0.65rem;
+    padding-right: 0.65rem;
+  }
+  .home-title {
+    font-size: 22px;
+  }
+  .verb-name {
+    font-size: 25px;
+  }
+  .actions {
+    grid-template-columns: 1fr;
+  }
+  .btn {
+    width: 100%;
+  }
+}
+body.mobile-ui.narrow-ui .page {
+  padding-left: 0.65rem;
+  padding-right: 0.65rem;
+}
+body.mobile-ui.narrow-ui .home-title {
+  font-size: 22px;
+}
+body.mobile-ui.narrow-ui .verb-name {
+  font-size: 25px;
+}
+body.mobile-ui.narrow-ui .actions {
+  grid-template-columns: 1fr;
+}
+body.mobile-ui.narrow-ui .btn {
+  width: 100%;
+}
 </style>
 </head>
 <body>
@@ -196,6 +611,12 @@ body {
   <p class="home-title">Koniugacja hiszpańska</p>
   <p class="home-sub">Wybierz poziom i czas, który chcesz ćwiczyć</p>
 
+  <div class="home-tabs" role="tablist" aria-label="Tryb nauki">
+    <button class="home-tab active" id="tab-verbs" onclick="showHomeTab('verbs')" type="button">Czasowniki</button>
+    <button class="home-tab" id="tab-accents" onclick="showHomeTab('accents')" type="button">Akcenty</button>
+  </div>
+
+  <div class="home-section active" id="home-verbs">
   <section class="mode-panel" aria-labelledby="verb-list-title">
     <button type="button" class="verb-list-toggle" onclick="toggleVerbList()" aria-expanded="false" id="verb-list-toggle">
       <span id="verb-list-title">Lista czasowników</span>
@@ -205,31 +626,66 @@ body {
   </section>
 
   <section class="mode-panel" aria-labelledby="difficulty-title">
+    <div class="settings-row">
+      <label class="region-toggle">
+        <input type="checkbox" id="spain-mode-toggle" onchange="setSpainMode(this.checked)">
+        <span>
+          <span class="region-title">Hiszpański z Hiszpanii</span>
+          <span class="region-meta">Dodaje vosotros do odmian (oprócz pretérito perfecto).</span>
+        </span>
+      </label>
+      <label class="region-toggle">
+        <input type="checkbox" id="sentence-mode-toggle" onchange="setSentenceMode(this.checked)">
+        <span>
+          <span class="region-title">Zdania</span>
+          <span class="region-meta">Pokazuje losowe zdanie z luką zamiast samej osoby.</span>
+        </span>
+      </label>
+    </div>
     <div class="panel-title" id="difficulty-title">Poziom trudności</div>
     <div class="difficulty-options" id="difficulty-options"></div>
   </section>
 
   <div class="tense-grid">
-    <div class="tense-card" onclick="startTense('indefinido')">
+    <div class="tense-card" data-mode="indefinido" onclick="selectPracticeMode('indefinido')">
       <div class="tense-icon">📖</div>
       <div class="tense-label">Pretérito indefinido</div>
       <div class="tense-desc">hablé, comí, fui...</div>
     </div>
-    <div class="tense-card" onclick="startTense('imperfecto')">
+    <div class="tense-card" data-mode="imperfecto" onclick="selectPracticeMode('imperfecto')">
       <div class="tense-icon">↻</div>
       <div class="tense-label">Pretérito imperfecto</div>
       <div class="tense-desc">hablaba, comía, era...</div>
     </div>
-    <div class="tense-card" onclick="startTense('futuro')">
+    <div class="tense-card" data-mode="perfecto" onclick="selectPracticeMode('perfecto')">
+      <div class="tense-icon">✓</div>
+      <div class="tense-label">Pretérito perfecto</div>
+      <div class="tense-desc">abrir → abierto</div>
+    </div>
+    <div class="tense-card" data-mode="futuro" onclick="selectPracticeMode('futuro')">
       <div class="tense-icon">⏭</div>
       <div class="tense-label">Futuro imperfecto</div>
       <div class="tense-desc">hablaré, tendré, iré...</div>
     </div>
-    <div class="tense-card" onclick="startTense('subjuntivo')">
+    <div class="tense-card" data-mode="subjuntivo" onclick="selectPracticeMode('subjuntivo')">
       <div class="tense-icon">◇</div>
       <div class="tense-label">Subjuntivo presente</div>
       <div class="tense-desc">hable, coma, sea...</div>
     </div>
+    <div class="tense-card" data-mode="mix" onclick="selectPracticeMode('mix')">
+      <div class="tense-icon">⇄</div>
+      <div class="tense-label">Mix czasów</div>
+      <div class="tense-desc">losowo ze wszystkich czasów</div>
+    </div>
+    <div class="tense-card" data-mode="favorites" onclick="selectPracticeMode('favorites')">
+      <div class="tense-icon">★</div>
+      <div class="tense-label">Moje trudne</div>
+      <div class="tense-desc">czasowniki oznaczone gwiazdką</div>
+    </div>
+  </div>
+  <div class="start-panel">
+    <div class="selection-note" id="selection-note"></div>
+    <button class="btn btn-green" type="button" onclick="startSelectedPractice()">Start</button>
   </div>
 
   <section class="stats-panel" aria-labelledby="stats-title">
@@ -238,6 +694,35 @@ body {
     <div class="panel-title" style="margin-top:12px;">Najgorsze czasowniki</div>
     <div id="worst-verbs"></div>
   </section>
+  </div>
+
+  <div class="home-section" id="home-accents">
+  <section class="mode-panel" aria-labelledby="accent-list-title">
+    <button type="button" class="verb-list-toggle" onclick="toggleAccentList()" aria-expanded="false" id="accent-list-toggle">
+      <span id="accent-list-title">Lista słów z akcentami</span>
+      <span id="accent-list-arrow">+</span>
+    </button>
+    <div class="verb-list-panel" id="accent-list-panel"></div>
+  </section>
+
+  <section class="mode-panel" aria-labelledby="accent-difficulty-title">
+    <div class="panel-title" id="accent-difficulty-title">Poziom akcentów</div>
+    <div class="difficulty-options" id="accent-difficulty-options"></div>
+  </section>
+  <div class="accent-start-card">
+    <div class="tense-label">Akcenty</div>
+    <div class="tense-desc">Dostajesz słowo bez akcentu i znaczenie po polsku, wpisujesz poprawną wersję po hiszpańsku.</div>
+    <button class="btn btn-purple" onclick="startAccentQuiz()">Start: Akcenty</button>
+  </div>
+  <section class="stats-panel" aria-labelledby="accent-stats-title">
+    <div class="panel-title" id="accent-stats-title">Akcenty: statystyka</div>
+    <div id="accent-stats-summary"></div>
+    <div class="panel-title" style="margin-top:12px;">Akcenty: najgorsze słowa</div>
+    <div id="accent-worst-words"></div>
+    <div class="panel-title" style="margin-top:12px;">Akcenty: trudne słowa</div>
+    <div id="accent-hard-words"></div>
+  </section>
+  </div>
 </div>
 
 <div id="page-exercise" class="page">
@@ -252,7 +737,16 @@ body {
 </div>
 
 <script>
+function applyDeviceLayout(){
+  const looksMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) <= 820);
+  document.body.classList.toggle("mobile-ui", looksMobile);
+  document.body.classList.toggle("narrow-ui", looksMobile && Math.min(window.innerWidth, screen.width) <= 380);
+}
+applyDeviceLayout();
+window.addEventListener("resize", applyDeviceLayout);
+
 const pronouns = ["yo","tú","él/ella","nosotros","ellos/ellas"];
+const spainPronouns = ["yo","tú","él/ella","nosotros","vosotros","ellos/ellas"];
 
 const DATA = {
   indefinido: {
@@ -537,29 +1031,124 @@ Object.entries(SUPPLEMENTAL_VERBS).forEach(([tense, verbs]) => {
   const existing = new Set(DATA[tense].verbs.map(v => v.inf));
   verbs.forEach(v => { if(!existing.has(v.inf)) DATA[tense].verbs.push(v); });
 });
+DATA.perfecto = {
+  label: "Pretérito perfecto",
+  desc: "imiesłów: abrir → abierto",
+  color: "pink",
+  verbs: [
+    {inf:"abrir",en:"otwierać",part:"abierto"}, {inf:"decir",en:"mówić / powiedzieć",part:"dicho"}, {inf:"hacer",en:"robić",part:"hecho"}, {inf:"poner",en:"kłaść / stawiać",part:"puesto"}, {inf:"ver",en:"widzieć / oglądać",part:"visto"},
+    {inf:"volver",en:"wracać",part:"vuelto"}, {inf:"escribir",en:"pisać",part:"escrito"}, {inf:"morir",en:"umierać",part:"muerto"}, {inf:"romper",en:"łamać / psuć",part:"roto"}, {inf:"cubrir",en:"zakrywać",part:"cubierto"},
+    {inf:"descubrir",en:"odkrywać",part:"descubierto"}, {inf:"freír",en:"smażyć",part:"frito"}, {inf:"resolver",en:"rozwiązywać",part:"resuelto"}, {inf:"devolver",en:"oddawać",part:"devuelto"}, {inf:"imprimir",en:"drukować",part:"impreso"},
+    {inf:"ser",en:"być",part:"sido"}, {inf:"estar",en:"być (gdzieś/w stanie)",part:"estado"}, {inf:"tener",en:"mieć",part:"tenido"}, {inf:"ir",en:"iść / jechać",part:"ido"}, {inf:"poder",en:"móc",part:"podido"},
+    {inf:"querer",en:"chcieć / kochać",part:"querido"}, {inf:"saber",en:"wiedzieć / umieć",part:"sabido"}, {inf:"venir",en:"przychodzić",part:"venido"}, {inf:"dar",en:"dawać",part:"dado"}, {inf:"salir",en:"wychodzić",part:"salido"},
+    {inf:"traer",en:"przynosić",part:"traído"}, {inf:"leer",en:"czytać",part:"leído"}, {inf:"caer",en:"upadać",part:"caído"}, {inf:"oír",en:"słyszeć",part:"oído"}, {inf:"creer",en:"wierzyć / sądzić",part:"creído"},
+    {inf:"dormir",en:"spać",part:"dormido"}, {inf:"pedir",en:"prosić / zamawiać",part:"pedido"}, {inf:"sentir",en:"czuć",part:"sentido"}, {inf:"seguir",en:"podążać",part:"seguido"}, {inf:"elegir",en:"wybierać",part:"elegido"},
+    {inf:"conducir",en:"prowadzić (auto)",part:"conducido"}, {inf:"conocer",en:"znać / poznać",part:"conocido"}, {inf:"mantener",en:"utrzymywać",part:"mantenido"}, {inf:"traducir",en:"tłumaczyć",part:"traducido"}, {inf:"producir",en:"produkować",part:"producido"}
+  ]
+};
 const DIFFICULTIES = {
   easy: {
     label: "Łatwy",
-    verbCount: 3,
-    desc: "najczęstsze czasowniki: 15 pytań z puli 20",
-    verbs: ["ser","estar","tener","ir","hacer","poder","querer","decir","saber","venir","dar","ver","poner","salir","haber","traer","dormir","pedir","hablar","comer"]
+    formCount: 15,
+    desc: "najczęstsze czasowniki i formy"
   },
   normal: {
     label: "Średni",
-    verbCount: 3,
-    desc: "częste, trochę trudniejsze: 15 pytań z puli 20",
-    verbs: ["seguir","sentir","volver","empezar","jugar","leer","oír","caer","creer","conocer","conducir","construir","elegir","servir","morir","valer","caber","andar","escribir","trabajar"]
+    formCount: 15,
+    desc: "częste, trochę trudniejsze"
   },
   hard: {
     label: "Trudny",
-    verbCount: 3,
-    desc: "częste nieregularne i problematyczne: 15 pytań z puli 20",
-    verbs: ["pensar","perder","entender","encontrar","preferir","conseguir","mantener","traducir","producir","ofrecer","aparecer","reconocer","reír","nacer","buscar","pagar","llegar","abrir","beber","vivir"]
+    formCount: 15,
+    desc: "problemowe nieregularności"
   }
 };
+const TENSE_LEVEL_VERBS = {
+  indefinido: {
+    easy: ["ser","ir","tener","estar","hacer","poder","querer","decir","saber","venir","dar","ver","poner","salir","dormir","pedir","hablar","comer"],
+    normal: ["traer","andar","leer","oír","caer","creer","sentir","seguir","elegir","servir","morir","volver","empezar","jugar","buscar","pagar","llegar","escribir"],
+    hard: ["conducir","construir","caber","mantener","traducir","producir","preferir","conseguir","reír","nacer","conocer","perder","entender","encontrar","ofrecer","aparecer","reconocer","abrir"]
+  },
+  imperfecto: {
+    easy: ["ser","ir","ver","tener","estar","hacer","poder","querer","saber","venir","decir","poner","salir","dormir","hablar","comer","vivir","trabajar"],
+    normal: ["haber","traer","leer","creer","reír","sentir","seguir","pedir","dar","jugar","conocer","llevar","llamar","pasar","pensar","escribir","comprar","viajar"],
+    hard: ["caber","valer","conseguir","mantener","traducir","producir","ofrecer","aparecer","reconocer","preferir","elegir","servir","volver","empezar","perder","entender","encontrar","abrir"]
+  },
+  futuro: {
+    easy: ["tener","hacer","poder","querer","saber","venir","decir","poner","salir","haber","ser","ir","estar","ver","dar","hablar","comer","vivir"],
+    normal: ["valer","caber","mantener","pensar","sentir","pedir","traer","dormir","escribir","leer","abrir","seguir","volver","jugar","creer","conocer","perder","entender"],
+    hard: ["conseguir","traducir","producir","preferir","encontrar","elegir","servir","empezar","buscar","pagar","llegar","nacer","reír","ofrecer","aparecer","reconocer","comprar","viajar"]
+  },
+  subjuntivo: {
+    easy: ["ser","estar","ir","tener","hacer","poder","querer","saber","venir","decir","dar","ver","poner","salir","haber","hablar","comer","vivir"],
+    normal: ["traer","conocer","conducir","dormir","pedir","sentir","seguir","elegir","volver","empezar","jugar","buscar","llegar","pagar","escribir","leer","abrir","pensar"],
+    hard: ["caber","valer","perder","entender","encontrar","preferir","creer","morir","nacer","reír","conseguir","mantener","traducir","producir","ofrecer","aparecer","reconocer","trabajar"]
+  },
+  perfecto: {
+    easy: ["abrir","decir","hacer","poner","ver","volver","escribir","morir","ser","estar","tener","ir","poder","querer","dar"],
+    normal: ["romper","cubrir","descubrir","resolver","devolver","imprimir","saber","venir","salir","traer","leer","caer","oír","creer","dormir"],
+    hard: ["freír","pedir","sentir","seguir","elegir","conducir","conocer","mantener","traducir","producir","cubrir","descubrir","resolver","devolver","imprimir"]
+  }
+};
+function inferVosotros(tense, verb){
+  if(!verb.c || verb.c.vosotros) return;
+  if(tense === "indefinido" && verb.c["tú"]) verb.c.vosotros = verb.c["tú"] + "is";
+  if(tense === "imperfecto"){
+    const yo = verb.c.yo || "";
+    if(verb.inf === "ser") verb.c.vosotros = "erais";
+    else if(verb.inf === "ir") verb.c.vosotros = "ibais";
+    else if(verb.inf === "ver") verb.c.vosotros = "veíais";
+    else if(yo.endsWith("aba")) verb.c.vosotros = yo.slice(0, -3) + "abais";
+    else if(yo.endsWith("ía")) verb.c.vosotros = yo.slice(0, -2) + "íais";
+  }
+  if(tense === "futuro" && verb.c.yo?.endsWith("é")) verb.c.vosotros = verb.c.yo.slice(0, -1) + "éis";
+  if(tense === "subjuntivo"){
+    const nos = verb.c.nosotros || "";
+    if(verb.inf === "dar") verb.c.vosotros = "deis";
+    else if(nos.endsWith("emos")) verb.c.vosotros = nos.slice(0, -4) + "éis";
+    else if(nos.endsWith("amos")) verb.c.vosotros = nos.slice(0, -4) + "áis";
+  }
+}
+Object.entries(DATA).forEach(([tense, data]) => {
+  if(tense !== "perfecto") data.verbs.forEach(v => inferVosotros(tense, v));
+});
 const STATS_KEY = "spanishConjugationStats.v2";
+const FAVORITES_KEY = "spanishConjugationFavorites.v1";
+const SUSPENDED_VERBS_KEY = "spanishSuspendedVerbs.v1";
+const SUSPENDED_ACCENTS_KEY = "spanishSuspendedAccents.v1";
+const ACCENT_STATS_KEY = "spanishAccentStats.v1";
+const ACCENT_HARD_KEY = "spanishAccentHardWords.v1";
+const ACCENT_TOTAL = 15;
+const ACCENT_WORDS = [
+  {plain:"tambien",word:"también",pl:"też"}, {plain:"ademas",word:"además",pl:"ponadto"}, {plain:"despues",word:"después",pl:"potem"}, {plain:"aqui",word:"aquí",pl:"tutaj"}, {plain:"alli",word:"allí",pl:"tam"}, {plain:"ahi",word:"ahí",pl:"tam / właśnie tam"}, {plain:"asi",word:"así",pl:"tak / w ten sposób"}, {plain:"mas",word:"más",pl:"więcej"}, {plain:"si",word:"sí",pl:"tak"}, {plain:"aun",word:"aún",pl:"jeszcze"},
+  {plain:"como",word:"cómo",pl:"jak"}, {plain:"que",word:"qué",pl:"co / jaki"}, {plain:"quien",word:"quién",pl:"kto"}, {plain:"quienes",word:"quiénes",pl:"kto (liczba mnoga)"}, {plain:"cual",word:"cuál",pl:"który"}, {plain:"cuales",word:"cuáles",pl:"które"}, {plain:"cuando",word:"cuándo",pl:"kiedy"}, {plain:"donde",word:"dónde",pl:"gdzie"}, {plain:"cuanto",word:"cuánto",pl:"ile"}, {plain:"cuanta",word:"cuánta",pl:"ile (r. żeński)"},
+  {plain:"cuantos",word:"cuántos",pl:"ilu / ile"}, {plain:"cuantas",word:"cuántas",pl:"ile (r. żeński mn.)"}, {plain:"porque",word:"porqué",pl:"powód"}, {plain:"dia",word:"día",pl:"dzień"}, {plain:"dias",word:"días",pl:"dni"}, {plain:"pais",word:"país",pl:"kraj"}, {plain:"paises",word:"países",pl:"kraje"}, {plain:"ciudadania",word:"ciudadanía",pl:"obywatelstwo"}, {plain:"guia",word:"guía",pl:"przewodnik"}, {plain:"cafe",word:"café",pl:"kawa / kawiarnia"},
+  {plain:"te",word:"té",pl:"herbata"}, {plain:"ingles",word:"inglés",pl:"angielski"}, {plain:"frances",word:"francés",pl:"francuski"}, {plain:"aleman",word:"alemán",pl:"niemiecki"}, {plain:"japones",word:"japonés",pl:"japoński"}, {plain:"portugues",word:"portugués",pl:"portugalski"}, {plain:"compas",word:"compás",pl:"rytm / kompas"}, {plain:"menu",word:"menú",pl:"menu"}, {plain:"sofa",word:"sofá",pl:"sofa"}, {plain:"bebe",word:"bebé",pl:"dziecko"},
+  {plain:"mama",word:"mamá",pl:"mama"}, {plain:"papa",word:"papá",pl:"tata"}, {plain:"arbol",word:"árbol",pl:"drzewo"}, {plain:"lapiz",word:"lápiz",pl:"ołówek"}, {plain:"facil",word:"fácil",pl:"łatwy"}, {plain:"dificil",word:"difícil",pl:"trudny"}, {plain:"util",word:"útil",pl:"użyteczny"}, {plain:"inutil",word:"inútil",pl:"bezużyteczny"}, {plain:"rapido",word:"rápido",pl:"szybki"}, {plain:"rapidamente",word:"rápidamente",pl:"szybko"},
+  {plain:"ultimo",word:"último",pl:"ostatni"}, {plain:"unico",word:"único",pl:"jedyny"}, {plain:"proximo",word:"próximo",pl:"następny / bliski"}, {plain:"publico",word:"público",pl:"publiczny"}, {plain:"musica",word:"música",pl:"muzyka"}, {plain:"numero",word:"número",pl:"liczba / numer"}, {plain:"telefono",word:"teléfono",pl:"telefon"}, {plain:"camara",word:"cámara",pl:"aparat / kamera"}, {plain:"pagina",word:"página",pl:"strona"}, {plain:"maquina",word:"máquina",pl:"maszyna"},
+  {plain:"medico",word:"médico",pl:"lekarz"}, {plain:"periodico",word:"periódico",pl:"gazeta"}, {plain:"pelicula",word:"película",pl:"film"}, {plain:"practica",word:"práctica",pl:"praktyka"}, {plain:"tecnica",word:"técnica",pl:"technika"}, {plain:"economia",word:"economía",pl:"ekonomia"}, {plain:"policia",word:"policía",pl:"policja"}, {plain:"energia",word:"energía",pl:"energia"}, {plain:"alegria",word:"alegría",pl:"radość"}, {plain:"compania",word:"compañía",pl:"towarzystwo / firma"},
+  {plain:"todavia",word:"todavía",pl:"jeszcze"}, {plain:"linea",word:"línea",pl:"linia"}, {plain:"area",word:"área",pl:"obszar"}, {plain:"mayoria",word:"mayoría",pl:"większość"}, {plain:"minoria",word:"minoría",pl:"mniejszość"}, {plain:"teoria",word:"teoría",pl:"teoria"}, {plain:"geografia",word:"geografía",pl:"geografia"}, {plain:"biologia",word:"biología",pl:"biologia"}, {plain:"filosofia",word:"filosofía",pl:"filozofia"}, {plain:"fotografia",word:"fotografía",pl:"fotografia"},
+  {plain:"situacion",word:"situación",pl:"sytuacja"}, {plain:"informacion",word:"información",pl:"informacja"}, {plain:"educacion",word:"educación",pl:"edukacja"}, {plain:"relacion",word:"relación",pl:"relacja"}, {plain:"decision",word:"decisión",pl:"decyzja"}, {plain:"opinion",word:"opinión",pl:"opinia"}, {plain:"atencion",word:"atención",pl:"uwaga"}, {plain:"direccion",word:"dirección",pl:"adres / kierunek"}, {plain:"habitacion",word:"habitación",pl:"pokój"}, {plain:"estacion",word:"estación",pl:"stacja / pora roku"},
+  {plain:"corazon",word:"corazón",pl:"serce"}, {plain:"razon",word:"razón",pl:"racja / powód"}, {plain:"cancion",word:"canción",pl:"piosenka"}, {plain:"avion",word:"avión",pl:"samolot"}, {plain:"camion",word:"camión",pl:"ciężarówka"}, {plain:"reunion",word:"reunión",pl:"spotkanie"}, {plain:"television",word:"televisión",pl:"telewizja"}, {plain:"ocasion",word:"ocasión",pl:"okazja"}, {plain:"solucion",word:"solución",pl:"rozwiązanie"}, {plain:"conversacion",word:"conversación",pl:"rozmowa"},
+  {plain:"accion",word:"acción",pl:"akcja"}, {plain:"nacion",word:"nación",pl:"naród"}, {plain:"region",word:"región",pl:"region"}, {plain:"union",word:"unión",pl:"unia / związek"}, {plain:"comun",word:"común",pl:"wspólny"}, {plain:"jovenes",word:"jóvenes",pl:"młodzi ludzie"}, {plain:"imagenes",word:"imágenes",pl:"obrazy"}, {plain:"examenes",word:"exámenes",pl:"egzaminy"}, {plain:"origenes",word:"orígenes",pl:"pochodzenia"}, {plain:"caracter",word:"carácter",pl:"charakter"},
+  {plain:"facilmente",word:"fácilmente",pl:"łatwo"}, {plain:"ultimamente",word:"últimamente",pl:"ostatnio"}, {plain:"basicamente",word:"básicamente",pl:"zasadniczo"}, {plain:"unicamente",word:"únicamente",pl:"wyłącznie"}, {plain:"politica",word:"política",pl:"polityka"}, {plain:"logica",word:"lógica",pl:"logika"}, {plain:"fisica",word:"física",pl:"fizyka"}, {plain:"quimica",word:"química",pl:"chemia"}, {plain:"matematicas",word:"matemáticas",pl:"matematyka"}, {plain:"gramatica",word:"gramática",pl:"gramatyka"},
+  {plain:"trafico",word:"tráfico",pl:"ruch uliczny"}, {plain:"plastico",word:"plástico",pl:"plastik"}, {plain:"clasico",word:"clásico",pl:"klasyczny"}, {plain:"metodo",word:"método",pl:"metoda"}, {plain:"america",word:"América",pl:"Ameryka"}, {plain:"mexico",word:"México",pl:"Meksyk"}, {plain:"peru",word:"Perú",pl:"Peru"}, {plain:"panama",word:"Panamá",pl:"Panama"}, {plain:"bogota",word:"Bogotá",pl:"Bogota"}, {plain:"cordoba",word:"Córdoba",pl:"Kordoba"},
+  {plain:"angel",word:"ángel",pl:"anioł"}, {plain:"azucar",word:"azúcar",pl:"cukier"}, {plain:"carcel",word:"cárcel",pl:"więzienie"}, {plain:"cesped",word:"césped",pl:"trawa"}, {plain:"tunel",word:"túnel",pl:"tunel"}, {plain:"album",word:"álbum",pl:"album"}, {plain:"lider",word:"líder",pl:"lider"}, {plain:"futbol",word:"fútbol",pl:"piłka nożna"}, {plain:"record",word:"récord",pl:"rekord"}, {plain:"poster",word:"póster",pl:"plakat"},
+  {plain:"comodo",word:"cómodo",pl:"wygodny"}, {plain:"incomodo",word:"incómodo",pl:"niewygodny"}, {plain:"calido",word:"cálido",pl:"ciepły"}, {plain:"frio",word:"frío",pl:"zimno / zimny"}, {plain:"rio",word:"río",pl:"rzeka"}, {plain:"mio",word:"mío",pl:"mój"}, {plain:"tio",word:"tío",pl:"wujek"}, {plain:"tia",word:"tía",pl:"ciocia"}, {plain:"sonrie",word:"sonríe",pl:"uśmiecha się"}, {plain:"oir",word:"oír",pl:"słyszeć"},
+  {plain:"adios",word:"adiós",pl:"do widzenia"}, {plain:"quizas",word:"quizás",pl:"może"}, {plain:"quiza",word:"quizá",pl:"może"}, {plain:"jamas",word:"jamás",pl:"nigdy"}, {plain:"detras",word:"detrás",pl:"z tyłu"}, {plain:"atras",word:"atrás",pl:"wstecz / z tyłu"}, {plain:"segun",word:"según",pl:"według"}, {plain:"algun",word:"algún",pl:"jakiś"}, {plain:"ningun",word:"ningún",pl:"żaden"}, {plain:"demas",word:"demás",pl:"pozostali"},
+  {plain:"sabado",word:"sábado",pl:"sobota"}, {plain:"miercoles",word:"miércoles",pl:"środa"}, {plain:"autobus",word:"autobús",pl:"autobus"}, {plain:"balon",word:"balón",pl:"piłka"}, {plain:"jardin",word:"jardín",pl:"ogród"}, {plain:"salon",word:"salón",pl:"salon / pokój"}, {plain:"rincon",word:"rincón",pl:"kąt"}, {plain:"sillon",word:"sillón",pl:"fotel"}, {plain:"oceano",word:"océano",pl:"ocean"}, {plain:"heroe",word:"héroe",pl:"bohater"},
+  {plain:"heroes",word:"héroes",pl:"bohaterowie"}, {plain:"poesia",word:"poesía",pl:"poezja"}, {plain:"raiz",word:"raíz",pl:"korzeń"}, {plain:"baul",word:"baúl",pl:"kufer"}, {plain:"maiz",word:"maíz",pl:"kukurydza"}, {plain:"oido",word:"oído",pl:"słuch / ucho wewnętrzne"}, {plain:"caida",word:"caída",pl:"upadek"}, {plain:"reir",word:"reír",pl:"śmiać się"}, {plain:"buho",word:"búho",pl:"sowa"}, {plain:"envio",word:"envío",pl:"wysyłka"},
+  {plain:"profesion",word:"profesión",pl:"zawód"}, {plain:"presion",word:"presión",pl:"presja"}, {plain:"version",word:"versión",pl:"wersja"}, {plain:"mision",word:"misión",pl:"misja"}, {plain:"vision",word:"visión",pl:"wizja"}, {plain:"impresion",word:"impresión",pl:"wrażenie"}, {plain:"expresion",word:"expresión",pl:"wyrażenie"}, {plain:"investigacion",word:"investigación",pl:"badanie"}, {plain:"organizacion",word:"organización",pl:"organizacja"}, {plain:"comunicacion",word:"comunicación",pl:"komunikacja"},
+  {plain:"poblacion",word:"población",pl:"populacja"}, {plain:"tradicion",word:"tradición",pl:"tradycja"}, {plain:"eleccion",word:"elección",pl:"wybór"}, {plain:"emocion",word:"emoción",pl:"emocja"}, {plain:"obligacion",word:"obligación",pl:"obowiązek"}, {plain:"participacion",word:"participación",pl:"udział"}, {plain:"condicion",word:"condición",pl:"warunek"}, {plain:"posicion",word:"posición",pl:"pozycja"}, {plain:"produccion",word:"producción",pl:"produkcja"}, {plain:"construccion",word:"construcción",pl:"budowa / konstrukcja"},
+  {plain:"administracion",word:"administración",pl:"administracja"}, {plain:"practicamente",word:"prácticamente",pl:"praktycznie"}, {plain:"dificilmente",word:"difícilmente",pl:"z trudem"}, {plain:"tecnologia",word:"tecnología",pl:"technologia"}, {plain:"psicologia",word:"psicología",pl:"psychologia"}, {plain:"categoria",word:"categoría",pl:"kategoria"}, {plain:"secretaria",word:"secretaría",pl:"sekretariat"}, {plain:"garantia",word:"garantía",pl:"gwarancja"}, {plain:"melodia",word:"melodía",pl:"melodia"}, {plain:"simpatia",word:"simpatía",pl:"sympatia"}
+];
 let selectedDifficulty = localStorage.getItem("spanishConjugationDifficulty") || "normal";
+let selectedPracticeMode = localStorage.getItem("spanishPracticeMode") || "indefinido";
+let spainMode = localStorage.getItem("spanishSpainMode") === "true";
+let sentenceMode = localStorage.getItem("spanishSentenceMode") === "true";
+let selectedAccentDifficulty = localStorage.getItem("spanishAccentDifficulty") || "easy";
 let currentTense = null, queue = [], current = 0, score = 0, checked = false, sessionWrong = [];
+let accentQueue = [], accentCurrent = 0, accentScore = 0, accentChecked = false, accentSessionWrong = [];
 
 function shuffle(a){
   const copy = [...a];
@@ -573,41 +1162,416 @@ function normalize(s){ return s.trim().toLowerCase().normalize("NFD").replace(/[
 function cleanText(s){ return s.trim().toLowerCase(); }
 function hasAccentDifference(answer, correct){ return normalize(answer) === normalize(correct) && cleanText(answer) !== cleanText(correct); }
 function randomPick(items){ return items[Math.floor(Math.random() * items.length)]; }
-function subjectFor(pronoun){ return {yo:"yo", tú:"tú", "él/ella":"ella", nosotros:"nosotros", "ellos/ellas":"ellos"}[pronoun] || pronoun; }
+function getPronouns(tense = currentTense){ return spainMode && tense !== "perfecto" ? spainPronouns : pronouns; }
+function isPerfecto(tense = currentTense){ return tense === "perfecto"; }
+function correctFor(q){ return isPerfecto(q.tense) ? q.verb.part : q.verb.c[q.pronoun]; }
+function subjectFor(pronoun){ return {yo:"yo", tú:"tú", "él/ella":"ella", nosotros:"nosotros", vosotros:"vosotros", "ellos/ellas":"ellos"}[pronoun] || pronoun; }
+const SENTENCE_SUBJECTS = {
+  yo: ["yo"],
+  tú: ["tú"],
+  "él/ella": ["él", "ella", "mi hermano", "mi amiga", "el profesor", "la vecina", "mi padre", "mi madre", "Carlos", "Lucía", "la doctora", "el camarero"],
+  nosotros: ["nosotros", "nosotras", "mi familia y yo", "mis amigos y yo", "mi clase y yo", "mi hermana y yo", "mi equipo y yo"],
+  vosotros: ["vosotros", "vosotras", "tú y tus amigos", "tú y tu familia", "tú y tu hermano", "vosotros dos"],
+  "ellos/ellas": ["ellos", "ellas", "mis amigos", "los estudiantes", "mis padres", "los vecinos", "las chicas", "los niños", "los profesores", "las familias"]
+};
+const SENTENCE_SUBJECT_PL = {
+  yo: "ja", tú: "ty", él: "on", ella: "ona", "mi hermano": "mój brat", "mi amiga": "moja przyjaciółka", "el profesor": "nauczyciel", "la vecina": "sąsiadka", "mi padre": "mój tata", "mi madre": "moja mama", Carlos: "Carlos", Lucía: "Lucía", "la doctora": "lekarka", "el camarero": "kelner",
+  nosotros: "my", nosotras: "my", "mi familia y yo": "moja rodzina i ja", "mis amigos y yo": "moi przyjaciele i ja", "mi clase y yo": "moja klasa i ja", "mi hermana y yo": "moja siostra i ja", "mi equipo y yo": "moja drużyna i ja",
+  vosotros: "wy", vosotras: "wy", "tú y tus amigos": "ty i twoi przyjaciele", "tú y tu familia": "ty i twoja rodzina", "tú y tu hermano": "ty i twój brat", "vosotros dos": "wy dwaj",
+  ellos: "oni", ellas: "one", "mis amigos": "moi przyjaciele", "los estudiantes": "uczniowie", "mis padres": "moi rodzice", "los vecinos": "sąsiedzi", "las chicas": "dziewczyny", "los niños": "dzieci", "los profesores": "nauczyciele", "las familias": "rodziny"
+};
+const SENTENCE_START_PL = {
+  "Ayer":"wczoraj", "Anoche":"wczoraj wieczorem", "El lunes":"w poniedziałek", "La semana pasada":"w zeszłym tygodniu", "Hace dos días":"dwa dni temu", "Esta mañana":"dziś rano", "El verano pasado":"zeszłego lata", "En aquel momento":"w tamtym momencie", "Después de clase":"po lekcji", "Durante el viaje":"podczas podróży", "Al final":"na końcu", "De repente":"nagle", "Hace un rato":"przed chwilą", "En la reunión":"na spotkaniu", "Antes de salir":"przed wyjściem", "Por la tarde":"po południu", "El fin de semana":"w weekend", "En Madrid":"w Madrycie", "En casa":"w domu", "En la fiesta":"na imprezie", "En el aeropuerto":"na lotnisku", "Durante la cena":"podczas kolacji", "Al volver a casa":"po powrocie do domu", "En el último minuto":"w ostatniej chwili",
+  "Antes":"wcześniej", "De joven":"w młodości", "En la infancia":"w dzieciństwie", "Todos los días":"codziennie", "Cada verano":"każdego lata", "Normalmente":"zwykle", "A menudo":"często", "Muchas veces":"wiele razy", "En aquella época":"w tamtym okresie", "Durante las vacaciones":"podczas wakacji", "Por las tardes":"popołudniami", "En la antigua escuela":"w dawnej szkole", "Los domingos":"w niedziele", "Cuando había tiempo":"kiedy był czas", "Siempre":"zawsze", "Casi nunca":"prawie nigdy", "Cada mañana":"każdego ranka", "En invierno":"zimą", "Durante el año":"w ciągu roku", "En casa de los abuelos":"u dziadków", "En el barrio":"w dzielnicy", "Después de comer":"po jedzeniu", "Antes de dormir":"przed snem", "Cuando llovía":"kiedy padał deszcz",
+  "Mañana":"jutro", "La próxima semana":"w przyszłym tygodniu", "El año que viene":"w przyszłym roku", "Pronto":"wkrótce", "Después":"potem", "Esta tarde":"dziś po południu", "El lunes":"w poniedziałek", "Más tarde":"później", "Si todo va bien":"jeśli wszystko pójdzie dobrze", "Dentro de poco":"niedługo", "En vacaciones":"w wakacje", "Esta noche":"dziś wieczorem", "El próximo verano":"przyszłego lata", "Después del examen":"po egzaminie", "Cuando termine la clase":"kiedy skończy się lekcja", "En el futuro":"w przyszłości", "El fin de semana":"w weekend", "Antes de la cena":"przed kolacją", "En unos minutos":"za kilka minut", "Al llegar a casa":"po przyjściu do domu", "Durante el viaje":"podczas podróży", "En la reunión":"na spotkaniu", "Después de practicar":"po ćwiczeniu", "Cuando sea posible":"kiedy będzie to możliwe",
+  "Quiero que":"chcę, żeby", "Espero que":"mam nadzieję, że", "Es posible que":"możliwe, że", "Dudo que":"wątpię, że", "Ojalá que":"oby", "Es importante que":"ważne, żeby", "Me alegra que":"cieszę się, że", "No creo que":"nie sądzę, żeby", "Prefiero que":"wolę, żeby", "Necesito que":"potrzebuję, żeby", "Tal vez":"być może", "Puede que":"możliwe, że", "Antes de que":"zanim", "Aunque":"chociaż", "Cuando sea necesario que":"kiedy będzie konieczne, żeby", "Es mejor que":"lepiej, żeby", "Me sorprende que":"dziwi mnie, że", "No parece que":"nie wygląda na to, żeby", "Es normal que":"to normalne, że", "Me gusta que":"podoba mi się, że", "Es probable que":"prawdopodobne, że", "No es seguro que":"nie jest pewne, że", "Me preocupa que":"martwi mnie, że", "Es una pena que":"szkoda, że",
+  "Hoy he":"dzisiaj", "Esta semana he":"w tym tygodniu", "Este mes he":"w tym miesiącu", "Ya he":"już", "Nunca he":"nigdy", "Todavía no he":"jeszcze nie", "Últimamente he":"ostatnio", "Esta mañana he":"dziś rano", "En mi vida he":"w życiu", "Por fin he":"w końcu", "Después de mucho tiempo he":"po długim czasie", "Hace poco he":"niedawno", "En clase he":"na lekcji", "En casa he":"w domu", "Durante el viaje he":"podczas podróży", "Antes de salir he":"przed wyjściem", "Al final he":"na końcu", "Para practicar he":"dla praktyki", "Con calma he":"spokojnie", "Otra vez he":"znowu", "Esta tarde he":"dziś po południu", "En la reunión he":"na spotkaniu", "Después de estudiar he":"po nauce", "Sin ayuda he":"bez pomocy"
+};
+const SENTENCE_COMPLEMENTS = {
+  hablar:[{es:" con Ana.",pl:"z Aną"},{es:" en clase.",pl:"na lekcji"},{es:" por teléfono.",pl:"przez telefon"}],
+  comer:[{es:" una ensalada.",pl:"sałatkę"},{es:" en casa.",pl:"w domu"},{es:" algo rápido.",pl:"coś szybkiego"}],
+  vivir:[{es:" en Madrid.",pl:"w Madrycie"},{es:" cerca del centro.",pl:"blisko centrum"},{es:" con su familia.",pl:"z rodziną"}],
+  ser:[{es:" sincero.",pl:"szczery"},{es:" muy amable.",pl:"bardzo miły"},{es:" importante.",pl:"ważny"}],
+  estar:[{es:" en casa.",pl:"w domu"},{es:" tranquilo.",pl:"spokojny"},{es:" en la escuela.",pl:"w szkole"}],
+  ir:[{es:" a clase.",pl:"na lekcję"},{es:" al centro.",pl:"do centrum"},{es:" a casa.",pl:"do domu"}],
+  tener:[{es:" tiempo.",pl:"czas"},{es:" una idea.",pl:"pomysł"},{es:" mucha suerte.",pl:"dużo szczęścia"}],
+  hacer:[{es:" la tarea.",pl:"zadanie"},{es:" una pregunta.",pl:"pytanie"},{es:" algo importante.",pl:"coś ważnego"}],
+  poder:[{es:" ayudar.",pl:"pomóc"},{es:" venir.",pl:"przyjść"},{es:" terminar a tiempo.",pl:"skończyć na czas"}],
+  querer:[{es:" ayudar.",pl:"pomóc"},{es:" aprender más.",pl:"nauczyć się więcej"},{es:" salir temprano.",pl:"wyjść wcześniej"}],
+  decir:[{es:" la verdad.",pl:"prawdę"},{es:" algo importante.",pl:"coś ważnego"},{es:" una frase nueva.",pl:"nowe zdanie"}],
+  saber:[{es:" la respuesta.",pl:"odpowiedź"},{es:" mucho.",pl:"dużo"},{es:" qué hacer.",pl:"co zrobić"}],
+  venir:[{es:" a casa.",pl:"do domu"},{es:" a la reunión.",pl:"na spotkanie"},{es:" con nosotros.",pl:"z nami"}],
+  dar:[{es:" un regalo.",pl:"prezent"},{es:" una respuesta.",pl:"odpowiedź"},{es:" una explicación.",pl:"wyjaśnienie"}],
+  ver:[{es:" la película.",pl:"film"},{es:" el mensaje.",pl:"wiadomość"},{es:" a sus amigos.",pl:"swoich przyjaciół"}],
+  poner:[{es:" la mesa.",pl:"stół"},{es:" el libro aquí.",pl:"książkę tutaj"},{es:" atención.",pl:"uwagę"}],
+  salir:[{es:" de casa.",pl:"z domu"},{es:" temprano.",pl:"wcześnie"},{es:" con amigos.",pl:"z przyjaciółmi"}],
+  traer:[{es:" el libro.",pl:"książkę"},{es:" una mochila.",pl:"plecak"},{es:" buenas noticias.",pl:"dobre wiadomości"}],
+  dormir:[{es:" ocho horas.",pl:"osiem godzin"},{es:" bien.",pl:"dobrze"},{es:" en el hotel.",pl:"w hotelu"}],
+  pedir:[{es:" ayuda.",pl:"pomoc"},{es:" un café.",pl:"kawę"},{es:" más tiempo.",pl:"więcej czasu"}],
+  leer:[{es:" el libro.",pl:"książkę"},{es:" el mensaje.",pl:"wiadomość"},{es:" en voz alta.",pl:"na głos"}],
+  escribir:[{es:" una carta.",pl:"list"},{es:" el mensaje.",pl:"wiadomość"},{es:" una respuesta.",pl:"odpowiedź"}],
+  llegar:[{es:" a tiempo.",pl:"na czas"},{es:" tarde.",pl:"późno"},{es:" a la estación.",pl:"na stację"}],
+  sentir:[{es:" alegría.",pl:"radość"},{es:" miedo.",pl:"strach"},{es:" mucho estrés.",pl:"dużo stresu"}],
+  seguir:[{es:" el camino.",pl:"drogę"},{es:" las instrucciones.",pl:"instrukcje"},{es:" adelante.",pl:"dalej"}],
+  volver:[{es:" a casa.",pl:"do domu"},{es:" al trabajo.",pl:"do pracy"},{es:" muy tarde.",pl:"bardzo późno"}],
+  empezar:[{es:" la clase.",pl:"lekcję"},{es:" el proyecto.",pl:"projekt"},{es:" temprano.",pl:"wcześnie"}],
+  jugar:[{es:" al fútbol.",pl:"w piłkę nożną"},{es:" con amigos.",pl:"z przyjaciółmi"},{es:" en el parque.",pl:"w parku"}],
+  oír:[{es:" la música.",pl:"muzykę"},{es:" una voz.",pl:"głos"},{es:" el ruido.",pl:"hałas"}],
+  caer:[{es:" al suelo.",pl:"na ziemię"},{es:" de la silla.",pl:"z krzesła"},{es:" en la calle.",pl:"na ulicy"}],
+  creer:[{es:" la historia.",pl:"w tę historię"},{es:" en sus amigos.",pl:"w swoich przyjaciół"},{es:" que era posible.",pl:"że to było możliwe"}],
+  conocer:[{es:" a una persona nueva.",pl:"nową osobę"},{es:" la ciudad.",pl:"miasto"},{es:" bien el tema.",pl:"dobrze temat"}],
+  conducir:[{es:" el coche.",pl:"samochód"},{es:" hasta el centro.",pl:"do centrum"},{es:" con cuidado.",pl:"ostrożnie"}],
+  construir:[{es:" una casa.",pl:"dom"},{es:" una solución.",pl:"rozwiązanie"},{es:" un puente.",pl:"most"}],
+  elegir:[{es:" una opción.",pl:"jedną opcję"},{es:" el camino correcto.",pl:"właściwą drogę"},{es:" un tema.",pl:"temat"}],
+  servir:[{es:" la comida.",pl:"jedzenie"},{es:" café.",pl:"kawę"},{es:" de ejemplo.",pl:"jako przykład"}],
+  morir:[{es:" en la historia.",pl:"w tej historii"},{es:" joven.",pl:"młodo"},{es:" lejos de casa.",pl:"daleko od domu"}],
+  valer:[{es:" mucho.",pl:"dużo"},{es:" la pena.",pl:"zachodu"},{es:" cien euros.",pl:"sto euro"}],
+  caber:[{es:" en la mochila.",pl:"w plecaku"},{es:" en la caja.",pl:"w pudełku"},{es:" en el coche.",pl:"w samochodzie"}],
+  andar:[{es:" por el parque.",pl:"po parku"},{es:" mucho.",pl:"dużo"},{es:" hasta casa.",pl:"aż do domu"}],
+  pensar:[{es:" en el problema.",pl:"o problemie"},{es:" en su futuro.",pl:"o swojej przyszłości"},{es:" demasiado.",pl:"za dużo"}],
+  perder:[{es:" las llaves.",pl:"klucze"},{es:" el tren.",pl:"pociąg"},{es:" una oportunidad.",pl:"okazję"}],
+  entender:[{es:" la explicación.",pl:"wyjaśnienie"},{es:" el problema.",pl:"problem"},{es:" la pregunta.",pl:"pytanie"}],
+  encontrar:[{es:" una solución.",pl:"rozwiązanie"},{es:" el teléfono.",pl:"telefon"},{es:" a un amigo.",pl:"przyjaciela"}],
+  preferir:[{es:" el café.",pl:"kawę"},{es:" quedarse en casa.",pl:"zostać w domu"},{es:" estudiar solo.",pl:"uczyć się samemu"}],
+  conseguir:[{es:" el trabajo.",pl:"pracę"},{es:" una entrada.",pl:"bilet"},{es:" buenos resultados.",pl:"dobre wyniki"}],
+  mantener:[{es:" la calma.",pl:"spokój"},{es:" el contacto.",pl:"kontakt"},{es:" la promesa.",pl:"obietnicę"}],
+  traducir:[{es:" el texto.",pl:"tekst"},{es:" la frase.",pl:"zdanie"},{es:" una palabra difícil.",pl:"trudne słowo"}],
+  producir:[{es:" un cambio.",pl:"zmianę"},{es:" mucha energía.",pl:"dużo energii"},{es:" un resultado.",pl:"wynik"}],
+  ofrecer:[{es:" ayuda.",pl:"pomoc"},{es:" una solución.",pl:"rozwiązanie"},{es:" café.",pl:"kawę"}],
+  aparecer:[{es:" en la pantalla.",pl:"na ekranie"},{es:" de repente.",pl:"nagle"},{es:" en la lista.",pl:"na liście"}],
+  reconocer:[{es:" el error.",pl:"błąd"},{es:" a su amigo.",pl:"swojego przyjaciela"},{es:" la voz.",pl:"głos"}],
+  abrir:[{es:" la puerta.",pl:"drzwi"},{es:" el correo.",pl:"maila"},{es:" la ventana.",pl:"okno"}],
+  beber:[{es:" agua.",pl:"wodę"},{es:" un café.",pl:"kawę"},{es:" demasiado.",pl:"za dużo"}],
+  trabajar:[{es:" en la oficina.",pl:"w biurze"},{es:" mucho.",pl:"dużo"},{es:" con paciencia.",pl:"cierpliwie"}],
+  estudiar:[{es:" español.",pl:"hiszpański"},{es:" para el examen.",pl:"do egzaminu"},{es:" en la biblioteca.",pl:"w bibliotece"}],
+  comprar:[{es:" pan.",pl:"chleb"},{es:" un regalo.",pl:"prezent"},{es:" comida.",pl:"jedzenie"}],
+  viajar:[{es:" a España.",pl:"do Hiszpanii"},{es:" en tren.",pl:"pociągiem"},{es:" con su familia.",pl:"z rodziną"}],
+  nacer:[{es:" en España.",pl:"w Hiszpanii"},{es:" en verano.",pl:"latem"},{es:" en una ciudad pequeña.",pl:"w małym mieście"}],
+  reír:[{es:" mucho.",pl:"dużo"},{es:" con sus amigos.",pl:"ze swoimi przyjaciółmi"},{es:" de la broma.",pl:"z żartu"}],
+  buscar:[{es:" las llaves.",pl:"klucze"},{es:" una respuesta.",pl:"odpowiedź"},{es:" trabajo.",pl:"pracy"}],
+  pagar:[{es:" la cuenta.",pl:"rachunek"},{es:" el billete.",pl:"bilet"},{es:" en efectivo.",pl:"gotówką"}],
+  haber:[{es:" terminado el trabajo.",pl:"skończyć pracę"},{es:" estudiado mucho.",pl:"dużo się uczyć"},{es:" llegado antes.",pl:"przyjść wcześniej"}],
+  romper:[{es:" el vaso.",pl:"szklankę"},{es:" la regla.",pl:"zasadę"},{es:" el papel.",pl:"papier"}],
+  cubrir:[{es:" la mesa.",pl:"stół"},{es:" el tema.",pl:"temat"},{es:" la caja.",pl:"pudełko"}],
+  descubrir:[{es:" la verdad.",pl:"prawdę"},{es:" un lugar nuevo.",pl:"nowe miejsce"},{es:" la respuesta.",pl:"odpowiedź"}],
+  freír:[{es:" las patatas.",pl:"ziemniaki"},{es:" un huevo.",pl:"jajko"},{es:" la comida.",pl:"jedzenie"}],
+  resolver:[{es:" el problema.",pl:"problem"},{es:" la duda.",pl:"wątpliwość"},{es:" el ejercicio.",pl:"ćwiczenie"}],
+  devolver:[{es:" el libro.",pl:"książkę"},{es:" el dinero.",pl:"pieniądze"},{es:" la llamada.",pl:"telefon"}],
+  imprimir:[{es:" el documento.",pl:"dokument"},{es:" la página.",pl:"stronę"},{es:" el billete.",pl:"bilet"}]
+};
+const SENTENCE_EXTRA_COMPLEMENTS = {
+  hablar:[{es:" con el profesor.",pl:"z nauczycielem"},{es:" de sus planes.",pl:"o swoich planach"},{es:" en español.",pl:"po hiszpańsku"},{es:" con calma.",pl:"spokojnie"},{es:" durante la reunión.",pl:"podczas spotkania"}],
+  comer:[{es:" con la familia.",pl:"z rodziną"},{es:" en el restaurante.",pl:"w restauracji"},{es:" demasiado rápido.",pl:"zbyt szybko"},{es:" después de clase.",pl:"po lekcji"},{es:" una sopa caliente.",pl:"ciepłą zupę"}],
+  vivir:[{es:" en un piso pequeño.",pl:"w małym mieszkaniu"},{es:" cerca de la playa.",pl:"blisko plaży"},{es:" en otra ciudad.",pl:"w innym mieście"},{es:" sin problemas.",pl:"bez problemów"},{es:" con dos compañeros.",pl:"z dwoma współlokatorami"}],
+  ser:[{es:" una buena idea.",pl:"dobrym pomysłem"},{es:" bastante difícil.",pl:"dość trudny"},{es:" muy importante para todos.",pl:"bardzo ważny dla wszystkich"},{es:" el primero.",pl:"pierwszy"},{es:" una persona paciente.",pl:"cierpliwą osobą"}],
+  estar:[{es:" cansado.",pl:"zmęczony"},{es:" listo.",pl:"gotowy"},{es:" cerca de la puerta.",pl:"blisko drzwi"},{es:" de buen humor.",pl:"w dobrym humorze"},{es:" ocupado.",pl:"zajęty"}],
+  ir:[{es:" al supermercado.",pl:"do supermarketu"},{es:" a la biblioteca.",pl:"do biblioteki"},{es:" al médico.",pl:"do lekarza"},{es:" con prisa.",pl:"w pośpiechu"},{es:" en autobús.",pl:"autobusem"}],
+  tener:[{es:" una reunión.",pl:"spotkanie"},{es:" dolor de cabeza.",pl:"ból głowy"},{es:" razón.",pl:"rację"},{es:" muchas preguntas.",pl:"wiele pytań"},{es:" ganas de aprender.",pl:"ochotę się uczyć"}],
+  hacer:[{es:" la compra.",pl:"zakupy"},{es:" ejercicio.",pl:"ćwiczenia"},{es:" una llamada.",pl:"telefon"},{es:" un favor.",pl:"przysługę"},{es:" todo lo posible.",pl:"wszystko, co możliwe"}],
+  poder:[{es:" descansar un poco.",pl:"trochę odpocząć"},{es:" entender la pregunta.",pl:"zrozumieć pytanie"},{es:" pagar la cuenta.",pl:"zapłacić rachunek"},{es:" entrar sin problema.",pl:"wejść bez problemu"},{es:" hablar con el jefe.",pl:"porozmawiać z szefem"}],
+  querer:[{es:" un café.",pl:"kawę"},{es:" descansar.",pl:"odpocząć"},{es:" probar algo nuevo.",pl:"spróbować czegoś nowego"},{es:" hablar contigo.",pl:"porozmawiać z tobą"},{es:" cambiar de plan.",pl:"zmienić plan"}],
+  decir:[{es:" que no.",pl:"że nie"},{es:" la respuesta correcta.",pl:"poprawną odpowiedź"},{es:" su opinión.",pl:"swoją opinię"},{es:" una cosa importante.",pl:"ważną rzecz"},{es:" lo mismo.",pl:"to samo"}],
+  saber:[{es:" dónde estaba la estación.",pl:"gdzie była stacja"},{es:" cómo resolverlo.",pl:"jak to rozwiązać"},{es:" el nombre.",pl:"imię"},{es:" la fecha.",pl:"datę"},{es:" hablar un poco de español.",pl:"mówić trochę po hiszpańsku"}],
+  venir:[{es:" a la fiesta.",pl:"na imprezę"},{es:" más tarde.",pl:"później"},{es:" en tren.",pl:"pociągiem"},{es:" para ayudar.",pl:"żeby pomóc"},{es:" con buenas noticias.",pl:"z dobrymi wiadomościami"}],
+  dar:[{es:" las gracias.",pl:"podziękowania"},{es:" una oportunidad.",pl:"szansę"},{es:" un consejo.",pl:"radę"},{es:" dinero a su hermano.",pl:"pieniądze swojemu bratu"},{es:" una clase.",pl:"lekcję"}],
+  ver:[{es:" una serie nueva.",pl:"nowy serial"},{es:" el partido.",pl:"mecz"},{es:" la diferencia.",pl:"różnicę"},{es:" una foto antigua.",pl:"stare zdjęcie"},{es:" el resultado.",pl:"wynik"}],
+  poner:[{es:" la mochila en la silla.",pl:"plecak na krześle"},{es:" música.",pl:"muzykę"},{es:" el móvil en silencio.",pl:"telefon na tryb cichy"},{es:" una nota en la mesa.",pl:"notatkę na stole"},{es:" todo en orden.",pl:"wszystko w porządku"}],
+  salir:[{es:" de la oficina.",pl:"z biura"},{es:" al balcón.",pl:"na balkon"},{es:" a caminar.",pl:"na spacer"},{es:" después de la cena.",pl:"po kolacji"},{es:" sin paraguas.",pl:"bez parasola"}],
+  traer:[{es:" la comida.",pl:"jedzenie"},{es:" los documentos.",pl:"dokumenty"},{es:" un paraguas.",pl:"parasolkę"},{es:" la respuesta.",pl:"odpowiedź"},{es:" algo para beber.",pl:"coś do picia"}],
+  dormir:[{es:" poco.",pl:"mało"},{es:" profundamente.",pl:"głęboko"},{es:" en el sofá.",pl:"na kanapie"},{es:" hasta tarde.",pl:"do późna"},{es:" sin despertarse.",pl:"bez budzenia się"}],
+  pedir:[{es:" perdón.",pl:"przebaczenie"},{es:" una mesa para dos.",pl:"stolik dla dwóch osób"},{es:" la cuenta.",pl:"rachunek"},{es:" consejo.",pl:"radę"},{es:" permiso.",pl:"pozwolenie"}],
+  leer:[{es:" el periódico.",pl:"gazetę"},{es:" una novela.",pl:"powieść"},{es:" las instrucciones.",pl:"instrukcje"},{es:" antes de dormir.",pl:"przed snem"},{es:" cada página con atención.",pl:"każdą stronę uważnie"}],
+  escribir:[{es:" un correo.",pl:"maila"},{es:" en el cuaderno.",pl:"w zeszycie"},{es:" una lista.",pl:"listę"},{es:" una historia corta.",pl:"krótką historię"},{es:" con muchos errores.",pl:"z wieloma błędami"}],
+  llegar:[{es:" antes que todos.",pl:"przed wszystkimi"},{es:" sin avisar.",pl:"bez uprzedzenia"},{es:" al aeropuerto.",pl:"na lotnisko"},{es:" justo a tiempo.",pl:"dokładnie na czas"},{es:" con retraso.",pl:"z opóźnieniem"}],
+  sentir:[{es:" un poco de miedo.",pl:"trochę strachu"},{es:" mucha alegría.",pl:"dużo radości"},{es:" frío.",pl:"zimno"},{es:" curiosidad.",pl:"ciekawość"},{es:" alivio.",pl:"ulgę"}],
+  seguir:[{es:" trabajando.",pl:"pracować dalej"},{es:" estudiando.",pl:"uczyć się dalej"},{es:" el consejo.",pl:"radę"},{es:" a su hermano.",pl:"za swoim bratem"},{es:" la conversación.",pl:"rozmowę"}],
+  volver:[{es:" al mismo lugar.",pl:"w to samo miejsce"},{es:" después de una hora.",pl:"po godzinie"},{es:" con una sonrisa.",pl:"z uśmiechem"},{es:" a intentarlo.",pl:"spróbować ponownie"},{es:" antes de la cena.",pl:"przed kolacją"}],
+  empezar:[{es:" a estudiar.",pl:"uczyć się"},{es:" a trabajar.",pl:"pracować"},{es:" la reunión.",pl:"spotkanie"},{es:" con una pregunta.",pl:"od pytania"},{es:" sin miedo.",pl:"bez strachu"}],
+  jugar:[{es:" al tenis.",pl:"w tenisa"},{es:" una partida.",pl:"partię"},{es:" con el perro.",pl:"z psem"},{es:" en línea.",pl:"online"},{es:" después de clase.",pl:"po lekcji"}],
+  oír:[{es:" una canción.",pl:"piosenkę"},{es:" pasos en la calle.",pl:"kroki na ulicy"},{es:" la alarma.",pl:"alarm"},{es:" una noticia extraña.",pl:"dziwną wiadomość"},{es:" a alguien en la cocina.",pl:"kogoś w kuchni"}],
+  caer:[{es:" mal.",pl:"źle"},{es:" bien a todos.",pl:"dobrze wszystkim"},{es:" por las escaleras.",pl:"ze schodów"},{es:" en una trampa.",pl:"w pułapkę"},{es:" durante el partido.",pl:"podczas meczu"}],
+  creer:[{es:" en sí mismo.",pl:"w siebie"},{es:" cada palabra.",pl:"każdemu słowu"},{es:" en la explicación.",pl:"w wyjaśnienie"},{es:" que todo saldría bien.",pl:"że wszystko pójdzie dobrze"},{es:" en la suerte.",pl:"w szczęście"}],
+  conocer:[{es:" el camino.",pl:"drogę"},{es:" a la profesora.",pl:"nauczycielkę"},{es:" un restaurante nuevo.",pl:"nową restaurację"},{es:" la respuesta.",pl:"odpowiedź"},{es:" a mucha gente.",pl:"wielu ludzi"}],
+  conducir:[{es:" por la ciudad.",pl:"po mieście"},{es:" de noche.",pl:"nocą"},{es:" hasta la playa.",pl:"aż na plażę"},{es:" demasiado rápido.",pl:"zbyt szybko"},{es:" con mucha atención.",pl:"bardzo uważnie"}],
+  construir:[{es:" una relación.",pl:"relację"},{es:" un plan.",pl:"plan"},{es:" una idea nueva.",pl:"nowy pomysł"},{es:" una escuela.",pl:"szkołę"},{es:" una mesa.",pl:"stół"}],
+  elegir:[{es:" el menú.",pl:"menu"},{es:" la mejor respuesta.",pl:"najlepszą odpowiedź"},{es:" otro camino.",pl:"inną drogę"},{es:" un vestido.",pl:"sukienkę"},{es:" la fecha.",pl:"datę"}],
+  servir:[{es:" la cena.",pl:"kolację"},{es:" agua fría.",pl:"zimną wodę"},{es:" a los clientes.",pl:"klientom"},{es:" para explicar la regla.",pl:"do wyjaśnienia zasady"},{es:" de ayuda.",pl:"jako pomoc"}],
+  morir:[{es:" en paz.",pl:"w pokoju"},{es:" en la novela.",pl:"w powieści"},{es:" de viejo.",pl:"ze starości"},{es:" antes del final.",pl:"przed końcem"},{es:" sin decir nada.",pl:"nic nie mówiąc"}],
+  valer:[{es:" menos de lo esperado.",pl:"mniej niż oczekiwano"},{es:" mucho dinero.",pl:"dużo pieniędzy"},{es:" el esfuerzo.",pl:"wysiłku"},{es:" más que antes.",pl:"więcej niż wcześniej"},{es:" para el examen.",pl:"na egzamin"}],
+  caber:[{es:" perfectamente.",pl:"idealnie"},{es:" en una bolsa.",pl:"w torbie"},{es:" en el armario.",pl:"w szafie"},{es:" sin problema.",pl:"bez problemu"},{es:" al lado de la ventana.",pl:"obok okna"}],
+  andar:[{es:" despacio.",pl:"powoli"},{es:" por la playa.",pl:"po plaży"},{es:" sin rumbo.",pl:"bez celu"},{es:" con cuidado.",pl:"ostrożnie"},{es:" durante una hora.",pl:"przez godzinę"}],
+  pensar:[{es:" en la respuesta.",pl:"o odpowiedzi"},{es:" en cambiar de trabajo.",pl:"o zmianie pracy"},{es:" en voz alta.",pl:"na głos"},{es:" en sus amigos.",pl:"o swoich przyjaciołach"},{es:" antes de responder.",pl:"przed odpowiedzią"}],
+  perder:[{es:" la paciencia.",pl:"cierpliwość"},{es:" el móvil.",pl:"telefon"},{es:" el camino.",pl:"drogę"},{es:" mucho tiempo.",pl:"dużo czasu"},{es:" contra el otro equipo.",pl:"z drugą drużyną"}],
+  entender:[{es:" casi todo.",pl:"prawie wszystko"},{es:" la regla.",pl:"zasadę"},{es:" el chiste.",pl:"żart"},{es:" a la profesora.",pl:"nauczycielkę"},{es:" por fin.",pl:"w końcu"}],
+  encontrar:[{es:" la salida.",pl:"wyjście"},{es:" una buena excusa.",pl:"dobrą wymówkę"},{es:" el error.",pl:"błąd"},{es:" un piso barato.",pl:"tanie mieszkanie"},{es:" paz.",pl:"spokój"}],
+  preferir:[{es:" té.",pl:"herbatę"},{es:" otra opción.",pl:"inną opcję"},{es:" trabajar por la mañana.",pl:"pracować rano"},{es:" hablar después.",pl:"porozmawiać później"},{es:" el camino corto.",pl:"krótką drogę"}],
+  conseguir:[{es:" ayuda.",pl:"pomoc"},{es:" terminar el proyecto.",pl:"skończyć projekt"},{es:" una beca.",pl:"stypendium"},{es:" resolverlo.",pl:"rozwiązać to"},{es:" una mesa libre.",pl:"wolny stolik"}],
+  mantener:[{es:" la puerta abierta.",pl:"drzwi otwarte"},{es:" una conversación larga.",pl:"długą rozmowę"},{es:" el equilibrio.",pl:"równowagę"},{es:" la atención.",pl:"uwagę"},{es:" su palabra.",pl:"słowo"}],
+  traducir:[{es:" una canción.",pl:"piosenkę"},{es:" el menú.",pl:"menu"},{es:" el correo.",pl:"maila"},{es:" una noticia.",pl:"wiadomość"},{es:" todo al polaco.",pl:"wszystko na polski"}],
+  producir:[{es:" una película.",pl:"film"},{es:" ruido.",pl:"hałas"},{es:" muchos cambios.",pl:"wiele zmian"},{es:" comida local.",pl:"lokalne jedzenie"},{es:" una reacción fuerte.",pl:"silną reakcję"}],
+  ofrecer:[{es:" su asiento.",pl:"swoje miejsce"},{es:" una disculpa.",pl:"przeprosiny"},{es:" trabajo.",pl:"pracę"},{es:" apoyo.",pl:"wsparcie"},{es:" una alternativa.",pl:"alternatywę"}],
+  aparecer:[{es:" en una foto.",pl:"na zdjęciu"},{es:" al final.",pl:"na końcu"},{es:" en la puerta.",pl:"w drzwiach"},{es:" en internet.",pl:"w internecie"},{es:" sin explicación.",pl:"bez wyjaśnienia"}],
+  reconocer:[{es:" su culpa.",pl:"swoją winę"},{es:" el problema.",pl:"problem"},{es:" la canción.",pl:"piosenkę"},{es:" el lugar.",pl:"miejsce"},{es:" el esfuerzo.",pl:"wysiłek"}],
+  abrir:[{es:" la tienda.",pl:"sklep"},{es:" una cuenta.",pl:"konto"},{es:" el paquete.",pl:"paczkę"},{es:" el archivo.",pl:"plik"},{es:" los ojos.",pl:"oczy"}],
+  beber:[{es:" agua fría.",pl:"zimną wodę"},{es:" té.",pl:"herbatę"},{es:" un zumo.",pl:"sok"},{es:" con calma.",pl:"spokojnie"},{es:" durante la cena.",pl:"podczas kolacji"}],
+  trabajar:[{es:" desde casa.",pl:"z domu"},{es:" todo el día.",pl:"cały dzień"},{es:" con un equipo nuevo.",pl:"z nową drużyną"},{es:" en silencio.",pl:"w ciszy"},{es:" para ahorrar dinero.",pl:"żeby oszczędzać pieniądze"}],
+  estudiar:[{es:" gramática.",pl:"gramatykę"},{es:" vocabulario.",pl:"słownictwo"},{es:" con una aplicación.",pl:"z aplikacją"},{es:" por la noche.",pl:"nocą"},{es:" cada día.",pl:"codziennie"}],
+  comprar:[{es:" una chaqueta.",pl:"kurtkę"},{es:" billetes de tren.",pl:"bilety na pociąg"},{es:" fruta.",pl:"owoce"},{es:" algo barato.",pl:"coś taniego"},{es:" un cuaderno.",pl:"zeszyt"}],
+  viajar:[{es:" a México.",pl:"do Meksyku"},{es:" por trabajo.",pl:"służbowo"},{es:" sin maleta.",pl:"bez walizki"},{es:" con amigos.",pl:"z przyjaciółmi"},{es:" durante dos semanas.",pl:"przez dwa tygodnie"}],
+  nacer:[{es:" en primavera.",pl:"wiosną"},{es:" en Polonia.",pl:"w Polsce"},{es:" en una familia grande.",pl:"w dużej rodzinie"},{es:" el mismo día.",pl:"tego samego dnia"},{es:" muy lejos de aquí.",pl:"bardzo daleko stąd"}],
+  reír:[{es:" en voz alta.",pl:"głośno"},{es:" hasta llorar.",pl:"aż do łez"},{es:" durante la película.",pl:"podczas filmu"},{es:" sin parar.",pl:"bez przerwy"},{es:" con alegría.",pl:"z radością"}],
+  buscar:[{es:" una solución.",pl:"rozwiązanie"},{es:" el pasaporte.",pl:"paszport"},{es:" una dirección.",pl:"adres"},{es:" información.",pl:"informacje"},{es:" un hotel barato.",pl:"tani hotel"}],
+  pagar:[{es:" con tarjeta.",pl:"kartą"},{es:" por internet.",pl:"przez internet"},{es:" demasiado.",pl:"za dużo"},{es:" la entrada.",pl:"bilet wejściowy"},{es:" el alquiler.",pl:"czynsz"}],
+  haber:[{es:" una razón.",pl:"powód"},{es:" mucha gente.",pl:"dużo ludzi"},{es:" problemas.",pl:"problemy"},{es:" una solución.",pl:"rozwiązanie"},{es:" tiempo suficiente.",pl:"wystarczająco czasu"}],
+  romper:[{es:" una promesa.",pl:"obietnicę"},{es:" el silencio.",pl:"ciszę"},{es:" el ordenador.",pl:"komputer"},{es:" una taza.",pl:"kubek"},{es:" la puerta.",pl:"drzwi"}],
+  cubrir:[{es:" los gastos.",pl:"koszty"},{es:" la noticia.",pl:"wiadomość"},{es:" la comida.",pl:"jedzenie"},{es:" todo el suelo.",pl:"całą podłogę"},{es:" su cara.",pl:"twarz"}],
+  descubrir:[{es:" un secreto.",pl:"sekret"},{es:" un error.",pl:"błąd"},{es:" una canción nueva.",pl:"nową piosenkę"},{es:" un restaurante.",pl:"restaurację"},{es:" otra forma de estudiar.",pl:"inny sposób nauki"}],
+  freír:[{es:" pescado.",pl:"rybę"},{es:" verduras.",pl:"warzywa"},{es:" demasiado aceite.",pl:"za dużo oleju"},{es:" algo rápido.",pl:"coś szybkiego"},{es:" la cena.",pl:"kolację"}],
+  resolver:[{es:" el misterio.",pl:"zagadkę"},{es:" la situación.",pl:"sytuację"},{es:" el conflicto.",pl:"konflikt"},{es:" todo solo.",pl:"wszystko samemu"},{es:" la tarea difícil.",pl:"trudne zadanie"}],
+  devolver:[{es:" el favor.",pl:"przysługę"},{es:" las llaves.",pl:"klucze"},{es:" el paquete.",pl:"paczkę"},{es:" la chaqueta.",pl:"kurtkę"},{es:" el mensaje.",pl:"wiadomość"}],
+  imprimir:[{es:" las fotos.",pl:"zdjęcia"},{es:" el formulario.",pl:"formularz"},{es:" todo en color.",pl:"wszystko w kolorze"},{es:" la reserva.",pl:"rezerwację"},{es:" el contrato.",pl:"umowę"}]
+};
+Object.entries(SENTENCE_EXTRA_COMPLEMENTS).forEach(([inf, items]) => {
+  SENTENCE_COMPLEMENTS[inf] = [...(SENTENCE_COMPLEMENTS[inf] || []), ...items];
+});
+SENTENCE_COMPLEMENTS.ser = [
+  {tpl:" {adj}.", adj:"sincer", type:"o", pl:"szczery/a"},
+  {tpl:" muy {adj}.", adj:"amable", type:"e", pl:"bardzo miły/a"},
+  {tpl:" {adj} para todos.", adj:"importante", type:"e", pl:"ważny/a dla wszystkich"},
+  {tpl:" bastante {adj}.", forms:{ms:"difícil",fs:"difícil",mp:"difíciles",fp:"difíciles"}, pl:"dość trudny/a"},
+  {tpl:" {adj}.", adj:"paciente", type:"e", pl:"cierpliwy/a"},
+  {tpl:" {adj}.", adj:"responsable", type:"e", pl:"odpowiedzialny/a"},
+  {tpl:" {adj}.", adj:"puntual", type:"consonant", pl:"punktualny/a"},
+  {tpl:" {adj}.", adj:"divertid", type:"o", pl:"zabawny/a"},
+  {tpl:" {adj}.", forms:{ms:"útil",fs:"útil",mp:"útiles",fp:"útiles"}, pl:"użyteczny/a"},
+  {tpl:" {adj} con los demás.", adj:"honest", type:"o", pl:"uczciwy/a wobec innych"}
+];
+SENTENCE_COMPLEMENTS.estar = [
+  {tpl:" {adj}.", adj:"cansad", type:"o", pl:"zmęczony/a"},
+  {tpl:" {adj}.", adj:"list", type:"o", pl:"gotowy/a"},
+  {es:" cerca de la puerta.", pl:"blisko drzwi"},
+  {es:" de buen humor.", pl:"w dobrym humorze"},
+  {tpl:" {adj}.", adj:"ocupad", type:"o", pl:"zajęty/a"},
+  {tpl:" {adj}.", adj:"tranquil", type:"o", pl:"spokojny/a"},
+  {tpl:" muy {adj}.", adj:"content", type:"o", pl:"bardzo zadowolony/a"},
+  {tpl:" {adj} de aprender.", adj:"orgullos", type:"o", pl:"dumny/a z nauki"},
+  {es:" en el centro.", pl:"w centrum"},
+  {es:" con sus amigos.", pl:"ze swoimi przyjaciółmi"}
+];
+const SENTENCE_ACTION_PL = {
+  hablar:"rozmawiać", comer:"jeść", vivir:"mieszkać", ser:"być", estar:"być / znajdować się", ir:"iść / jechać", tener:"mieć", hacer:"robić", poder:"móc", querer:"chcieć", decir:"powiedzieć", saber:"wiedzieć / umieć", venir:"przyjść", dar:"dać", ver:"zobaczyć", poner:"położyć / włączyć", salir:"wyjść", traer:"przynieść", dormir:"spać", pedir:"poprosić", leer:"czytać", escribir:"napisać", llegar:"przyjść / dotrzeć", sentir:"czuć", seguir:"kontynuować / iść za", volver:"wrócić", empezar:"zacząć", jugar:"grać", oír:"usłyszeć", caer:"upaść / wypaść", creer:"wierzyć", conocer:"poznać / znać", conducir:"prowadzić", construir:"budować", elegir:"wybrać", servir:"podać / służyć", morir:"umrzeć", valer:"być wartym", caber:"zmieścić się", andar:"chodzić", pensar:"myśleć", perder:"zgubić / stracić", entender:"rozumieć", encontrar:"znaleźć", preferir:"woleć", conseguir:"zdobyć / osiągnąć", mantener:"utrzymać", traducir:"tłumaczyć", producir:"produkować / powodować", ofrecer:"zaoferować", aparecer:"pojawić się", reconocer:"rozpoznać / przyznać", abrir:"otworzyć", beber:"pić", trabajar:"pracować", estudiar:"uczyć się", comprar:"kupić", viajar:"podróżować", nacer:"urodzić się", reír:"śmiać się", buscar:"szukać", pagar:"zapłacić", haber:"być / istnieć", romper:"złamać / zepsuć", cubrir:"zakryć", descubrir:"odkryć", freír:"smażyć", resolver:"rozwiązać", devolver:"oddać", imprimir:"wydrukować"
+};
+const SENTENCE_BANK = {
+  indefinido: {
+    starts: ["Ayer", "Anoche", "El lunes", "La semana pasada", "Hace dos días", "Esta mañana", "El verano pasado", "En aquel momento", "Después de clase", "Durante el viaje", "Al final", "De repente", "Hace un rato", "En la reunión", "Antes de salir", "Por la tarde", "El fin de semana", "En Madrid", "En casa", "En la fiesta", "En el aeropuerto", "Durante la cena", "Al volver a casa", "En el último minuto"],
+    ends: [".", " muy rápido.", " sin problema.", " con mis amigos.", " en casa.", " en la escuela.", " en el trabajo.", " durante la clase.", " antes de cenar.", " después de comer.", " por la mañana.", " por la noche.", " en el centro.", " con calma.", " por primera vez.", " otra vez.", " muy bien.", " con cuidado.", " en el hotel.", " durante el examen."]
+  },
+  imperfecto: {
+    starts: ["Antes", "De joven", "En la infancia", "Todos los días", "Cada verano", "Normalmente", "A menudo", "Muchas veces", "En aquella época", "Durante las vacaciones", "Por las tardes", "En la antigua escuela", "Los domingos", "Cuando había tiempo", "Siempre", "Casi nunca", "Cada mañana", "En invierno", "Durante el año", "En casa de los abuelos", "En el barrio", "Después de comer", "Antes de dormir", "Cuando llovía"],
+    ends: [".", " mucho.", " con frecuencia.", " en casa.", " con mi familia.", " en la escuela.", " después de clase.", " antes de dormir.", " cada semana.", " sin prisa.", " por la tarde.", " cuando llovía.", " con mis amigos.", " en el barrio.", " durante horas.", " muy bien.", " todos juntos.", " en silencio.", " con alegría.", " tranquilamente."]
+  },
+  futuro: {
+    starts: ["Mañana", "La próxima semana", "El año que viene", "Pronto", "Después", "Esta tarde", "El lunes", "Más tarde", "Si todo va bien", "Dentro de poco", "En vacaciones", "Esta noche", "El próximo verano", "Después del examen", "Cuando termine la clase", "En el futuro", "El fin de semana", "Antes de la cena", "En unos minutos", "Al llegar a casa", "Durante el viaje", "En la reunión", "Después de practicar", "Cuando sea posible"],
+    ends: [".", " sin problema.", " con mis amigos.", " en casa.", " en la escuela.", " en el trabajo.", " después de comer.", " antes de dormir.", " con calma.", " por la tarde.", " por la noche.", " muy bien.", " cuando llegue.", " si todo va bien.", " durante el viaje.", " en el centro.", " otra vez.", " con cuidado.", " rápidamente.", " para practicar."]
+  },
+  subjuntivo: {
+    starts: ["Quiero que", "Espero que", "Es posible que", "Dudo que", "Ojalá que", "Es importante que", "Me alegra que", "No creo que", "Prefiero que", "Necesito que", "Tal vez", "Puede que", "Antes de que", "Aunque", "Cuando sea necesario que", "Es mejor que", "Me sorprende que", "No parece que", "Es normal que", "Me gusta que", "Es probable que", "No es seguro que", "Me preocupa que", "Es una pena que"],
+    ends: [".", " hoy.", " mañana.", " pronto.", " en casa.", " con nosotros.", " en la clase.", " sin problema.", " con cuidado.", " antes de salir.", " después de comer.", " por la mañana.", " por la tarde.", " esta vez.", " durante la reunión.", " para aprender.", " si puede.", " cuando llegue.", " con más calma.", " correctamente."]
+  },
+  perfecto: {
+    starts: ["Hoy he", "Esta semana he", "Este mes he", "Ya he", "Nunca he", "Todavía no he", "Últimamente he", "Esta mañana he", "En mi vida he", "Por fin he", "Después de mucho tiempo he", "Hace poco he", "En clase he", "En casa he", "Durante el viaje he", "Antes de salir he", "Al final he", "Para practicar he", "Con calma he", "Otra vez he", "Esta tarde he", "En la reunión he", "Después de estudiar he", "Sin ayuda he"],
+    ends: [".", " todo.", " mucho.", " esto.", " algo importante.", " la tarea.", " el mensaje.", " la puerta.", " el problema.", " la respuesta.", " con cuidado.", " muy rápido.", " en casa.", " en clase.", " durante la semana.", " antes de comer.", " después de estudiar.", " sin ayuda.", " por primera vez.", " otra vez."]
+  }
+};
+function sentenceVariantCount(){
+  const complements = Object.values(SENTENCE_COMPLEMENTS).reduce((sum, items) => sum + items.length, 0);
+  const closers = SENTENCE_CLOSERS.length || 1;
+  return Object.values(SENTENCE_BANK).reduce((sum, bank) => sum + (bank.starts.length * complements * closers), 0);
+}
+const SENTENCE_CLOSERS = [
+  {es:"", pl:""},
+  {es:" sin problema", pl:"bez problemu"},
+  {es:" con calma", pl:"spokojnie"},
+  {es:" otra vez", pl:"znowu"},
+  {es:" antes de salir", pl:"przed wyjściem"},
+  {es:" después de clase", pl:"po lekcji"},
+  {es:" por la mañana", pl:"rano"},
+  {es:" por la tarde", pl:"po południu"},
+  {es:" en casa", pl:"w domu"},
+  {es:" con sus amigos", pl:"ze swoimi przyjaciółmi"},
+  {es:" con mucho cuidado", pl:"bardzo ostrożnie"},
+  {es:" para practicar", pl:"żeby poćwiczyć"}
+];
+function sentenceComplementFor(inf){
+  return randomPick(SENTENCE_COMPLEMENTS[inf] || [{es:".", pl:""}]);
+}
+function subjectGrammar(pronoun, subject){
+  const s = subject || "";
+  const plural = ["nosotros","vosotros","ellos/ellas"].includes(pronoun) || /(^los |^las |^mis | y |familias|profesores|estudiantes|vecinos|niños|chicas|padres|amigos|vosotras|nosotras|ellos|ellas)/.test(s);
+  const feminine = /(^la |^las |Lucía|madre|amiga|vecina|doctora|hermana|familias|chicas|nosotras|vosotras|ellas)/.test(s);
+  return {plural, feminine};
+}
+function adjectiveForm(spec, pronoun, subject){
+  const g = subjectGrammar(pronoun, subject);
+  const key = (g.feminine ? "f" : "m") + (g.plural ? "p" : "s");
+  if(spec.forms) return spec.forms[key] || spec.forms.ms;
+  if(spec.type === "e") return spec.adj + (g.plural ? "s" : "");
+  if(spec.type === "consonant") return spec.adj + (g.plural ? "es" : "");
+  return spec.adj + (g.feminine ? "a" : "o") + (g.plural ? "s" : "");
+}
+function renderComplementForSubject(complement, pronoun, subject){
+  if(!complement.tpl) return complement;
+  return {
+    es: complement.tpl.replace("{adj}", adjectiveForm(complement, pronoun, subject)),
+    pl: complement.pl
+  };
+}
+function sentenceComplementForSubject(inf, pronoun, subject){
+  return renderComplementForSubject(sentenceComplementFor(inf), pronoun, subject);
+}
+function sentenceStartFor(tense, inf){
+  const bank = SENTENCE_BANK[tense] || SENTENCE_BANK.indefinido;
+  const avoid = {
+    vivir: ["Cuando vivía allí"],
+    estudiar: ["Mientras estudiaba"],
+    llegar: ["Cuando llegué"],
+    poder: ["Cuando pueda"]
+  }[inf] || [];
+  const starts = bank.starts.filter(start => !avoid.includes(start));
+  return randomPick(starts.length ? starts : bank.starts);
+}
+function addSentenceCloser(complement){
+  if(!complement.es.endsWith(".")) return complement;
+  if(Math.random() < 0.55) return complement;
+  const closer = randomPick(SENTENCE_CLOSERS);
+  if(!closer.es) return complement;
+  const base = complement.es.toLowerCase();
+  const extra = closer.es.toLowerCase();
+  if((base.includes(" con ") && extra.startsWith(" con ")) || (base.includes(" en casa") && extra.includes("en casa")) || (base.includes(" por la ") && extra.startsWith(" por la "))) return complement;
+  return {
+    es: complement.es.replace(/\.$/, "") + " " + closer.es + ".",
+    pl: [complement.pl, closer.pl].filter(Boolean).join(", ")
+  };
+}
+function sentenceTranslation(start, subject, verb, complement, tense){
+  const startPl = SENTENCE_START_PL[start] || start.toLowerCase();
+  const subjectPl = subject ? (SENTENCE_SUBJECT_PL[subject] || subject) : "";
+  const action = SENTENCE_ACTION_PL[verb.inf] || verb.en.replace(/\s*\/\s*/g, " / ");
+  const what = [action, complement.pl].filter(Boolean).join(" ");
+  if(isPerfecto(tense)) return [startPl, what].filter(Boolean).join(" · ");
+  return [startPl, subjectPl, what].filter(Boolean).join(" · ");
+}
+function sentencePromptFor(q, correct){
+  const tense = q.tense || currentTense;
+  const start = sentenceStartFor(tense, q.verb.inf);
+  if(isPerfecto(tense)){
+    const complement = addSentenceCloser(sentenceComplementForSubject(q.verb.inf, "yo", "yo"));
+    return {
+      blank: `${start} <span class="blank"></span>${complement.es}`,
+      full: `${start} ${correct}${complement.es}`,
+      pl: sentenceTranslation(start, "", q.verb, complement, tense)
+    };
+  }
+  const subject = randomPick(SENTENCE_SUBJECTS[q.pronoun] || [subjectFor(q.pronoun)]);
+  const complement = addSentenceCloser(sentenceComplementForSubject(q.verb.inf, q.pronoun, subject));
+  return {
+    blank: `${start} ${subject} <span class="blank"></span>${complement.es}`,
+    full: `${start} ${subject} ${correct}${complement.es}`,
+    pl: sentenceTranslation(start, subject, q.verb, complement, tense)
+  };
+}
 function exampleFor(q, correct){
+  if(isPerfecto(q.tense)){
+    return randomPick([
+      "He " + correct + " la puerta.",
+      "Ya he " + correct + " esto antes.",
+      "Hoy he " + correct + " mucho.",
+      "Esta semana he " + correct + " algo importante.",
+      "Nunca he " + correct + " así."
+    ]);
+  }
   const subject = subjectFor(q.pronoun);
+  const tense = q.tense || currentTense;
   const sets = {
     indefinido: ["Ayer " + subject + " " + correct + ".", "La semana pasada " + subject + " " + correct + ".", "En ese momento " + subject + " " + correct + ".", "Anoche " + subject + " " + correct + ".", "De repente " + subject + " " + correct + "."],
     imperfecto: ["Antes " + subject + " " + correct + " a menudo.", "De niño, " + subject + " " + correct + ".", "Cada verano " + subject + " " + correct + ".", "Normalmente " + subject + " " + correct + ".", "Mientras tanto, " + subject + " " + correct + "."],
     futuro: ["Mañana " + subject + " " + correct + ".", "El próximo año " + subject + " " + correct + ".", "Después " + subject + " " + correct + ".", "Pronto " + subject + " " + correct + ".", "Esta tarde " + subject + " " + correct + "."],
     subjuntivo: ["Es posible que " + subject + " " + correct + ".", "Quiero que " + subject + " " + correct + ".", "Dudo que " + subject + " " + correct + ".", "Ojalá que " + subject + " " + correct + ".", "Es importante que " + subject + " " + correct + "."]
   };
-  return randomPick(sets[currentTense] || [subject + " " + correct + "."]);
+  return randomPick(sets[tense] || [subject + " " + correct + "."]);
 }
 function showExample(q, correct){
   const box = document.getElementById("example-line");
-  if(box) box.innerHTML = "<span>Przykład:</span> " + exampleFor(q, correct);
+  if(box) box.innerHTML = q.sentence ? "<span>Zdanie:</span> " + q.sentence.full + "<br><span>Sens:</span> " + q.sentence.pl : "<span>Przykład:</span> " + exampleFor(q, correct);
 }
 function statKey(tense, inf){ return `${tense}::${inf}`; }
+function getFavorites(){
+  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveFavorites(items){ localStorage.setItem(FAVORITES_KEY, JSON.stringify(items)); }
+function isFavorite(inf){ return getFavorites().includes(inf); }
+function toggleFavorite(inf){
+  const favs = getFavorites();
+  const next = favs.includes(inf) ? favs.filter(v => v !== inf) : [...favs, inf];
+  saveFavorites(next);
+  document.querySelectorAll(`[data-fav-inf="${inf}"]`).forEach(btn => {
+    btn.classList.toggle("active", next.includes(inf));
+    btn.setAttribute("aria-pressed", String(next.includes(inf)));
+  });
+}
+function getSuspendedVerbs(){
+  try { return JSON.parse(localStorage.getItem(SUSPENDED_VERBS_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveSuspendedVerbs(items){ localStorage.setItem(SUSPENDED_VERBS_KEY, JSON.stringify(items)); }
+function verbSuspendKey(tense, level, inf){ return `${tense}::${level}::${inf}`; }
+function isVerbSuspended(tense, level, inf){ return getSuspendedVerbs().includes(verbSuspendKey(tense, level, inf)); }
+function toggleVerbSuspended(tense, level, inf){
+  const key = verbSuspendKey(tense, level, inf);
+  const current = getSuspendedVerbs();
+  const next = current.includes(key) ? current.filter(item => item !== key) : [...current, key];
+  saveSuspendedVerbs(next);
+  renderVerbList();
+}
+function getSuspendedAccents(){
+  try { return JSON.parse(localStorage.getItem(SUSPENDED_ACCENTS_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveSuspendedAccents(items){ localStorage.setItem(SUSPENDED_ACCENTS_KEY, JSON.stringify(items)); }
+function accentSuspendKey(level, word){ return `${level}::${word}`; }
+function isAccentSuspended(level, word){ return getSuspendedAccents().includes(accentSuspendKey(level, word)); }
+function toggleAccentSuspended(level, word){
+  const key = accentSuspendKey(level, word);
+  const current = getSuspendedAccents();
+  const next = current.includes(key) ? current.filter(item => item !== key) : [...current, key];
+  saveSuspendedAccents(next);
+  renderAccentList();
+}
 function getStats(){
   try { return JSON.parse(localStorage.getItem(STATS_KEY)) || {}; }
   catch(e){ return {}; }
 }
 function saveStats(stats){ localStorage.setItem(STATS_KEY, JSON.stringify(stats)); }
-function getUniqueVerbs(tense, level = null){
+function getUniqueVerbs(tense, level = null, includeSuspended = false){
+  if(!DATA[tense]) return [];
   const seen = new Set();
-  const allowed = level ? new Set(DIFFICULTIES[level].verbs) : null;
+  const allowed = level && TENSE_LEVEL_VERBS[tense] ? new Set(TENSE_LEVEL_VERBS[tense][level] || []) : null;
   return DATA[tense].verbs.filter(v => {
     if(allowed && !allowed.has(v.inf)) return false;
+    if(level && !includeSuspended && isVerbSuspended(tense, level, v.inf)) return false;
     if(seen.has(v.inf)) return false;
     seen.add(v.inf);
-    return pronouns.every(p => Object.prototype.hasOwnProperty.call(v.c, p));
+    if(isPerfecto(tense)) return Boolean(v.part);
+    return getPronouns(tense).every(p => Object.prototype.hasOwnProperty.call(v.c, p));
   });
 }
-function buildQueueFromVerbs(verbs){
+function buildQueueFromVerbs(verbs, tense = currentTense){
+  if(isPerfecto(tense)) return shuffle(verbs).map(v => ({verb:v, pronoun:null, tense}));
+  const people = getPronouns(tense);
   const groups = shuffle(verbs).map(v => ({
     inf: v.inf,
-    items: shuffle(pronouns).map(p => ({verb:v, pronoun:p}))
+    items: shuffle(people).map(p => ({verb:v, pronoun:p, tense}))
   }));
   const queue = [];
   while(groups.some(g => g.items.length)){
@@ -623,8 +1587,10 @@ function buildQueueFromVerbs(verbs){
   }
   return queue;
 }
-function buildRandomFormQueue(verbs, count = 15){
-  const remaining = shuffle(verbs.flatMap(v => pronouns.map(p => ({verb:v, pronoun:p}))));
+function buildRandomFormQueue(verbs, count = 15, tense = currentTense){
+  if(isPerfecto(tense)) return shuffle(verbs).slice(0, count).map(v => ({verb:v, pronoun:null, tense}));
+  const people = getPronouns(tense);
+  const remaining = shuffle(verbs.flatMap(v => people.map(p => ({verb:v, pronoun:p, tense}))));
   const queue = [];
   while(queue.length < count && remaining.length){
     const lastInf = queue.length ? queue[queue.length - 1].verb.inf : null;
@@ -638,15 +1604,16 @@ function buildRandomFormQueue(verbs, count = 15){
 }
 function recordAnswer(q, ok){
   const stats = getStats();
-  const key = statKey(currentTense, q.verb.inf);
-  const item = stats[key] || { tense: currentTense, inf: q.verb.inf, en: q.verb.en, attempts: 0, correct: 0, wrong: 0 };
+  const tense = q.tense || currentTense;
+  const key = statKey(tense, q.verb.inf);
+  const item = stats[key] || { tense, inf: q.verb.inf, en: q.verb.en, attempts: 0, correct: 0, wrong: 0 };
   item.attempts += 1;
   if(ok) item.correct += 1; else item.wrong += 1;
   item.lastPracticed = Date.now();
   stats[key] = item;
   saveStats(stats);
-  if(!ok && !sessionWrong.some(item => item.verb.inf === q.verb.inf && item.pronoun === q.pronoun)){
-    sessionWrong.push({verb: q.verb, pronoun: q.pronoun});
+  if(!ok && !sessionWrong.some(item => item.verb.inf === q.verb.inf && item.pronoun === q.pronoun && item.tense === tense)){
+    sessionWrong.push({verb: q.verb, pronoun: q.pronoun, tense});
   }
   renderStats();
 }
@@ -661,10 +1628,18 @@ function getWorstStats(limit = 5, tense = null){
 function showPage(id){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
-  if(id === "page-home") renderStats();
+  if(id === "page-home"){ renderStats(); renderAccentStats(); }
 }
 
 function goHome(){ showPage("page-home"); }
+
+function showHomeTab(tab){
+  document.querySelectorAll(".home-section").forEach(section => section.classList.remove("active"));
+  document.querySelectorAll(".home-tab").forEach(btn => btn.classList.remove("active"));
+  document.getElementById(tab === "accents" ? "home-accents" : "home-verbs").classList.add("active");
+  document.getElementById(tab === "accents" ? "tab-accents" : "tab-verbs").classList.add("active");
+  if(tab === "accents") renderAccentStats();
+}
 
 function renderDifficultyOptions(){
   const wrap = document.getElementById("difficulty-options");
@@ -675,14 +1650,66 @@ function renderDifficultyOptions(){
       <span class="difficulty-meta">${d.desc}</span>
     </button>`).join("");
 }
+function renderPracticeSelection(){
+  document.querySelectorAll(".tense-card[data-mode]").forEach(card => {
+    const active = card.dataset.mode === selectedPracticeMode;
+    card.classList.toggle("active", active);
+    card.setAttribute("aria-pressed", String(active));
+  });
+  const toggle = document.getElementById("spain-mode-toggle");
+  if(toggle) toggle.checked = spainMode;
+  const sentenceToggle = document.getElementById("sentence-mode-toggle");
+  if(sentenceToggle) sentenceToggle.checked = sentenceMode;
+  const note = document.getElementById("selection-note");
+  if(note){
+    const label = selectedPracticeMode === "mix" ? "Mix czasów" : selectedPracticeMode === "favorites" ? "Moje trudne" : DATA[selectedPracticeMode]?.label;
+    const region = spainMode && selectedPracticeMode !== "perfecto" ? " · z vosotros" : "";
+    const sentences = sentenceMode ? ` · zdania (${sentenceVariantCount()}+ wariantów)` : "";
+    note.textContent = `${DIFFICULTIES[selectedDifficulty].label} · ${label}${region}${sentences}`;
+  }
+}
+function selectPracticeMode(mode){
+  selectedPracticeMode = mode;
+  localStorage.setItem("spanishPracticeMode", mode);
+  renderPracticeSelection();
+  renderVerbList();
+}
+const ACCENT_DIFFICULTIES = {
+  easy: { label: "Prosty", desc: "częste krótkie słowa", start: 0, end: 70 },
+  normal: { label: "Średni", desc: "więcej rzeczowników i pytań", start: 70, end: 140 },
+  hard: { label: "Trudny", desc: "dłuższe słowa i końcówki -ción/-ía", start: 140, end: ACCENT_WORDS.length }
+};
+function getAccentPool(){
+  const d = ACCENT_DIFFICULTIES[selectedAccentDifficulty] || ACCENT_DIFFICULTIES.easy;
+  return ACCENT_WORDS.slice(d.start, d.end).filter(item => !isAccentSuspended(selectedAccentDifficulty, item.word));
+}
+function renderAccentDifficultyOptions(){
+  const wrap = document.getElementById("accent-difficulty-options");
+  if(!wrap) return;
+  wrap.innerHTML = Object.entries(ACCENT_DIFFICULTIES).map(([key, d]) => `
+    <button type="button" class="difficulty-option ${selectedAccentDifficulty === key ? "active" : ""}" onclick="setAccentDifficulty('${key}')" aria-pressed="${selectedAccentDifficulty === key}">
+      <span class="difficulty-name">${d.label}</span>
+      <span class="difficulty-meta">${d.desc}</span>
+    </button>`).join("");
+}
+function setAccentDifficulty(level){
+  selectedAccentDifficulty = level;
+  localStorage.setItem("spanishAccentDifficulty", level);
+  renderAccentDifficultyOptions();
+}
 function renderVerbList(){
   const panel = document.getElementById("verb-list-panel");
   if(!panel) return;
-  panel.innerHTML = Object.entries(DIFFICULTIES).map(([, d]) => `
+  const mode = DATA[selectedPracticeMode] ? selectedPracticeMode : "indefinido";
+  const verbs = getUniqueVerbs(mode, selectedDifficulty, true);
+  panel.innerHTML = `
     <div class="verb-list-level">
-      <div class="verb-list-title">${d.label}</div>
-      <div class="verb-chip-list">${d.verbs.map(v => `<span class="verb-chip">${v}</span>`).join("")}</div>
-    </div>`).join("");
+      <div class="verb-list-title">${DATA[mode].label} · ${DIFFICULTIES[selectedDifficulty].label}</div>
+      <div class="verb-chip-list">${verbs.map(v => {
+        const suspended = isVerbSuspended(mode, selectedDifficulty, v.inf);
+        return `<button type="button" class="verb-chip ${suspended ? "suspended" : ""}" onclick="toggleVerbSuspended('${mode}', '${selectedDifficulty}', '${v.inf.replace(/'/g,"\\'")}')" aria-pressed="${suspended}" title="Kliknij, aby ${suspended ? "przywrócić" : "zawiesić"}">${v.inf}</button>`;
+      }).join("")}</div>
+    </div>`;
 }
 function toggleVerbList(){
   const panel = document.getElementById("verb-list-panel");
@@ -693,10 +1720,122 @@ function toggleVerbList(){
   toggle.setAttribute("aria-expanded", String(open));
   arrow.textContent = open ? "−" : "+";
 }
+function renderAccentList(){
+  const panel = document.getElementById("accent-list-panel");
+  if(!panel) return;
+  panel.innerHTML = Object.entries(ACCENT_DIFFICULTIES).map(([level, d]) => {
+    const words = ACCENT_WORDS.slice(d.start, d.end);
+    return `
+    <div class="verb-list-level">
+      <div class="verb-list-title">${d.label}</div>
+      <div class="verb-chip-list">${words.map(item => {
+        const suspended = isAccentSuspended(level, item.word);
+        return `<button type="button" class="verb-chip ${suspended ? "suspended" : ""}" onclick="toggleAccentSuspended('${level}', '${item.word.replace(/'/g,"\\'")}')" aria-pressed="${suspended}" title="Kliknij, aby ${suspended ? "przywrócić" : "zawiesić"}">${item.word}</button>`;
+      }).join("")}</div>
+    </div>`;
+  }).join("");
+}
+function toggleAccentList(){
+  const panel = document.getElementById("accent-list-panel");
+  const toggle = document.getElementById("accent-list-toggle");
+  const arrow = document.getElementById("accent-list-arrow");
+  if(!panel || !toggle || !arrow) return;
+  const open = panel.classList.toggle("open");
+  toggle.setAttribute("aria-expanded", String(open));
+  arrow.textContent = open ? "−" : "+";
+}
 function setDifficulty(level){
   selectedDifficulty = level;
   localStorage.setItem("spanishConjugationDifficulty", level);
   renderDifficultyOptions();
+  renderPracticeSelection();
+  renderVerbList();
+}
+function setSpainMode(enabled){
+  spainMode = enabled;
+  localStorage.setItem("spanishSpainMode", String(enabled));
+  renderPracticeSelection();
+  renderVerbList();
+}
+function setSentenceMode(enabled){
+  sentenceMode = enabled;
+  localStorage.setItem("spanishSentenceMode", String(enabled));
+  renderPracticeSelection();
+}
+
+function getAccentStats(){
+  try { return JSON.parse(localStorage.getItem(ACCENT_STATS_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveAccentStats(stats){ localStorage.setItem(ACCENT_STATS_KEY, JSON.stringify(stats)); }
+function getAccentHard(){
+  try { return JSON.parse(localStorage.getItem(ACCENT_HARD_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveAccentHard(words){ localStorage.setItem(ACCENT_HARD_KEY, JSON.stringify(words)); }
+function isAccentHard(word){ return getAccentHard().includes(word); }
+function toggleAccentHard(word){
+  const hard = getAccentHard();
+  const next = hard.includes(word) ? hard.filter(w => w !== word) : [...hard, word];
+  saveAccentHard(next);
+  document.querySelectorAll(`[data-accent-word="${word}"]`).forEach(btn => {
+    btn.classList.toggle("active", next.includes(word));
+    btn.setAttribute("aria-pressed", String(next.includes(word)));
+  });
+  renderAccentStats();
+}
+function recordAccentAnswer(item, ok){
+  const stats = getAccentStats();
+  const row = stats[item.word] || { word: item.word, plain: item.plain, pl: item.pl, attempts: 0, correct: 0, wrong: 0 };
+  row.attempts += 1;
+  if(ok) row.correct += 1; else row.wrong += 1;
+  row.lastPracticed = Date.now();
+  stats[item.word] = row;
+  saveAccentStats(stats);
+  if(!ok && !accentSessionWrong.some(w => w.word === item.word)) accentSessionWrong.push(item);
+  renderAccentStats();
+}
+function getAccentWorst(limit = 5){
+  return Object.values(getAccentStats())
+    .filter(s => s.attempts > 0)
+    .map(s => ({...s, accuracy: s.correct / s.attempts}))
+    .sort((a,b) => (a.accuracy - b.accuracy) || (b.wrong - a.wrong) || (b.attempts - a.attempts))
+    .slice(0, limit);
+}
+function renderAccentStats(){
+  const summary = document.getElementById("accent-stats-summary");
+  const worstBox = document.getElementById("accent-worst-words");
+  const hardBox = document.getElementById("accent-hard-words");
+  if(!summary || !worstBox || !hardBox) return;
+  const all = Object.values(getAccentStats());
+  const attempts = all.reduce((sum, s) => sum + s.attempts, 0);
+  const correct = all.reduce((sum, s) => sum + s.correct, 0);
+  const wrong = all.reduce((sum, s) => sum + s.wrong, 0);
+  const pct = attempts ? Math.round((correct / attempts) * 100) : 0;
+  summary.innerHTML = attempts ? `
+    <div class="stats-grid">
+      <div class="stat-box"><span class="stat-num">${attempts}</span><span class="stat-label">odpowiedzi</span></div>
+      <div class="stat-box"><span class="stat-num">${pct}%</span><span class="stat-label">poprawnych</span></div>
+      <div class="stat-box"><span class="stat-num">${wrong}</span><span class="stat-label">do powtórki</span></div>
+    </div>` : `<p class="muted-note">Statystyki akcentów pojawią się po pierwszej odpowiedzi.</p>`;
+
+  const worst = getAccentWorst(5);
+  worstBox.innerHTML = worst.length ? `<div class="worst-list">${worst.map(s => `
+    <div class="worst-item">
+      <div><div class="worst-name">${s.word}</div><div class="worst-meta">${s.pl}: ${Math.round(s.accuracy * 100)}% (${s.correct}/${s.attempts})</div></div>
+      <button class="btn" onclick="startAccentQuiz([ACCENT_WORDS.find(w => w.word === '${s.word.replace(/'/g,"\\'")}')], 'Powtórka: ${s.word.replace(/'/g,"\\'")}')">Powtórz</button>
+    </div>`).join("")}</div>` : `<p class="muted-note">Na razie nie ma słabych słów z akcentami.</p>`;
+
+  const hard = getAccentHard().map(word => ACCENT_WORDS.find(w => w.word === word)).filter(Boolean);
+  hardBox.innerHTML = hard.length ? `
+    <div class="worst-list">${hard.map(w => `
+      <div class="worst-item">
+        <div><div class="worst-name">${w.word}</div><div class="worst-meta">${w.pl}</div></div>
+        <button class="btn" onclick="toggleAccentHard('${w.word.replace(/'/g,"\\'")}')">Usuń</button>
+      </div>`).join("")}</div>
+    <div class="actions" style="position:static;margin:10px 0 0;padding:0;background:transparent;border:0;">
+      <button class="btn btn-amber" onclick="startAccentHardQuiz()">Ćwicz trudne</button>
+    </div>` : `<p class="muted-note">Oznacz słowo gwiazdką w trybie Akcenty, a pojawi się tutaj.</p>`;
 }
 
 function renderStats(){
@@ -725,6 +1864,12 @@ function renderStats(){
   }).join("")}</div>` : `<p class="muted-note">Na razie nie ma słabych punktów. Zrób rundę, a tu pojawią się czasowniki z największą liczbą pomyłek.</p>`;
 }
 
+function startSelectedPractice(){
+  if(selectedPracticeMode === "mix"){ startMixedTense(); return; }
+  if(selectedPracticeMode === "favorites"){ startFavoritesMix(); return; }
+  startTense(selectedPracticeMode);
+}
+
 function startTense(tense, customVerbs = null, customTitle = null, customDesc = null){
   currentTense = tense;
   const d = DATA[tense];
@@ -733,12 +1878,16 @@ function startTense(tense, customVerbs = null, customTitle = null, customDesc = 
   const pf = document.getElementById("progress");
   pf.className = "progress-fill pf-" + tense;
 
-  const btnClass = { indefinido:"btn-green", futuro:"btn-blue", imperfecto:"btn-amber", subjuntivo:"btn-purple" }[tense];
+  const btnClass = { indefinido:"btn-green", futuro:"btn-blue", imperfecto:"btn-amber", subjuntivo:"btn-purple", perfecto:"btn-purple" }[tense];
   window._btnClass = btnClass;
 
   const available = getUniqueVerbs(tense, selectedDifficulty);
   const verbs = customVerbs || available;
-  queue = customVerbs ? buildQueueFromVerbs(verbs) : buildRandomFormQueue(verbs, DIFFICULTIES[selectedDifficulty].verbCount * pronouns.length);
+  if(!verbs.length){
+    alert("W tym zakresie wszystkie elementy są zawieszone. Przywróć coś na liście albo wybierz inny poziom.");
+    return;
+  }
+  queue = customVerbs ? buildQueueFromVerbs(verbs, tense) : buildRandomFormQueue(verbs, DIFFICULTIES[selectedDifficulty].formCount, tense);
   current = 0; score = 0; checked = false; sessionWrong = [];
   showPage("page-exercise");
   renderExercise();
@@ -749,6 +1898,84 @@ function repeatWorst(tense = currentTense, inf = null){
   const verbs = inf ? unique.filter(v => v.inf === inf) : getWorstStats(3, tense).map(s => unique.find(v => v.inf === s.inf)).filter(Boolean);
   if(!verbs.length) return;
   startTense(tense, verbs, "Powtórka: najsłabsze czasowniki", "Powtórka czasowników, które mają najniższą skuteczność");
+}
+
+function buildMixedForms(filterFavorites = false){
+  const favs = getFavorites();
+  return Object.keys(DATA).flatMap(tense => {
+    const verbs = getUniqueVerbs(tense, selectedDifficulty).filter(v => !filterFavorites || favs.includes(v.inf));
+    if(isPerfecto(tense)) return verbs.map(v => ({verb:v, pronoun:null, tense}));
+    return verbs.flatMap(v => getPronouns(tense).map(p => ({verb:v, pronoun:p, tense})));
+  });
+}
+
+function startMixedTense(){
+  currentTense = "mix";
+  document.getElementById("ex-title").textContent = "Mix czasów";
+  document.getElementById("ex-sub").textContent = "15 losowych form ze wszystkich czasów · " + DIFFICULTIES[selectedDifficulty].label;
+  const pf = document.getElementById("progress");
+  pf.className = "progress-fill";
+  pf.style.background = "#D8527A";
+  window._btnClass = "btn-purple";
+  queue = shuffle(buildMixedForms(false)).slice(0, 15);
+  current = 0; score = 0; checked = false; sessionWrong = [];
+  showPage("page-exercise");
+  renderExercise();
+}
+
+function startFavoritesMix(){
+  const favs = getFavorites();
+  if(!favs.length){
+    alert("Najpierw oznacz czasownik gwiazdką podczas ćwiczenia.");
+    return;
+  }
+  const forms = buildMixedForms(true);
+  if(!forms.length){
+    alert("Oznaczone czasowniki nie są dostępne w aktualnym poziomie.");
+    return;
+  }
+  currentTense = "favorites";
+  document.getElementById("ex-title").textContent = "Moje trudne";
+  document.getElementById("ex-sub").textContent = "15 losowych form z czasowników oznaczonych gwiazdką";
+  const pf = document.getElementById("progress");
+  pf.className = "progress-fill";
+  pf.style.background = "#B7791F";
+  window._btnClass = "btn-amber";
+  queue = shuffle(forms).slice(0, 15);
+  current = 0; score = 0; checked = false; sessionWrong = [];
+  showPage("page-exercise");
+  renderExercise();
+}
+
+function conjugationTableHtml(q){
+  const tense = q.tense || currentTense;
+  const title = DATA[tense]?.label || "";
+  if(isPerfecto(tense)){
+    return `
+    <div class="conj-table-wrap" id="conj-table-wrap">
+      <table class="conj-table" aria-label="Participio ${q.verb.inf}">
+        <tbody>
+          <tr><th>Bezokolicznik</th><td>${q.verb.inf}</td></tr>
+          <tr><th>Participio</th><td>${q.verb.part}</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+  }
+  const people = getPronouns(tense);
+  return `
+    <div class="conj-table-wrap" id="conj-table-wrap">
+      <table class="conj-table" aria-label="Odmiana ${q.verb.inf}">
+        <tbody>
+          <tr><th colspan="2">${q.verb.inf} · ${title}</th></tr>
+          ${people.map(p => `<tr><th>${p}</th><td>${q.verb.c[p]}</td></tr>`).join("")}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function toggleConjugationTable(){
+  const table = document.getElementById("conj-table-wrap");
+  if(table) table.classList.toggle("open");
 }
 
 function startWrongReview(){
@@ -762,23 +1989,151 @@ function startWrongReview(){
   renderExercise();
 }
 
+function startAccentQuiz(customWords = null, title = "Akcenty"){
+  currentTense = "accent";
+  const source = customWords || getAccentPool();
+  if(!source.length){
+    alert("W tym poziomie wszystkie słowa są zawieszone. Przywróć coś na liście albo wybierz inny poziom.");
+    return;
+  }
+  accentQueue = shuffle(source).slice(0, Math.min(source.length, ACCENT_TOTAL));
+  accentCurrent = 0; accentScore = 0; accentChecked = false; accentSessionWrong = [];
+  document.getElementById("ex-title").textContent = title;
+  document.getElementById("ex-sub").textContent = "Wpisz hiszpańskie słowo z poprawnym akcentem" + (customWords ? "" : " · " + ACCENT_DIFFICULTIES[selectedAccentDifficulty].label);
+  const pf = document.getElementById("progress");
+  pf.className = "progress-fill";
+  pf.style.background = "#C0447A";
+  window._btnClass = "btn-purple";
+  showPage("page-exercise");
+  renderAccentExercise();
+}
+
+function startAccentHardQuiz(){
+  const hard = getAccentHard().map(word => ACCENT_WORDS.find(w => w.word === word)).filter(Boolean);
+  if(!hard.length){
+    alert("Najpierw oznacz trudne słowa gwiazdką w trybie Akcenty.");
+    return;
+  }
+  startAccentQuiz(hard, "Akcenty: trudne słowa");
+}
+
+function renderAccentExercise(){
+  if(accentCurrent >= accentQueue.length){ renderAccentScore(); return; }
+  const item = accentQueue[accentCurrent];
+  accentChecked = false;
+  document.getElementById("counter").textContent = `Pytanie ${accentCurrent+1} / ${accentQueue.length}`;
+  document.getElementById("progress").style.width = `${(accentCurrent/accentQueue.length)*100}%`;
+  document.getElementById("exercise-area").innerHTML = `
+    <div class="card">
+      <div class="verb-head">
+        <div class="verb-name">${item.plain}<small>${item.pl}</small></div>
+        <button class="fav-btn ${isAccentHard(item.word) ? "active" : ""}" data-accent-word="${item.word}" onclick="toggleAccentHard('${item.word.replace(/'/g,"\\'")}')" aria-pressed="${isAccentHard(item.word)}" title="Oznacz jako trudne">★</button>
+      </div>
+      <div class="session-note">Przepisz słowo po hiszpańsku z poprawnym akcentem.</div>
+      <div class="pronoun-row">
+        <span class="pronoun">akcent</span>
+        <input class="inp" id="accent-ans" type="text" placeholder="wpisz z akcentem..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <span class="hint" id="accent-hint"></span>
+      </div>
+      <div class="actions">
+        <button class="btn ${window._btnClass}" id="accent-check-btn" onclick="checkAccentAnswer()">Sprawdź</button>
+        <button class="btn" onclick="skipAccentQ()">Pomiń →</button>
+      </div>
+    </div>`;
+  const inp = document.getElementById("accent-ans");
+  inp.focus();
+  inp.addEventListener("keydown", e => { if(e.key==="Enter") accentChecked ? nextAccentQ() : checkAccentAnswer(); });
+}
+
+function checkAccentAnswer(){
+  if(accentChecked) return;
+  accentChecked = true;
+  const item = accentQueue[accentCurrent];
+  const inp = document.getElementById("accent-ans");
+  const hint = document.getElementById("accent-hint");
+  const btn = document.getElementById("accent-check-btn");
+  const ok = cleanText(inp.value) === cleanText(item.word);
+  if(ok){
+    inp.classList.add("correct");
+    hint.textContent = "✓ dobrze!";
+    hint.className = "hint show-correct";
+    accentScore++;
+  } else {
+    inp.classList.add("wrong");
+    hint.textContent = item.word;
+    hint.className = "hint show-wrong";
+  }
+  recordAccentAnswer(item, ok);
+  btn.textContent = "Dalej →";
+  btn.onclick = nextAccentQ;
+}
+
+function skipAccentQ(){
+  if(!accentChecked){
+    accentChecked = true;
+    const item = accentQueue[accentCurrent];
+    document.getElementById("accent-ans").classList.add("wrong");
+    document.getElementById("accent-hint").textContent = item.word;
+    document.getElementById("accent-hint").className = "hint show-wrong";
+    const btn = document.getElementById("accent-check-btn");
+    btn.textContent = "Dalej →";
+    btn.onclick = nextAccentQ;
+    recordAccentAnswer(item, false);
+  } else nextAccentQ();
+}
+
+function nextAccentQ(){ accentCurrent++; renderAccentExercise(); }
+
+function startAccentWrongReview(){
+  if(!accentSessionWrong.length) return;
+  startAccentQuiz(accentSessionWrong, "Akcenty: błędne słowa");
+}
+
+function renderAccentScore(){
+  document.getElementById("progress").style.width = "100%";
+  document.getElementById("counter").textContent = "";
+  const total = accentQueue.length;
+  const pct = Math.round((accentScore/total)*100);
+  const msg = pct >= 80 ? "Świetnie z akcentami!" : pct >= 50 ? "Niezłe, parę akcentów do powtórki." : "Warto powtórzyć te słowa.";
+  const retryWrong = accentSessionWrong.length ? `<button class="btn" onclick="startAccentWrongReview()">Powtórz błędne (${accentSessionWrong.length})</button>` : "";
+  document.getElementById("exercise-area").innerHTML = `
+    <div class="card score-card">
+      <div class="score-num score-pink">${accentScore}/${total}</div>
+      <div class="score-label">${pct}% poprawnych<br><span style="font-size:15px;color:var(--color-text-primary)">${msg}</span></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-purple" onclick="startAccentQuiz()">Jeszcze raz</button>
+        ${retryWrong}
+        <button class="btn" onclick="goHome()">Inne ćwiczenie</button>
+      </div>
+    </div>`;
+}
+
 function renderExercise(){
   if(current >= queue.length){ renderScore(); return; }
   const q = queue[current];
   const v = q.verb, p = q.pronoun;
+  const qTense = q.tense || currentTense;
+  const tenseNote = currentTense === "mix" || currentTense === "favorites" ? `<small>${v.en} · ${DATA[qTense].label}</small>` : `<small>${v.en}</small>`;
+  const isParticiple = isPerfecto(qTense);
+  const correct = correctFor(q);
+  q.sentence = sentenceMode ? sentencePromptFor(q, correct) : null;
   checked = false;
   document.getElementById("counter").textContent = `Pytanie ${current+1} / ${queue.length}`;
   document.getElementById("progress").style.width = `${(current/queue.length)*100}%`;
   document.getElementById("exercise-area").innerHTML = `
     <div class="card">
-      <div class="verb-name">${v.inf}<small>${v.en}</small></div>
-      <div class="session-note">Każdy wybrany czasownik pojawia się we wszystkich osobach oprócz vosotros.</div>
+      <div class="verb-head">
+        <div class="verb-name">${v.inf}${tenseNote}</div>
+        <button class="fav-btn ${isFavorite(v.inf) ? "active" : ""}" data-fav-inf="${v.inf}" onclick="toggleFavorite('${v.inf.replace(/'/g,"\\'")}')" aria-pressed="${isFavorite(v.inf)}" title="Oznacz jako trudny">★</button>
+      </div>
+      <div class="session-note">${sentenceMode ? "Uzupełnij zdanie poprawną formą czasownika." : isParticiple ? "Wpisz participio, np. abrir → abierto." : `Losowe formy z wybranego zakresu${spainMode ? ", z vosotros." : ", bez vosotros."}`}</div>
+      ${sentenceMode ? `<div class="sentence-card">${q.sentence.blank}<small>${isParticiple ? "Wpisz participio." : "Forma dla: " + p}</small></div>` : ""}
       <div class="pronoun-row">
-        <span class="pronoun">${p}</span>
-        <input class="inp" id="ans" type="text" placeholder="wpisz formę..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <span class="pronoun">${isParticiple ? "participio" : p}</span>
+        <input class="inp" id="ans" type="text" placeholder="${isParticiple ? "wpisz imiesłów..." : "wpisz formę..."}" autocomplete="off" autocorrect="off" spellcheck="false"/>
         <span class="hint" id="hint"></span>
       </div>
-      <div class="translation-box" id="tbox"><strong>${v.inf}</strong> = ${v.en}<div class="example-line" id="example-line"></div></div>
+      <div class="translation-box" id="tbox"><strong>${v.inf}</strong> = ${v.en}<div class="example-line" id="example-line"></div><button class="btn" style="margin-top:10px;" onclick="toggleConjugationTable()">${isParticiple ? "Pokaż participio" : "Pokaż odmianę"}</button>${conjugationTableHtml(q)}</div>
       <div class="actions">
         <button class="btn ${window._btnClass}" id="check-btn" onclick="checkAnswer()">Sprawdź</button>
         <button class="btn" onclick="skipQ()">Pomiń →</button>
@@ -792,7 +2147,7 @@ function renderExercise(){
 function checkAnswer(){
   if(checked) return;
   checked = true;
-  const q = queue[current], correct = q.verb.c[q.pronoun];
+  const q = queue[current], correct = correctFor(q);
   const inp = document.getElementById("ans");
   const hint = document.getElementById("hint");
   const btn = document.getElementById("check-btn");
@@ -824,7 +2179,7 @@ function skipQ(){
   if(!checked){
     checked=true;
     const q = queue[current];
-    const correct=q.verb.c[q.pronoun];
+    const correct=correctFor(q);
     const inp=document.getElementById("ans");
     inp.classList.add("wrong");
     document.getElementById("hint").textContent=correct;
@@ -845,15 +2200,16 @@ function renderScore(){
   const total = queue.length;
   const pct=Math.round((score/total)*100);
   const msg=pct>=80?"¡Muy bien!":pct>=50?"Niezłe, ćwicz dalej!":"Warto powtórzyć materiał.";
-  const sc = { indefinido:"score-green", futuro:"score-blue", imperfecto:"score-amber", subjuntivo:"score-purple" }[currentTense];
+  const sc = { indefinido:"score-green", futuro:"score-blue", imperfecto:"score-amber", subjuntivo:"score-purple", perfecto:"score-pink", mix:"score-purple", favorites:"score-amber" }[currentTense] || "score-green";
   const retryWrong = sessionWrong.length ? `<button class="btn" onclick="startWrongReview()">Powtórz błędne (${sessionWrong.length})</button>` : "";
-  const retryWorst = getWorstStats(3, currentTense).length ? `<button class="btn" onclick="repeatWorst('${currentTense}')">Powtórz najsłabsze</button>` : "";
+  const retryWorst = DATA[currentTense] && getWorstStats(3, currentTense).length ? `<button class="btn" onclick="repeatWorst('${currentTense}')">Powtórz najsłabsze</button>` : "";
+  const againAction = currentTense === "mix" ? "startMixedTense()" : currentTense === "favorites" ? "startFavoritesMix()" : `startTense('${currentTense}')`;
   document.getElementById("exercise-area").innerHTML=`
     <div class="card score-card">
       <div class="score-num ${sc}">${score}/${total}</div>
       <div class="score-label">${pct}% poprawnych<br><span style="font-size:15px;color:var(--color-text-primary)">${msg}</span></div>
       <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn ${window._btnClass}" onclick="startTense('${currentTense}')">Jeszcze raz</button>
+        <button class="btn ${window._btnClass}" onclick="${againAction}">Jeszcze raz</button>
         ${retryWrong}
         ${retryWorst}
         <button class="btn" onclick="goHome()">Inne ćwiczenie</button>
@@ -862,7 +2218,11 @@ function renderScore(){
 }
 
 renderVerbList();
+renderAccentList();
 renderDifficultyOptions();
-renderStats();</script>
+renderPracticeSelection();
+renderAccentDifficultyOptions();
+renderStats();
+renderAccentStats();</script>
 </body>
 </html>
