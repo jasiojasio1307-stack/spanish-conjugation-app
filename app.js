@@ -745,6 +745,7 @@ const ACCENT_WORDS = [
   {plain:"administracion",word:"administración",pl:"administracja"}, {plain:"practicamente",word:"prácticamente",pl:"praktycznie"}, {plain:"dificilmente",word:"difícilmente",pl:"z trudem"}, {plain:"tecnologia",word:"tecnología",pl:"technologia"}, {plain:"psicologia",word:"psicología",pl:"psychologia"}, {plain:"categoria",word:"categoría",pl:"kategoria"}, {plain:"secretaria",word:"secretaría",pl:"sekretariat"}, {plain:"garantia",word:"garantía",pl:"gwarancja"}, {plain:"melodia",word:"melodía",pl:"melodia"}, {plain:"simpatia",word:"simpatía",pl:"sympatia"}
 ];
 const DIFFICULTY_KEYS = ["easy", "normal", "hard"];
+const TENSE_KEYS = Object.keys(DATA);
 function loadSelectedDifficulties(){
   try {
     const saved = JSON.parse(localStorage.getItem("spanishConjugationDifficulties") || "null");
@@ -757,7 +758,19 @@ function loadSelectedDifficulties(){
   return DIFFICULTY_KEYS.includes(legacy) ? [legacy] : ["normal"];
 }
 let selectedDifficulties = loadSelectedDifficulties();
-let selectedPracticeMode = localStorage.getItem("spanishPracticeMode") || "indefinido";
+function loadSelectedTenses(){
+  try {
+    const saved = JSON.parse(localStorage.getItem("spanishPracticeTenses") || "null");
+    if(Array.isArray(saved)){
+      const valid = saved.filter(tense => DATA[tense]);
+      if(valid.length) return valid;
+    }
+  } catch(e){}
+  const legacy = localStorage.getItem("spanishPracticeMode") || "indefinido";
+  return DATA[legacy] ? [legacy] : ["indefinido"];
+}
+let selectedTenses = loadSelectedTenses();
+let selectedPracticeMode = localStorage.getItem("spanishPracticeMode") === "favorites" ? "favorites" : "tenses";
 let spainMode = localStorage.getItem("spanishSpainMode") === "true";
 let sentenceMode = localStorage.getItem("spanishSentenceMode") === "true";
 let selectedAccentDifficulty = localStorage.getItem("spanishAccentDifficulty") || "easy";
@@ -1704,29 +1717,57 @@ function renderDifficultyOptions(){
 }
 function renderPracticeSelection(){
   document.querySelectorAll(".tense-card[data-mode]").forEach(card => {
-    const active = card.dataset.mode === selectedPracticeMode;
+    const active = card.dataset.mode === "favorites"
+      ? selectedPracticeMode === "favorites"
+      : selectedPracticeMode !== "favorites" && selectedTenses.includes(card.dataset.mode);
     card.classList.toggle("active", active);
     card.setAttribute("aria-pressed", String(active));
   });
   const tenseSelect = document.getElementById("tense-select");
-  if(tenseSelect) tenseSelect.value = selectedPracticeMode;
+  if(tenseSelect){
+    [...tenseSelect.options].forEach(option => {
+      option.selected = selectedPracticeMode !== "favorites" && selectedTenses.includes(option.value);
+    });
+  }
   const toggle = document.getElementById("spain-mode-toggle");
   if(toggle) toggle.checked = spainMode;
   const sentenceToggle = document.getElementById("sentence-mode-toggle");
   if(sentenceToggle) sentenceToggle.checked = sentenceMode;
   const note = document.getElementById("selection-note");
   if(note){
-    const label = selectedPracticeMode === "mix" ? "Mix czasów" : selectedPracticeMode === "favorites" ? "Moje trudne" : DATA[selectedPracticeMode]?.label;
-    const region = selectedPracticeMode === "imperativo"
+    const labels = selectedTenses.map(tense => DATA[tense]?.label).filter(Boolean);
+    const label = selectedPracticeMode === "favorites" ? "Moje trudne" : labels.join(" + ");
+    const region = selectedPracticeMode !== "favorites" && selectedTenses.includes("imperativo")
       ? (spainMode ? " · tú/vosotros" : " · vos/ustedes")
-      : spainMode && selectedPracticeMode !== "perfecto" ? " · z vosotros" : "";
+      : spainMode && selectedPracticeMode !== "favorites" && selectedTenses.some(tense => tense !== "perfecto") ? " · z vosotros" : "";
     const sentences = sentenceMode ? " · zdania" : "";
     note.textContent = `${selectedDifficultyLabel()} · ${label}${region}${sentences}`;
   }
 }
+function saveSelectedTenses(){
+  localStorage.setItem("spanishPracticeTenses", JSON.stringify(selectedTenses));
+  localStorage.setItem("spanishPracticeMode", selectedPracticeMode);
+}
 function selectPracticeMode(mode){
-  selectedPracticeMode = mode;
-  localStorage.setItem("spanishPracticeMode", mode);
+  if(mode === "favorites"){
+    selectedPracticeMode = "favorites";
+  } else if(DATA[mode]){
+    selectedPracticeMode = "tenses";
+    selectedTenses = selectedTenses.includes(mode)
+      ? (selectedTenses.length > 1 ? selectedTenses.filter(tense => tense !== mode) : selectedTenses)
+      : TENSE_KEYS.filter(tense => selectedTenses.includes(tense) || tense === mode);
+  }
+  saveSelectedTenses();
+  renderPracticeSelection();
+  renderVerbList();
+}
+function selectTensesFromSelect(select){
+  const next = [...select.selectedOptions].map(option => option.value).filter(tense => DATA[tense]);
+  if(next.length){
+    selectedPracticeMode = "tenses";
+    selectedTenses = TENSE_KEYS.filter(tense => next.includes(tense));
+    saveSelectedTenses();
+  }
   renderPracticeSelection();
   renderVerbList();
 }
@@ -1760,14 +1801,6 @@ function renderVerbList(){
   const toggle = document.getElementById("verb-list-toggle");
   const arrow = document.getElementById("verb-list-arrow");
   const title = document.getElementById("verb-list-title");
-  if(selectedPracticeMode === "mix"){
-    panel.innerHTML = "";
-    panel.classList.remove("open");
-    if(section) section.style.display = "none";
-    if(toggle) toggle.setAttribute("aria-expanded", "false");
-    if(arrow) arrow.textContent = "+";
-    return;
-  }
   if(section) section.style.display = "";
   if(title) title.textContent = selectedPracticeMode === "favorites" ? "Moje trudne" : "Lista czasowników";
   if(selectedPracticeMode === "favorites"){
@@ -1783,8 +1816,7 @@ function renderVerbList(){
       </div>`).join("") : `<p class="muted-note">Najpierw oznacz czasownik gwiazdką podczas ćwiczenia.</p>`;
     return;
   }
-  const mode = DATA[selectedPracticeMode] ? selectedPracticeMode : "indefinido";
-  panel.innerHTML = getSelectedDifficulties().map(level => {
+  panel.innerHTML = selectedTenses.flatMap(mode => getSelectedDifficulties().map(level => {
     const verbs = getUniqueVerbs(mode, level, true);
     return `
       <div class="verb-list-level">
@@ -1794,7 +1826,7 @@ function renderVerbList(){
           return `<button type="button" class="verb-chip ${suspended ? "suspended" : ""}" onclick="toggleVerbSuspended('${mode}', '${level}', '${v.inf.replace(/'/g,"\\'")}')" aria-pressed="${suspended}" title="Kliknij, aby ${suspended ? "przywrócić" : "zawiesić"}">${v.inf}</button>`;
         }).join("")}</div>
       </div>`;
-  }).join("");
+  })).join("");
 }
 function toggleVerbList(){
   const panel = document.getElementById("verb-list-panel");
@@ -1957,9 +1989,9 @@ function renderStats(){
 }
 
 function startSelectedPractice(){
-  if(selectedPracticeMode === "mix"){ startMixedTense(); return; }
   if(selectedPracticeMode === "favorites"){ startFavoritesMix(); return; }
-  startTense(selectedPracticeMode);
+  if(selectedTenses.length === 1){ startTense(selectedTenses[0]); return; }
+  startSelectedTensePractice();
 }
 
 function startTense(tense, customVerbs = null, customTitle = null, customDesc = null){
@@ -1992,25 +2024,32 @@ function repeatWorst(tense = currentTense, inf = null){
   startTense(tense, verbs, "Powtórka: najsłabsze czasowniki", "Powtórka czasowników, które mają najniższą skuteczność");
 }
 
-function buildMixedForms(filterFavorites = false){
+function buildMixedForms(filterFavorites = false, tenses = TENSE_KEYS){
   const favs = new Set(getFavorites());
   const levels = filterFavorites ? null : getSelectedDifficulties();
-  return Object.keys(DATA).flatMap(tense => {
+  return tenses.flatMap(tense => {
     const verbs = getUniqueVerbs(tense, levels).filter(v => !filterFavorites || favs.has(favoriteKey(tense, v.inf)));
     if(isPerfecto(tense)) return verbs.map(v => ({verb:v, pronoun:null, tense}));
     return verbs.flatMap(v => getPronouns(tense).map(p => ({verb:v, pronoun:p, tense})));
   });
 }
 
-function startMixedTense(){
-  currentTense = "mix";
-  document.getElementById("ex-title").textContent = "Mix czasów";
-  document.getElementById("ex-sub").textContent = "15 losowych form ze wszystkich czasów · " + selectedDifficultyLabel();
+function startSelectedTensePractice(){
+  const tenses = selectedTenses.filter(tense => DATA[tense]);
+  const labels = tenses.map(tense => DATA[tense].label);
+  const forms = buildMixedForms(false, tenses);
+  if(!forms.length){
+    alert("W wybranych czasach wszystkie elementy są zawieszone. Przywróć coś na liście albo wybierz inny poziom.");
+    return;
+  }
+  currentTense = "multi";
+  document.getElementById("ex-title").textContent = "Wybrane czasy";
+  document.getElementById("ex-sub").textContent = "15 losowych form: " + labels.join(" + ") + " · " + selectedDifficultyLabel();
   const pf = document.getElementById("progress");
   pf.className = "progress-fill";
   pf.style.background = "#D8527A";
   window._btnClass = "btn-purple";
-  queue = shuffle(buildMixedForms(false)).slice(0, 15);
+  queue = shuffle(forms).slice(0, 15);
   current = 0; score = 0; checked = false; sessionWrong = [];
   showPage("page-exercise");
   renderExercise();
@@ -2206,7 +2245,7 @@ function renderExercise(){
   const q = queue[current];
   const v = q.verb, p = q.pronoun;
   const qTense = q.tense || currentTense;
-  const tenseNote = currentTense === "mix" || currentTense === "favorites" ? `<small>${v.en} · ${DATA[qTense].label}</small>` : `<small>${v.en}</small>`;
+  const tenseNote = currentTense === "multi" || currentTense === "favorites" ? `<small>${v.en} · ${DATA[qTense].label}</small>` : `<small>${v.en}</small>`;
   const isParticiple = isPerfecto(qTense);
   const correct = correctFor(q);
   q.sentence = sentenceMode ? sentencePromptFor(q, correct) : null;
@@ -2293,10 +2332,10 @@ function renderScore(){
   const total = queue.length;
   const pct=Math.round((score/total)*100);
   const msg=pct>=80?"¡Muy bien!":pct>=50?"Niezłe, ćwicz dalej!":"Warto powtórzyć materiał.";
-  const sc = { presente:"score-teal", indefinido:"score-green", futuro:"score-blue", imperfecto:"score-amber", subjuntivo:"score-purple", subjuntivo_imperfecto:"score-indigo", perfecto:"score-pink", imperativo:"score-rose", mix:"score-purple", favorites:"score-amber" }[currentTense] || "score-green";
+  const sc = { presente:"score-teal", indefinido:"score-green", futuro:"score-blue", imperfecto:"score-amber", subjuntivo:"score-purple", subjuntivo_imperfecto:"score-indigo", perfecto:"score-pink", imperativo:"score-rose", multi:"score-purple", favorites:"score-amber" }[currentTense] || "score-green";
   const retryWrong = sessionWrong.length ? `<button class="btn" onclick="startWrongReview()">Powtórz błędne (${sessionWrong.length})</button>` : "";
   const retryWorst = DATA[currentTense] && getWorstStats(3, currentTense).length ? `<button class="btn" onclick="repeatWorst('${currentTense}')">Powtórz najsłabsze</button>` : "";
-  const againAction = currentTense === "mix" ? "startMixedTense()" : currentTense === "favorites" ? "startFavoritesMix()" : `startTense('${currentTense}')`;
+  const againAction = currentTense === "multi" ? "startSelectedTensePractice()" : currentTense === "favorites" ? "startFavoritesMix()" : `startTense('${currentTense}')`;
   document.getElementById("exercise-area").innerHTML=`
     <div class="card score-card">
       <div class="score-num ${sc}">${score}/${total}</div>

@@ -54,8 +54,8 @@
   </section>
 
   <div class="tense-select-wrap">
-    <label class="tense-select-label" for="tense-select">Czas</label>
-    <select class="tense-select" id="tense-select" onchange="selectPracticeMode(this.value)">
+    <label class="tense-select-label" for="tense-select">Czasy</label>
+    <select class="tense-select" id="tense-select" multiple size="8" onchange="selectTensesFromSelect(this)">
       <option value="presente">Presente</option>
       <option value="indefinido">Pretérito indefinido</option>
       <option value="imperfecto">Pretérito imperfecto</option>
@@ -64,8 +64,6 @@
       <option value="subjuntivo">Subjuntivo presente</option>
       <option value="subjuntivo_imperfecto">Subjuntivo imperfecto</option>
       <option value="imperativo">Imperativo</option>
-      <option value="mix">Mix czasów</option>
-      <option value="favorites">Moje trudne</option>
     </select>
   </div>
 
@@ -109,11 +107,6 @@
       <div class="tense-icon">!</div>
       <div class="tense-label">Imperativo</div>
       <div class="tense-desc">di, ven, hacé, vayan...</div>
-    </div>
-    <div class="tense-card" data-mode="mix" onclick="selectPracticeMode('mix')">
-      <div class="tense-icon">⇄</div>
-      <div class="tense-label">Mix czasów</div>
-      <div class="tense-desc">losowo ze wszystkich czasów</div>
     </div>
     <div class="tense-card" data-mode="favorites" onclick="selectPracticeMode('favorites')">
       <div class="tense-icon">★</div>
@@ -174,6 +167,6 @@
   <div id="exercise-area"></div>
 </div>
 
-<script src="app.js?v=2026-06-14-3"></script>
+<script src="app.js?v=2026-06-14-4"></script>
 </body>
 </html>
