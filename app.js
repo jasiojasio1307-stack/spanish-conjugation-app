@@ -1460,7 +1460,13 @@ function showExample(q, correct){
 }
 function statKey(tense, inf){ return `${tense}::${inf}`; }
 function getFavorites(){
-  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; }
+  try {
+    const saved = JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+    if(!Array.isArray(saved)) return [];
+    const valid = saved.filter(item => isTenseFavoriteKey(item));
+    if(valid.length !== saved.length) saveFavorites(valid);
+    return valid;
+  }
   catch(e){ return []; }
 }
 function saveFavorites(items){ localStorage.setItem(FAVORITES_KEY, JSON.stringify(items)); }
@@ -2011,7 +2017,7 @@ function startMixedTense(){
 }
 
 function startFavoritesMix(){
-  const favs = getFavorites().filter(isTenseFavoriteKey);
+  const favs = getFavorites();
   if(!favs.length){
     alert("Najpierw oznacz czasownik gwiazdką podczas ćwiczenia.");
     return;
