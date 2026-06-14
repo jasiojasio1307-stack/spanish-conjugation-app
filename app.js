@@ -1742,6 +1742,33 @@ function setAccentDifficulty(level){
 function renderVerbList(){
   const panel = document.getElementById("verb-list-panel");
   if(!panel) return;
+  const section = panel.closest(".mode-panel");
+  const toggle = document.getElementById("verb-list-toggle");
+  const arrow = document.getElementById("verb-list-arrow");
+  const title = document.getElementById("verb-list-title");
+  if(selectedPracticeMode === "mix"){
+    panel.innerHTML = "";
+    panel.classList.remove("open");
+    if(section) section.style.display = "none";
+    if(toggle) toggle.setAttribute("aria-expanded", "false");
+    if(arrow) arrow.textContent = "+";
+    return;
+  }
+  if(section) section.style.display = "";
+  if(title) title.textContent = selectedPracticeMode === "favorites" ? "Moje trudne" : "Lista czasowników";
+  if(selectedPracticeMode === "favorites"){
+    const favs = new Set(getFavorites());
+    const groups = Object.entries(DATA).map(([tense, data]) => {
+      const verbs = getUniqueVerbs(tense, null, true).filter(v => favs.has(v.inf));
+      return { tense, data, verbs };
+    }).filter(group => group.verbs.length);
+    panel.innerHTML = groups.length ? groups.map(group => `
+      <div class="verb-list-level">
+        <div class="verb-list-title">${group.data.label}</div>
+        <div class="verb-chip-list">${group.verbs.map(v => `<button type="button" class="verb-chip" onclick="toggleFavorite('${v.inf.replace(/'/g,"\\'")}'); renderVerbList();" aria-pressed="true" title="Usuń z Moje trudne">${v.inf}</button>`).join("")}</div>
+      </div>`).join("") : `<p class="muted-note">Najpierw oznacz czasownik gwiazdką podczas ćwiczenia.</p>`;
+    return;
+  }
   const mode = DATA[selectedPracticeMode] ? selectedPracticeMode : "indefinido";
   panel.innerHTML = getSelectedDifficulties().map(level => {
     const verbs = getUniqueVerbs(mode, level, true);
@@ -1953,8 +1980,9 @@ function repeatWorst(tense = currentTense, inf = null){
 
 function buildMixedForms(filterFavorites = false){
   const favs = getFavorites();
+  const levels = filterFavorites ? null : getSelectedDifficulties();
   return Object.keys(DATA).flatMap(tense => {
-    const verbs = getUniqueVerbs(tense, getSelectedDifficulties()).filter(v => !filterFavorites || favs.includes(v.inf));
+    const verbs = getUniqueVerbs(tense, levels).filter(v => !filterFavorites || favs.includes(v.inf));
     if(isPerfecto(tense)) return verbs.map(v => ({verb:v, pronoun:null, tense}));
     return verbs.flatMap(v => getPronouns(tense).map(p => ({verb:v, pronoun:p, tense})));
   });
@@ -1982,7 +2010,7 @@ function startFavoritesMix(){
   }
   const forms = buildMixedForms(true);
   if(!forms.length){
-    alert("Oznaczone czasowniki nie są dostępne w aktualnym poziomie.");
+    alert("Oznaczone czasowniki nie są dostępne w żadnym czasie.");
     return;
   }
   currentTense = "favorites";
