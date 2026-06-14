@@ -1464,14 +1464,22 @@ function getFavorites(){
   catch(e){ return []; }
 }
 function saveFavorites(items){ localStorage.setItem(FAVORITES_KEY, JSON.stringify(items)); }
-function isFavorite(inf){ return getFavorites().includes(inf); }
-function toggleFavorite(inf){
+function favoriteKey(tense, inf){ return `${tense}::${inf}`; }
+function isTenseFavoriteKey(key){
+  const [tense, inf] = String(key).split("::");
+  return Boolean(DATA[tense] && inf);
+}
+function isFavorite(inf, tense = currentTense){
+  return getFavorites().includes(favoriteKey(tense, inf));
+}
+function toggleFavorite(inf, tense = currentTense){
+  const key = favoriteKey(tense, inf);
   const favs = getFavorites();
-  const next = favs.includes(inf) ? favs.filter(v => v !== inf) : [...favs, inf];
+  const next = favs.includes(key) ? favs.filter(v => v !== key) : [...favs, key];
   saveFavorites(next);
-  document.querySelectorAll(`[data-fav-inf="${inf}"]`).forEach(btn => {
-    btn.classList.toggle("active", next.includes(inf));
-    btn.setAttribute("aria-pressed", String(next.includes(inf)));
+  document.querySelectorAll(`[data-fav-key="${key}"]`).forEach(btn => {
+    btn.classList.toggle("active", next.includes(key));
+    btn.setAttribute("aria-pressed", String(next.includes(key)));
   });
 }
 function getSuspendedVerbs(){
@@ -1759,13 +1767,13 @@ function renderVerbList(){
   if(selectedPracticeMode === "favorites"){
     const favs = new Set(getFavorites());
     const groups = Object.entries(DATA).map(([tense, data]) => {
-      const verbs = getUniqueVerbs(tense, null, true).filter(v => favs.has(v.inf));
+      const verbs = getUniqueVerbs(tense, null, true).filter(v => favs.has(favoriteKey(tense, v.inf)));
       return { tense, data, verbs };
     }).filter(group => group.verbs.length);
     panel.innerHTML = groups.length ? groups.map(group => `
       <div class="verb-list-level">
         <div class="verb-list-title">${group.data.label}</div>
-        <div class="verb-chip-list">${group.verbs.map(v => `<button type="button" class="verb-chip" onclick="toggleFavorite('${v.inf.replace(/'/g,"\\'")}'); renderVerbList();" aria-pressed="true" title="Usuń z Moje trudne">${v.inf}</button>`).join("")}</div>
+        <div class="verb-chip-list">${group.verbs.map(v => `<button type="button" class="verb-chip" onclick="toggleFavorite('${v.inf.replace(/'/g,"\\'")}', '${group.tense}'); renderVerbList();" aria-pressed="true" title="Usuń z Moje trudne">${v.inf}</button>`).join("")}</div>
       </div>`).join("") : `<p class="muted-note">Najpierw oznacz czasownik gwiazdką podczas ćwiczenia.</p>`;
     return;
   }
@@ -1979,10 +1987,10 @@ function repeatWorst(tense = currentTense, inf = null){
 }
 
 function buildMixedForms(filterFavorites = false){
-  const favs = getFavorites();
+  const favs = new Set(getFavorites());
   const levels = filterFavorites ? null : getSelectedDifficulties();
   return Object.keys(DATA).flatMap(tense => {
-    const verbs = getUniqueVerbs(tense, levels).filter(v => !filterFavorites || favs.includes(v.inf));
+    const verbs = getUniqueVerbs(tense, levels).filter(v => !filterFavorites || favs.has(favoriteKey(tense, v.inf)));
     if(isPerfecto(tense)) return verbs.map(v => ({verb:v, pronoun:null, tense}));
     return verbs.flatMap(v => getPronouns(tense).map(p => ({verb:v, pronoun:p, tense})));
   });
@@ -2003,7 +2011,7 @@ function startMixedTense(){
 }
 
 function startFavoritesMix(){
-  const favs = getFavorites();
+  const favs = getFavorites().filter(isTenseFavoriteKey);
   if(!favs.length){
     alert("Najpierw oznacz czasownik gwiazdką podczas ćwiczenia.");
     return;
@@ -2203,7 +2211,7 @@ function renderExercise(){
     <div class="card">
       <div class="verb-head">
         <div class="verb-name">${v.inf}${tenseNote}</div>
-        <button class="fav-btn ${isFavorite(v.inf) ? "active" : ""}" data-fav-inf="${v.inf}" onclick="toggleFavorite('${v.inf.replace(/'/g,"\\'")}')" aria-pressed="${isFavorite(v.inf)}" title="Oznacz jako trudny">★</button>
+        <button class="fav-btn ${isFavorite(v.inf, qTense) ? "active" : ""}" data-fav-key="${favoriteKey(qTense, v.inf)}" onclick="toggleFavorite('${v.inf.replace(/'/g,"\\'")}', '${qTense}')" aria-pressed="${isFavorite(v.inf, qTense)}" title="Oznacz jako trudny">★</button>
       </div>
       <div class="session-note">${sentenceMode ? "Uzupełnij zdanie poprawną formą czasownika." : isParticiple ? "Wpisz participio, np. abrir → abierto." : `Losowe formy z wybranego zakresu${spainMode ? ", z vosotros." : ", bez vosotros."}`}</div>
       ${sentenceMode ? `<div class="sentence-card">${q.sentence.blank}<small>${isParticiple ? "Wpisz participio." : "Forma dla: " + p}</small></div>` : ""}
