@@ -814,13 +814,25 @@ const SPECIAL_SENTENCE_SUBJECTS = {
   nacer: {
     "él/ella": ["el bebé", "mi hijo", "su hija"],
     "ellos/ellas": ["los bebés", "sus hijos"]
+  },
+  // "to cost / be worth" take a thing/service subject, not a person
+  // ("el camarero costó veinte euros" is wrong -> use things in 3rd person).
+  costar: {
+    "él/ella": ["el libro", "la entrada", "el billete", "la reparación", "el curso", "la cena"],
+    "ellos/ellas": ["los billetes", "las entradas", "los libros"]
+  },
+  valer: {
+    "él/ella": ["el coche", "el plan", "la idea", "el cuadro", "el reloj", "la casa"],
+    "ellos/ellas": ["las entradas", "los muebles", "los cuadros"]
   }
 };
 const SENTENCE_SUBJECT_PL = {
   yo: "ja", tú: "ty", vos: "ty", ustedes: "wy / państwo", él: "on", ella: "ona", "mi hermano": "mój brat", "mi amiga": "moja przyjaciółka", "el profesor": "nauczyciel", "la vecina": "sąsiadka", "mi padre": "mój tata", "mi madre": "moja mama", Carlos: "Carlos", Lucía: "Lucía", "la doctora": "lekarka", "el camarero": "kelner",
   nosotros: "my", nosotras: "my", "mi familia y yo": "moja rodzina i ja", "mis amigos y yo": "moi przyjaciele i ja", "mi clase y yo": "moja klasa i ja", "mi hermana y yo": "moja siostra i ja", "mi equipo y yo": "moja drużyna i ja",
   vosotros: "wy", vosotras: "wy", "tú y tus amigos": "ty i twoi przyjaciele", "tú y tu familia": "ty i twoja rodzina", "tú y tu hermano": "ty i twój brat", "vosotros dos": "wy dwaj",
-  ellos: "oni", ellas: "one", "mis amigos": "moi przyjaciele", "los estudiantes": "uczniowie", "mis padres": "moi rodzice", "los vecinos": "sąsiedzi", "las chicas": "dziewczyny", "los compañeros": "koledzy", "los profesores": "nauczyciele", "las familias": "rodziny", "el bebé": "dziecko", "mi hijo": "mój syn", "su hija": "jego/jej córka", "los bebés": "dzieci", "sus hijos": "jego/jej dzieci"
+  ellos: "oni", ellas: "one", "mis amigos": "moi przyjaciele", "los estudiantes": "uczniowie", "mis padres": "moi rodzice", "los vecinos": "sąsiedzi", "las chicas": "dziewczyny", "los compañeros": "koledzy", "los profesores": "nauczyciele", "las familias": "rodziny", "el bebé": "dziecko", "mi hijo": "mój syn", "su hija": "jego/jej córka", "los bebés": "dzieci", "sus hijos": "jego/jej dzieci",
+  "el libro": "książka", "la entrada": "bilet", "el billete": "bilet", "la reparación": "naprawa", "el curso": "kurs", "la cena": "kolacja", "los billetes": "bilety", "las entradas": "bilety", "los libros": "książki",
+  "el coche": "samochód", "el plan": "plan", "la idea": "pomysł", "el cuadro": "obraz", "el reloj": "zegarek", "la casa": "dom", "los muebles": "meble", "los cuadros": "obrazy"
 };
 const SENTENCE_START_PL = {
   "Ayer":"wczoraj", "Anoche":"wczoraj wieczorem", "El lunes":"w poniedziałek", "La semana pasada":"w zeszłym tygodniu", "Hace dos días":"dwa dni temu", "Esta mañana":"dziś rano", "El verano pasado":"zeszłego lata", "En aquel momento":"w tamtym momencie", "Después de clase":"po lekcji", "Durante el viaje":"podczas podróży", "Al final":"na końcu", "De repente":"nagle", "Hace un rato":"przed chwilą", "En la reunión":"na spotkaniu", "Antes de salir":"przed wyjściem", "Por la tarde":"po południu", "El fin de semana":"w weekend", "En Madrid":"w Madrycie", "En casa":"w domu", "En la fiesta":"na imprezie", "En el aeropuerto":"na lotnisku", "Durante la cena":"podczas kolacji", "Al volver a casa":"po powrocie do domu", "En el último minuto":"w ostatniej chwili",
@@ -1018,6 +1030,17 @@ GENERATED_VERB_DEFS.forEach(def => {
   const items = def.comp.map(([es, pl, tags = []]) => ({es, pl, tags:[...(def.tags || []), ...tags]}));
   SENTENCE_COMPLEMENTS[def.inf] = [...(SENTENCE_COMPLEMENTS[def.inf] || []), ...items];
 });
+// parecer + a personal subject needs predicate adjectives that agree in
+// gender/number ("los profesores parecen difíciles", not "...difícil"), so we
+// override the plain generated complements with templated, agreeing forms.
+SENTENCE_COMPLEMENTS.parecer = [
+  {tpl:" {adj}.", forms:{ms:"difícil",fs:"difícil",mp:"difíciles",fp:"difíciles"}, pl:"trudny/a", tags:["state"]},
+  {tpl:" {adj}.", forms:{ms:"normal",fs:"normal",mp:"normales",fp:"normales"}, pl:"normalny/a", tags:["state"]},
+  {tpl:" {adj}.", adj:"interesante", type:"e", pl:"interesujący/a", tags:["state"]},
+  {tpl:" {adj}.", adj:"importante", type:"e", pl:"ważny/a", tags:["state"]},
+  {tpl:" un poco {adj}.", adj:"cansad", type:"o", pl:"trochę zmęczony/a", tags:["state"]},
+  {tpl:" muy {adj}.", adj:"content", type:"o", pl:"bardzo zadowolony/a", tags:["state","feeling"]}
+];
 const SENTENCE_ACTION_PL = {
   hablar:"rozmawiać", comer:"jeść", vivir:"mieszkać", ser:"być", estar:"być / znajdować się", ir:"iść / jechać", tener:"mieć", hacer:"robić", poder:"móc", querer:"chcieć", decir:"powiedzieć", saber:"wiedzieć / umieć", venir:"przyjść", dar:"dać", ver:"zobaczyć", poner:"położyć / włączyć", salir:"wyjść", traer:"przynieść", dormir:"spać", pedir:"poprosić", leer:"czytać", escribir:"napisać", llegar:"przyjść / dotrzeć", sentir:"czuć", seguir:"kontynuować / iść za", volver:"wrócić", empezar:"zacząć", jugar:"grać", oír:"usłyszeć", caer:"upaść / wypaść", creer:"wierzyć", conocer:"poznać / znać", conducir:"prowadzić", construir:"budować", elegir:"wybrać", servir:"podać / służyć", morir:"umrzeć", valer:"być wartym", caber:"zmieścić się", andar:"chodzić", pensar:"myśleć", perder:"zgubić / stracić", entender:"rozumieć", encontrar:"znaleźć", preferir:"woleć", conseguir:"zdobyć / osiągnąć", mantener:"utrzymać", traducir:"tłumaczyć", producir:"produkować / powodować", ofrecer:"zaoferować", aparecer:"pojawić się", reconocer:"rozpoznać / przyznać", abrir:"otworzyć", beber:"pić", trabajar:"pracować", estudiar:"uczyć się", comprar:"kupić", viajar:"podróżować", nacer:"urodzić się", reír:"śmiać się", buscar:"szukać", pagar:"zapłacić", haber:"być / istnieć", romper:"złamać / zepsuć", cubrir:"zakryć", descubrir:"odkryć", freír:"smażyć", resolver:"rozwiązać", devolver:"oddać", imprimir:"wydrukować"
 };
@@ -1166,9 +1189,68 @@ const SENTENCE_VERB_TAGS = {
   dormir:["sleep","home"], vivir:["place"], estar:["state"], ser:["state"],
   jugar:["social"], ver:["perception"], oír:["perception"], pensar:["mental"], creer:["mental"], sentir:["feeling"],
   comprar:["shopping"], pagar:["shopping"], pedir:["request"], dar:["exchange"], poner:["home"], abrir:["home"], cerrar:["home"],
-  nacer:["life"], morir:["life"], caer:["movement"], encontrar:["search"], buscar:["search"], conseguir:["achievement"]
+  nacer:["life"], morir:["life"], caer:["movement"], encontrar:["search"], buscar:["search"], conseguir:["achievement"],
+  conocer:["social","knowledge"], construir:["work"], cubrir:["work"], descubrir:["knowledge"], devolver:["exchange"],
+  elegir:["mental"], imprimir:["work"], reconocer:["perception"], resolver:["mental"], reír:["feeling","social"],
+  servir:["food"], valer:["money"], aparecer:["state"], caber:["state"]
 };
 Object.assign(SENTENCE_VERB_TAGS, Object.fromEntries(GENERATED_VERB_DEFS.map(def => [def.inf, def.tags || []])));
+// Entertainment actions are fine at a party but out of place in focused
+// scenes (a meeting, class, dinner), so mark them with a "leisure" family.
+Object.assign(SENTENCE_VERB_TAGS, {
+  bailar:["social","leisure"], cantar:["social","leisure"], tocar:["social","leisure"], jugar:["social","leisure"]
+});
+// Scene-setting starts ("at the party", "at the airport"...) imply a situation,
+// so actions whose semantic family clashes with that situation are implausible
+// even when grammatically fine ("en la fiesta ahorré dinero"). Each scene lists
+// the verb/complement tag families that do NOT belong there.
+const SCENE_OF_START = {
+  "En la fiesta":"party",
+  "En el aeropuerto":"airport",
+  "En el tren":"transit", "Durante el viaje":"transit", "Durante el viaje he":"transit",
+  "Al llegar al hotel":"hotel",
+  "En la reunión":"meeting", "En la reunión he":"meeting", "Antes de la reunión":"meeting",
+  "Durante la cena":"meal", "Antes de la cena":"meal",
+  "En el restaurante":"restaurant",
+  "En la biblioteca":"study", "En la biblioteca he":"study", "En la universidad":"study",
+  "En la antigua escuela":"study", "En clase":"study", "En clase he":"study",
+  "En la cocina":"kitchen",
+  "En el trabajo":"work", "En el trabajo he":"work",
+  "Durante el descanso":"break", "Durante el descanso he":"break",
+  "En casa de los abuelos":"homefam",
+  // softer time/sequence starts: only the clearly-incongruous families are blocked
+  "Después de clase":"afterclass", "Después de clase he":"afterclass",
+  "Después de comer":"afterclass",
+  "Después del trabajo":"afterwork", "Después del trabajo he":"afterwork",
+  "Antes de dormir":"beforesleep",
+  "Al volver a casa":"homecoming", "Al llegar a casa":"homecoming"
+};
+const SCENE_BLOCKED_FAMILIES = {
+  party:      ["work","study","money","shopping","sleep","sport","travel","life","home","achievement","need","school","destination","search"],
+  airport:    ["home","sport","work","life","money","study","school","leisure"],
+  transit:    ["home","sport","life","work","leisure"],
+  hotel:      ["work","sport","life","school","study"],
+  meeting:    ["food","sport","sleep","travel","life","home","shopping","money","school","leisure","destination"],
+  meal:       ["work","study","sport","sleep","travel","life","home","shopping","money","school","leisure","destination"],
+  restaurant: ["work","study","sport","sleep","life","home","school","travel","leisure","destination"],
+  study:      ["food","sport","sleep","travel","life","home","shopping","money","leisure","destination"],
+  kitchen:    ["work","study","sport","sleep","travel","life","money","shopping","school","leisure","destination"],
+  work:       ["leisure","sport","sleep","life","destination","shopping","travel","home","money"],
+  break:      ["sport","life","travel","money"],
+  homefam:    ["work","sport","travel","money","school"],
+  afterclass: ["money","work","life","travel","shopping"],
+  afterwork:  ["life","school"],
+  beforesleep:["work","sport","money","shopping","travel","life","school","leisure","destination"],
+  homecoming: ["work","school","life","money","travel","destination"]
+};
+// Stative verbs describe ongoing states, so they clash with sudden/punctual
+// time frames ("de repente vivió", "hace un rato viví en Madrid").
+const STATIVE_VERBS = new Set(["vivir","ser","estar","parecer","costar","valer"]);
+// Punctual "a moment ago / at the last minute" frames that clash with states.
+const PUNCTUAL_STARTS = new Set(["Hace un rato","De repente","En el último minuto","En aquel momento","En ese momento","Anoche","Hace dos días"]);
+// Verbs whose action/state is not repeatable, so " otra vez" (again) is wrong
+// ("viví otra vez", "costó veinte euros otra vez").
+const NONREPEATABLE_VERBS = new Set(["vivir","nacer","morir","costar","valer"]);
 const TIME_OF_DAY_TAGS = ["morning", "afternoon", "night", "evening", "meal"];
 const BIRTH_SUBJUNCTIVE_STARTS = new Set(["Es posible que", "Puede que", "Tal vez", "No parece que", "Es probable que", "No es seguro que", "Era posible que", "No parecía que", "Era probable que", "No era seguro que"]);
 const DEATH_SUBJUNCTIVE_STARTS = new Set(["Es posible que", "Puede que", "Tal vez", "Dudo que", "No creo que", "No parece que", "Me preocupa que", "Es probable que", "No es seguro que", "Era posible que", "Dudaba que", "No creía que", "No parecía que", "Me preocupaba que", "Era probable que", "No era seguro que"]);
@@ -1229,6 +1311,15 @@ function inferComplementTags(inf, item){
   if(inf === "dar" && text.includes("una clase")) { tags.add("school"); tags.add("lesson"); }
   if(inf === "dormir") tags.add("sleep");
   if(inf === "nacer" || inf === "morir") tags.add("life-event");
+  // detect the action named inside the complement (e.g. "empezar a estudiar",
+  // "seguir trabajando", "hacer la compra") so scene rules can judge it
+  if(/\b(estudiar|estudiando|aprender|aprendiendo)\b/.test(text)) tags.add("study");
+  if(/\b(trabajar|trabajando)\b/.test(text)) tags.add("work");
+  if(/\b(compra|compras)\b/.test(text)) tags.add("shopping");
+  if(/\b(ejercicio|deporte)\b/.test(text)) tags.add("sport");
+  if(/\b(dormir|durmiendo)\b/.test(text)) tags.add("sleep");
+  if(/\b(viajar|viajando|viaje)\b/.test(text)) tags.add("travel");
+  if(/\bsupermercado\b/.test(text)) tags.add("shopping");
   return [...tags];
 }
 function enrichSentenceComplement(inf, item){
@@ -1260,6 +1351,16 @@ function startWorksWithComplement(inf, start, tense, complement){
   const ct = complement.tags || [];
   const startText = start.toLowerCase();
   const compText = textForSentenceItem(complement);
+  const scene = SCENE_OF_START[start];
+  const sceneBlocked = SCENE_BLOCKED_FAMILIES[scene];
+  if(sceneBlocked && ct.some(tag => sceneBlocked.includes(tag))) return false;
+  // "vivir" (to live somewhere) is stative and clashes with episodic scenes
+  // ("al volver a casa viví en otra ciudad"); habitual/neutral starts keep it.
+  if(scene && inf === "vivir") return false;
+  // states don't begin "suddenly / a moment ago / at the last minute"
+  if(STATIVE_VERBS.has(inf) && (hasAnyTag(st, ["moment","urgency"]) || PUNCTUAL_STARTS.has(start))) return false;
+  // "vivir" also rejects punctual/departure framing ("antes de salir viví...")
+  if(inf === "vivir" && hasAnyTag(st, ["moment","urgency","departure"])) return false;
   if(hasTimeConflict(st, ct)) return false;
   if(hasRepeatedTimeOfDay(st, ct)) return false;
   if(startText && compText.includes(startText)) return false;
@@ -1316,7 +1417,7 @@ function closerWorksWithSentence(inf, start, complement, closer, tense = current
   if(hasTag(st, "habit") && hasTag(xt, "repeat")) return false;
   if(start.toLowerCase().includes("esta vez") && hasTag(xt, "repeat")) return false;
   if(hasTag(st, "purpose") && hasTag(xt, "purpose")) return false;
-  if((extra.trim() && base.includes(extra.trim())) || (base.includes(" con ") && extra.startsWith(" con ")) || (base.includes(" en casa") && extra.includes("en casa")) || (base.includes(" por la ") && extra.startsWith(" por la "))) return false;
+  if((extra.trim() && base.includes(extra.trim())) || (base.includes(" con ") && extra.startsWith(" con ")) || (base.includes(" sin ") && extra.startsWith(" sin ")) || (base.includes(" para ") && extra.startsWith(" para ")) || (base.includes(" en casa") && extra.includes("en casa")) || (base.includes(" por la ") && extra.startsWith(" por la "))) return false;
   if(hasAnyTag(ct, ["place", "destination"]) && hasAnyTag(xt, ["place", "home"])) return false;
   if(hasTag(st, "place") && hasAnyTag(xt, ["place", "home"])) return false;
   if(hasTag(st, "home") && hasTag(xt, "home")) return false;
@@ -1332,6 +1433,14 @@ function closerWorksWithSentence(inf, start, complement, closer, tense = current
   if(hasTag(ct, "state") && hasTag(xt, "manner")) return false;
   if(hasTag(ct, "life-event") && hasTag(xt, "manner")) return false;
   if(["crecer", "costar", "merecer", "disfrutar"].includes(inf) && hasTag(xt, "manner")) return false;
+  if(inf === "cuidar" && extra.includes("cuidado")) return false;
+  // " otra vez" implies a repeatable event; wrong for living/being born/dying/costing
+  if(NONREPEATABLE_VERBS.has(inf) && hasTag(xt, "repeat")) return false;
+  // "at the last minute ... again" is self-contradictory
+  if(hasTag(st, "urgency") && hasTag(xt, "repeat")) return false;
+  // "con (mucho) cuidado" = caution; only fits active/physical actions, not
+  // states, perception, thought, feeling, sleep or eating ("comer con cuidado")
+  if(extra.includes("cuidado") && (STATIVE_VERBS.has(inf) || hasAnyTag(ct, ["state","perception","mental","feeling","sleep","knowledge","food","abstract","life-event"]))) return false;
   if(inf === "salir" && (hasTag(xt, "departure") || extra.includes("salir"))) return false;
   if(inf === "llegar" && hasTag(xt, "departure")) return false;
   if(["vivir", "reír"].includes(inf) && hasTag(xt, "manner")) return false;
@@ -1366,16 +1475,34 @@ function renderComplementForSubject(complement, pronoun, subject){
 function sentenceComplementForSubject(inf, pronoun, subject){
   return renderComplementForSubject(sentenceComplementFor(inf), pronoun, subject);
 }
+// Time-neutral starts that fit almost any verb; used as a safe fallback when
+// every contextual start was filtered out, instead of reopening the full list.
+const NEUTRAL_FALLBACK_STARTS = {
+  presente: ["Hoy", "Normalmente", "A veces", "Cada día"],
+  indefinido: ["Ayer", "Esta mañana", "El lunes"],
+  imperfecto: ["Antes", "Normalmente", "A menudo"],
+  futuro: ["Mañana", "Pronto", "Más tarde"],
+  subjuntivo: ["Quiero que", "Espero que", "Es importante que"],
+  subjuntivo_imperfecto: ["Quería que", "Esperaba que", "Era importante que"],
+  perfecto: ["Hoy he", "Ya he", "Últimamente he"],
+  imperativo: ["Por favor", "Ahora", "Esta vez"]
+};
+function fallbackStart(tense, bank){
+  const safe = (NEUTRAL_FALLBACK_STARTS[tense] || []).filter(s => bank.starts.includes(s));
+  return randomPick(safe.length ? safe : bank.starts);
+}
 function sentenceStartFor(tense, inf, complement = null){
   const bank = SENTENCE_BANK[tense] || SENTENCE_BANK.indefinido;
   const avoid = {
     vivir: ["Cuando vivía allí"],
     estudiar: ["Mientras estudiaba"],
     llegar: ["Cuando llegué"],
-    poder: ["Cuando pueda"]
+    poder: ["Cuando pueda"],
+    haber: ["Cuando había tiempo"],
+    despertar: ["Antes de dormir"]
   }[inf] || [];
   const starts = bank.starts.filter(start => !avoid.includes(start) && (!complement || startWorksWithComplement(inf, start, tense, complement)));
-  return randomPick(starts.length ? starts : bank.starts);
+  return starts.length ? randomPick(starts) : fallbackStart(tense, bank);
 }
 function imperativeSentenceStartFor(inf, complement, pronoun){
   const bank = SENTENCE_BANK.imperativo;
@@ -1388,7 +1515,7 @@ function imperativeSentenceStartFor(inf, complement, pronoun){
     if(!["vosotros", "ustedes"].includes(pronoun) && (ustedesOnly.has(start) || vosotrosOnly.has(start))) return false;
     return !complement || startWorksWithComplement(inf, start, "imperativo", complement);
   });
-  return randomPick(starts.length ? starts : bank.starts);
+  return starts.length ? randomPick(starts) : fallbackStart("imperativo", bank);
 }
 function addSentenceCloser(complement, start, inf, tense){
   if(!complement.es.endsWith(".")) return complement;
@@ -1411,16 +1538,54 @@ function sentenceTranslation(start, subject, verb, complement, tense){
   if(isImperativo(tense)) return [startPl, "polecenie", what].filter(Boolean).join(" · ");
   return [startPl, subjectPl, what].filter(Boolean).join(" · ");
 }
-function sentencePromptFor(q, correct){
-  const tense = q.tense || currentTense;
+// Words that should never count as a "repeated" content word: articles,
+// prepositions, conjunctions, pronouns, possessives, demonstratives and a few
+// high-frequency adverbs. Compared after accent-stripping and a light plural cut.
+const SENTENCE_STOP_WORDS = new Set([
+  "el","la","los","las","un","una","de","del","al","en","a","con","por","sobre","entre","hasta",
+  "y","o","u","que","se","lo","le","les","me","te","nos","os","mi","tu","su","mis","tus","sus","nuestro","nuestra",
+  "ese","esa","eso","aquel","aquella","aquello",
+  "dos","tres","cuatro","cinco","seis","siete","ocho","diez","cien","mil",
+  "no","si","ya","muy","mas","meno","mal","algo","nada",
+  "cuando","donde","como","mientra","aqui","alli","ahi","tan","tanto","ante","despue"
+]);
+function sentenceContentRoots(text){
+  const roots = [];
+  for(const raw of String(text).toLowerCase().replace(/[.,;:]/g, " ").split(/\s+/)){
+    if(!raw) continue;
+    const bare = raw.normalize("NFD").replace(/[̀-ͯ]/g, "");
+    if(bare.length <= 2) continue;
+    const root = bare.replace(/(es|s)$/, "");
+    if(SENTENCE_STOP_WORDS.has(bare) || SENTENCE_STOP_WORDS.has(root)) continue;
+    roots.push(root);
+  }
+  return roots;
+}
+// True if the visible fixed pieces (start + subject + complement/closer) repeat
+// the same content word, e.g. "Después de clase ... en clase" or
+// "el profesor ... con el profesor". The conjugated verb is intentionally excluded.
+function sentencePiecesRepeat(...pieces){
+  const seen = new Set();
+  for(const piece of pieces){
+    for(const root of sentenceContentRoots(piece)){
+      if(seen.has(root)) return true;
+      seen.add(root);
+    }
+  }
+  return false;
+}
+function buildSentenceAttempt(q, correct, tense){
   if(isPerfecto(tense)){
     const baseComplement = sentenceComplementForSubject(q.verb.inf, "yo", "yo");
     const start = sentenceStartFor(tense, q.verb.inf, baseComplement);
     const complement = addSentenceCloser(baseComplement, start, q.verb.inf, tense);
     return {
-      blank: `${start} <span class="blank"></span>${complement.es}`,
-      full: `${start} ${correct}${complement.es}`,
-      pl: sentenceTranslation(start, "", q.verb, complement, tense)
+      start, subject: "", complementEs: complement.es, complement,
+      result: {
+        blank: `${start} <span class="blank"></span>${complement.es}`,
+        full: `${start} ${correct}${complement.es}`,
+        pl: sentenceTranslation(start, "", q.verb, complement, tense)
+      }
     };
   }
   if(isImperativo(tense)){
@@ -1429,9 +1594,12 @@ function sentencePromptFor(q, correct){
     const start = imperativeSentenceStartFor(q.verb.inf, baseComplement, q.pronoun);
     const complement = addSentenceCloser(baseComplement, start, q.verb.inf, tense);
     return {
-      blank: `${start} <span class="blank"></span>${complement.es}`,
-      full: `${start} ${correct}${complement.es}`,
-      pl: sentenceTranslation(start, subject, q.verb, complement, tense)
+      start, subject: "", complementEs: complement.es, complement,
+      result: {
+        blank: `${start} <span class="blank"></span>${complement.es}`,
+        full: `${start} ${correct}${complement.es}`,
+        pl: sentenceTranslation(start, subject, q.verb, complement, tense)
+      }
     };
   }
   const subject = randomPick(subjectsForVerb(q.pronoun, q.verb.inf));
@@ -1439,10 +1607,43 @@ function sentencePromptFor(q, correct){
   const start = sentenceStartFor(tense, q.verb.inf, baseComplement);
   const complement = addSentenceCloser(baseComplement, start, q.verb.inf, tense);
   return {
-    blank: `${start} ${subject} <span class="blank"></span>${complement.es}`,
-    full: `${start} ${subject} ${correct}${complement.es}`,
-    pl: sentenceTranslation(start, subject, q.verb, complement, tense)
+    start, subject, complementEs: complement.es, complement,
+    result: {
+      blank: `${start} ${subject} <span class="blank"></span>${complement.es}`,
+      full: `${start} ${subject} ${correct}${complement.es}`,
+      pl: sentenceTranslation(start, subject, q.verb, complement, tense)
+    }
   };
+}
+// Semantic (not structural) tag families used to reward a coherent pairing of
+// start and complement — e.g. a school start with a study complement.
+const SENTENCE_THEME_TAGS = ["food","school","work","study","travel","home","social","communication","perception","mental","feeling","sport","money","shopping","movement","knowledge","support","life"];
+function sentenceNaturalness(attempt, tense){
+  const st = startTagsFor(attempt.start, tense);
+  const ct = (attempt.complement && attempt.complement.tags) || [];
+  let score = 0;
+  for(const tag of SENTENCE_THEME_TAGS){ if(st.includes(tag) && ct.includes(tag)) score++; }
+  return score;
+}
+function sentencePromptFor(q, correct){
+  const tense = q.tense || currentTense;
+  // Generate several valid candidates (hard filter = no repeated content word),
+  // then prefer the most thematically coherent. Ties are broken at random so the
+  // extra variety is kept; scoring only nudges when a clearly better option exists.
+  const candidates = [];
+  let last = null;
+  for(let i = 0; i < 16; i++){
+    const a = buildSentenceAttempt(q, correct, tense);
+    last = a;
+    if(!sentencePiecesRepeat(a.start, a.subject, a.complementEs, correct)) candidates.push(a);
+  }
+  if(!candidates.length) return last.result; // graceful fallback (extremely rare)
+  let best = -1;
+  for(const a of candidates){ a._score = sentenceNaturalness(a, tense); if(a._score > best) best = a._score; }
+  // Nudge toward coherence ~half the time; otherwise keep a fully random pick so
+  // variety (and use of neutral starts) is preserved.
+  const top = candidates.filter(a => a._score === best);
+  return randomPick(Math.random() < 0.5 ? top : candidates).result;
 }
 function exampleFor(q, correct){
   if(isPerfecto(q.tense)){
